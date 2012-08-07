@@ -1,0 +1,144 @@
+	* {margin:0;padding:0}
+	
+	body {
+		width:750px;
+		margin:auto;
+		font-family: 'Maven Pro', arial, segoe ui, sans serif;
+		font-size: 11pt;
+		color: #333;
+		background: #eee url(../img/sky2.jpg) fixed;
+		background-size: cover;
+	}
+	
+	#printlogo {width: 80px; margin: auto;}
+	
+	.body {
+		overflow: auto;
+		background: white;
+		padding: 8%;
+	}
+	
+	p {font-size: 0.9em; line-height: 1.5em; margin-bottom: 0.75em; font-family: arial;}
+	ul { margin-bottom: 1em;}
+	li {font-size: 0.8em; line-height: 1.5em; font-style: italic; margin-left: 2em; font-family: arial;}
+	
+	.contact {float: right; margin-top: 1.5em;}
+	h1 {font-size: 2.2em; margin-top: 0.5em; color: #39e;}
+	h2 {font-weight: normal; font-size: 1.6em; margin-top: 0.5em;}
+	.profile {font-size: 1.1em; line-height:1.5em;}
+	
+	.left {
+		float:left; 
+		width: 17%; 
+		margin-right: 3%; 
+		color: #999; 
+		font-weight: normal; 
+		font-style: italic; 
+		text-align: right;
+	}
+	
+	.bigbox {
+		float:right;
+		width: 80%;
+	}
+	
+	.part {
+		margin: 2em 0 0 0;
+		padding: 2em 0 0 0;
+		border-top: 1px solid #ddd;
+		clear:both;
+		overflow: auto;
+		page-break-inside: avoid;
+	}
+	h3 {font-size: 1.2em; line-height:1.5em;}
+	
+	/* 3 Skills */
+	h4 {font-size: 1.2em; line-height:1.5em; margin-bottom: 0.2em; font-weight: normal; color: #39e;}
+	
+	/* Technical skills lists */
+	h5 {padding-top:0.3em; font-size: 1em;}
+	
+	/* Tekniske listerier */
+	.techset, .other {margin-bottom:0.5em; overflow: auto;}
+	.techset ul {list-style:none;}
+	.techset li {
+		float: left; 
+		font-size: 0.7em; 
+		padding: 0.1em 0.4em 0.1em 0.4em; 
+		margin: 0.5em 0.5em 0 0; 
+		border: 1px solid #ddd; 
+		border-radius: 5px;
+		}
+	.techset li:hover {border-color: #bbb;}
+	
+	/* Work experience and Education */
+	.year {color: #999; font-style:italic; float: right;}
+	.workplace {font-weight: bold;}
+	.techs {font-style: italic; color: #999; font-size: 0.7em;}
+	.portlet {margin-bottom:2em; page-break-inside:avoid;}
+	section {margin-bottom:1em;}
+	
+	/* Functional */
+	.inactive {opacity: 0.3;}
+	.clickable {cursor: pointer;
+		border: 1px solid skyblue;
+		border-radius: 5px; padding: 1%;}
+	.instruction {color: red;}
+	
+	.pagebreak {page-break-before: always;}
+	
+	
+	/* Kommentar */
+	#comment {
+		position: fixed; 
+		top:0;
+		right:0; 
+		background: white; 
+		padding: 20px;
+		width: 120px;
+		opacity: 0.6;
+		border: 1px solid #ccc;
+		overflow: hidden;
+		max-height: 20px; 
+		transition: max-height 0.5s, opacity 0.5s, width 0.5s;
+		/* Firefox 4 */
+		-moz-transition: max-height 0.5s, opacity 0.5s, width 0.5s;
+		/* Safari and Chrome */
+		-webkit-transition: max-height 0.5s, opacity 0.5s, width 0.5s;
+		/* Opera */
+		-o-transition: max-height 0.5s, opacity 0.5s, width 0.5s;
+	}
+	
+	#comment li {margin-left: 30px;}
+	
+	#comment:hover { max-height: 800px; opacity:1; width: 500px; }
+	
+	#comment h4 {color: darkblue; text-decoration: underline; cursor: pointer;}
+	/*#logo img:hover {position: relative; left:-280px;}*/
+	
+	/* Settings */
+	#settings { position: fixed; top: 10px; left: 10px; background: rgba(255,255,255,0.5); padding: 10px; font-size: 130%; line-height: 160%;}
+	
+	#settings .button {padding: 10px;}
+	
+	.viewchange {
+		border: 1px solid #fff;
+		padding: 5px; margin: 15px;
+	}
+	
+	/* PRINT */
+	/* Fjerner kommentar når man printer */
+#comment {display:none;}
+
+#printlogo {display:inherit;}
+
+/* Inaktive "Evner" skjules ved print! */
+.skill {height: auto;}
+
+.clickable {border:none; padding:0;}
+
+		.portlet {cursor: move; page-break-inside: avoid;}
+		.portlet:hover {background: #f3f3f3;}
+		.toggle {width: 20px; height: 20px; background: red; float: right; cursor: pointer; text-align:center; border-radius: 5px;}
+		.toggle:hover {background: #d00;}
+		.toggle:before {content: "\00D7"; font-size: 20px; line-height: 20px;color: white;}

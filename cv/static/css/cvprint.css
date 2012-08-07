@@ -1,0 +1,11 @@
+/* Fjerner kommentar når man printer */
+#comment {display:none;}
+
+/* Inaktive "Evner" skjules ved print! */
+.skill {height: auto;}
+
+.clickable {border:none; padding:0;}
+
+.inactive {display: none; visibility: hidden;}
+
+.instruction {display:none;}
