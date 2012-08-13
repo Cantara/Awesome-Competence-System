@@ -6,9 +6,9 @@
 {% block topmenu %}
 	<a href="/cv/" class="button">Tilbake til CV-liste</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Rediger CV</a>
-	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Lag ODT</a>
+	<a class="button" onClick="document.cvform.submit()">Lag ODT</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Lag PDF</a>
-	<input type="button" value="TEST JSON" onClick="alert(FormatJSON($('#cvform').serializeObject()));"/>
+	<a class="button" onClick="document.cvform.cvjson.value=FormatJSON($('#cvform').serializeObject());">Test JSON</a>
 {% endblock %}
 
 {% block content %}
@@ -25,13 +25,10 @@
 			
 			.expandingArea {
 			  position: relative;
-			  border: 1px solid #eee;
-			  background: #fff;
 			}
 			
 			.expandingArea > textarea,
 			.expandingArea > pre {
-			  padding: 5px;
 			  background: transparent;
 			  font: 400 13px/16px helvetica, arial, sans-serif;
 			  /* Make the text soft-wrap */
@@ -72,7 +69,6 @@
 			
 		</style>
 		<script>
-			console.log("HEI");
 		$(function () {
 			 function makeExpandingArea(container) {
 			 var area = container.querySelector('textarea');
@@ -102,12 +98,12 @@
 		});
 		</script>
 		
-		<form action="" method="post" name="cvform" id="cvform">
-		
+		<form action="/cv/{{ cv.id }}/odt/" method="post" name="cvform" id="cvform" target="_blank">
+		{% csrf_token %}
 		<div class="part">
 		  <img src="{{ p.photo }}" class="left" id="photo">
-		  <h1>{{ p.name }}</h1>
-		  <h2>{{ p.title }}</h2>
+		  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
+		  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
 		  <p>
 		  <input type="text" name="phone" value="{{ p.phone }}"/>
 		  <input type="text" name="mail" value="{{ p.mail }}"/>
@@ -117,8 +113,7 @@
 		<div class="part">
 		  <h3 class="left">{{ l.profile }}</h3>
 		  <div class="bigbox">
-			<div class="expandingArea">
-			  <pre><span></span><br></pre>
+			<div class="expandingArea"><pre><span></span><br></pre>
 			  <textarea class="profile" name="profile">{{ cv.profile }}</textarea>
 			</div>	
 		  </div>
@@ -146,7 +141,9 @@
 						<h4>{{ ex.title }}</h4>
 						<p class="year">{{ ex.years }}</p>
 						<p class="workplace">{{ ex.company }}</p>
-						<p>{{ ex.description }}</p>
+						<div class="expandingArea"><pre><span></span><br></pre>
+						  <textarea name="experience[{{ forloop.counter }}][description]" id="experience[{{ forloop.counter }}][description]">{{ ex.description }}</textarea>
+						</div>	
 						<p class="techs">{{ ex.techs }}</p>
 					</div>
 				{% endfor %}
@@ -159,7 +156,7 @@
 				{% for wp in w %}
 					<section>
 					  <h4>{{ wp.company }}</h4>
-					  <p class="year">{{ wp.years }}</p>
+					  <p class="year">{{ wp.from_year }}</p>
 					  <p class="workplace">{{ wp.title }}</p>
 					  <p>{{ wp.description }}</p>
 					</section>
@@ -193,7 +190,9 @@
 			</div>
 			{% endfor %}
 		</div>
-		
+			<div class="expandingArea"><pre><span></span><br></pre>
+				<textarea name="cvjson" id="cvjson"></textarea>
+			</div>	
 		</form>
 		
 {% endblock %}

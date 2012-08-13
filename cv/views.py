@@ -7,6 +7,7 @@ from cv.models import Cv, Person
 from webodt.shortcuts import _ifile
 import webodt
 from reportlab.pdfgen import canvas
+import json
 
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
@@ -18,6 +19,11 @@ def index(request):
             <p><a href="odf/">OpenDocument with Picture-insert - Test</a></p>
         </body></html>
         """)
+		
+def odtjson(request):
+	a = json.loads(request.POST['cvjson'])
+	return HttpResponse( "Hei %s, du har \"%s\"" % (a, request.POST["experience[2][description]"]) );
+
 
 def odt(request, person_id=1):
 

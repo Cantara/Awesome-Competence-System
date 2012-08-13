@@ -37,7 +37,6 @@ a.section:link, a.section:visited { color: #666666; }
 	border-radius: 4px; 
 	}
 
-.object-tools {display:none !important;}
 	
 .form-row {
 	border: 0 !important;
@@ -59,3 +58,5 @@ input[name="_save"] { font-size: 1.1em !important; background-color: #ddd !impor
 .ui-autocomplete li { list-style: none !important; display:inline-block;}
 .ui-autocomplete a { color: #444 !important;}
 .ui-autocomplete a:hover { color: #fff !important;}
+
+a.add-link {color: white !important;}

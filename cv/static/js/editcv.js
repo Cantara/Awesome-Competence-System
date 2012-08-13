@@ -27,7 +27,6 @@ var techTags = [
 // Declare settings for JqueryUI sortable()
 var sortSettings = {
 		forcePlaceholderSize: true,
-		placeholder: 'dragplaceholder',
 		opacity: 0.7,
 		axis: 'y'
 	};
@@ -498,7 +497,7 @@ function removeParent(t) {
 
 function previewJson() {
 	getCVJson();
-}
+} */
 
 // Formats the JSON to be more readable - http://joncom.be/code/javascript-json-formatter/
 function FormatJSON(oData, sIndent) {
@@ -584,4 +583,3 @@ function RealTypeOf(v) {
   }
   return typeof(v);
 }
-*/
