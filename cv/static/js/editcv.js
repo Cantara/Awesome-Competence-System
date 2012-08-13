@@ -131,9 +131,9 @@ $.fn.serializeObject = function() {
 
 		  // at the end, psuh or assign the value
 		  if ( lookup.length != undefined ) {
-			   lookup.push( legalInput( $(this).val() ) );
+			   lookup.push( $(this).val() );
 		  }else {
-				lookup[ named[ cap ] ]  = legalInput( $(this).val() );
+				lookup[ named[ cap ] ]  = $(this).val();
 		  }
 
 		  // assign the reference back to root

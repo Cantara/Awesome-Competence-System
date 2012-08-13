@@ -1,0 +1,12 @@
+{% extends "polls/base.html" %}
+
+{% block content %}
+	<h2>{{ poll.question }}</h2>
+	<p>{{ poll.pub_date }}</p>
+	
+	<ul>
+	{% for choice in poll.choice_set.all %}
+		<li>{{ choice.choice }} - {{ choice.votes }}</li>
+	{% endfor %}
+	</ul>
+{% endblock %}

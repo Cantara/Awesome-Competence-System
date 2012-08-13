@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse
 from django import http
-from cv.models import Person
+from cv.models import Cv, Person
 from webodt.shortcuts import _ifile
 import webodt
 from reportlab.pdfgen import canvas
@@ -29,9 +29,9 @@ def odt(request, person_id=1):
 	p.profile = p.profile.replace('\n','<br/>')
 	pro = p.profile.encode( "utf-8" )
 	p.profile = pro
-	t = p.technologies_set.all()
+	t = p.technology_set.all()
 	e = p.experience_set.all()
-	w = p.workplaces_set.all()
+	w = p.workplace_set.all()
 	d = p.education_set.all()
 	dict = {
 		'l': {
@@ -68,20 +68,21 @@ def odtlist(request):
 
 def cvlist(request):
 	all_persons = Person.objects.all()
-	return render_to_response('cv/index.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
+	return render_to_response('cv/cvlist.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
 	
-def detail(request, person_id, arg1 = '', arg2 = ''):
-	p = get_object_or_404(Person, pk=person_id)
-	t = p.technologies_set.all()
-	e = p.experience_set.all()
-	w = p.workplaces_set.all()
-	d = p.education_set.all()
-	o = p.others_set.all()
+def detail(request, cv_id, arg1 = '', arg2 = ''):
+	cv = get_object_or_404(Cv, pk=cv_id)
+	p = cv.person
+	t = cv.technology.all()
+	e = cv.experience.all()
+	w = cv.workplace.all()
+	d = cv.education.all()
+	o = cv.other.all()
 	
 	# If they want English, give them English
 	if arg1 == 'eng' or arg2 == 'eng':
-		p.profile = p.profile_en
-		p.title = p.title_en
+		cv.profile = cv.profile_en
+		cv.title = cv.title_en
 		
 		for te in t:
 			te.title = te.title_en
@@ -124,7 +125,7 @@ def detail(request, person_id, arg1 = '', arg2 = ''):
 	else:
 		doc = False
 	
-	return render_to_response('cv/detail.html', {'person': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'doc': doc}, context_instance=RequestContext(request))
+	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'doc': doc}, context_instance=RequestContext(request))
 
 '''
 def odt(request):

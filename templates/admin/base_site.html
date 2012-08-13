@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base_site.css"/>
+{% endblock %}
+
+{% block branding %}
+<script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.22.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
+<h1 id="site-name">{% trans 'CV FreeCode' %}</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

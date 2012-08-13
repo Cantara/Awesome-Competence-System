@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CV-redigerer for FreeCode AS</title>
+		<link rel="stylesheet" type="text/css" href="css/editcv.css" />
+		<link rel="stylesheet" type="text/css" href="css/flick/jquery-ui-1.8.21.custom.css" />
+	</head>
+	<body>
+		<script type='text/javascript' src='js/jquery-1.7.2.min.js'></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.22.custom.min.js"></script>
+		<script type="text/javascript" src="js/editcv.js"></script>
+		<?php if(isset($_GET["loadcv"])) { ?>
+		<script>
+			loadCV("<? echo $_GET["loadcv"] ?>");
+		</script>
+		<?php } ?>
+		<div id="doc">
+			<img id="printlogo" src="img/freecodesentrert.png">
+			<h1>CV-tool</h1>
+			<span class="butt" onClick="preview();"><img src="img/preview.png"><br>Forhåndsvis</span>
+				<div class="popup">
+					<div id="preview_frame">
+						<iframe name="preview_framez" src="cv.php">Preview not supported by your browser.</iframe>
+						<input type="button" value="Lukk forhåndsvisning" onClick="$('#preview_frame').hide();">
+					</div>
+				</div>
+			<span class="butt" onClick="openClearCV();"><img src="img/new.png"><br>Ny CV</span>
+				<div class="popup">
+					<div id="clearcv">
+						<p>Er du sikker på at du vil starte en ny CV, og fjerne nåværende CV? Det som ikke er lagret vil bli borte for alltid!</p>
+						<span class="butt" onClick="clearCV();$('#clearcv').hide();">Ok, kjør på!</span><br>
+						<span class="butt" onClick="$('#clearcv').hide();">Abort, abort!</span><br>
+					</div>
+				</div>
+			<span class="butt" onClick="saveCV();"><img src="img/save.png"><br>Lagre CV</span>
+				<div class="popup">
+					<div id="save_frame">
+						<iframe name="save_frame" src="">Datamaskinen gjør noe hemmelig...</iframe>
+						<input type="button" value="Avbryt" onClick="$('#save_frame').hide();">
+					</div>
+				</div>
+			<span class="butt" onClick="openCVList();"><img src="img/open.png"><br>Åpne CV</span>
+			<div class="popup">
+				<div id="cvlist">
+					<select name="cvname" id="cvname" size="6">
+						<?php 
+							$cvlist = scandir('cv');
+							foreach($cvlist as $cvperson){
+								if(strpos($cvperson,'.json')) {
+									$cvj = file_get_contents('cv/'.$cvperson);
+									$cv = json_decode($cvj,true);
+									echo "<option value='{$cvperson}'>{$cv['name']}</option>";
+								}
+							}
+						?>
+					</select>
+					<span class="butt" onClick="loadCV();">Åpne valgt CV</span>
+					<span class="butt" onClick="$('#cvlist').hide();">Avbryt</span>
+				</div>
+			</div>
+			<br>
+			<i style="font-size: 0.7em; opacity: 0.5;">Funker best i <a href="http://chrome.com">Chrome</a>.</i>
+		</div>
+		<div id="content">
+			<form action="" method="post" name="cvform" id="cvform">
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_personinfo');">Personinfo</h3>
+					<fieldset id="all_personinfo">
+					<?php 
+						$formdata = array(
+							array("Navn", 			"name", 		"text"),
+							array("Tittel", 		"title", 		"text"),
+							array("Tittel (ENG)", 	"title_en", 	"text"),
+							array("Mobil", 			"phone", 		"text"),
+							array("E-mail", 		"mail", 		"text"),
+							array("Profil",			"profile",		"textarea"),
+							array("Profil (ENG)",	"profile_en",	"textarea")
+							);
+							
+						$lefthtml = "";
+						$righthtml = "";
+						foreach($formdata as $fd) {
+							$label = $fd[0];
+							$name = $fd[1];
+							$type = $fd[2];
+							$labelhtml = "<label for='{$name}'>{$label}</label>\n";
+							switch($type){
+								case "text": 		$lefthtml = $lefthtml.$labelhtml.'<input type="text" name="'.$name.'" id="'.$name.'" value=""/><br>'."\n"; break;
+								case "textarea": 	$righthtml = $righthtml.'<div class="right">'.$labelhtml.'<br><textarea name="'.$name.'" id="'.$name.'" cols="40" rows="5"></textarea></div>'."\n"; break;
+								}
+						};
+						echo '<div class="left">'.$lefthtml;
+					?>
+							<label for='photo'>Bilde-URL</label><input type="text" name="photo" id="photo" value=""/>
+						</div>
+						<div class="left">
+							<img src="img/profile-placeholder.gif" id="photoshow" style="max-height:80px; max-width: 80px;">
+					<?php 
+						echo "</div>\n<div style='float:left'>".$righthtml."</div>\n";
+					?>
+					</fieldset>
+				</div>
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_technologies');">Teknologier</h3>
+					<div id="all_technologies">
+						<div id="technologies"></div>
+						<input type="button" onClick="addTech();" value="+ Legg til teknologi-type">
+					</div>
+				</div>
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_experience');">Prosjekterfaring</h3>
+					<div id="all_experience">
+						<div id="experience"></div>
+						<input type="button" onClick="addExp();" value="+ Legg til erfaring">
+					</div>
+				</div>
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_workplaces');">Arbeidsgivere</h3>
+					<div id="all_workplaces">
+						<div id="workplaces"></div>
+						<input type="button" onClick="addWork();" value="+ Legg til arbeidsgiver">
+					</div>
+				</div>
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_education');">Utdanning</h3>
+					<div id="all_education">
+						<div id="education"></div>
+						<input type="button" onClick="addEdu();" value="+ Legg til utdanning">
+					</div>
+				</div>
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_other');">Annet</h3>
+					<div id="all_other">
+						<div id="other"></div>
+						<input type="button" onClick="addOther();" value="+ Legg til annet">
+					</div>
+				</div>
+			</form>
+			<form name="counters">
+				<input type="hidden" name="techcount" value="0">
+				<input type="hidden" name="expcount" value="0">
+				<input type="hidden" name="workcount" value="0">
+				<input type="hidden" name="educount" value="0">
+				<input type="hidden" name="othercount" value="0">
+			</form>
+			<form action="cv.php" method="post" name="showform" id="showform" target="preview_frame">
+				<div class="infogroup">
+					<h3 onClick="toggleThis('#all_json');">Forhåndsvisning</h3>
+					<div id="all_json">
+						<fieldset><textarea name="visjson" id="visjson" rows="10" style="width:99%"></textarea></fieldset>
+						<pre id="json"></pre>
+						<input type="button" onClick="previewJson();" value="Forhåndsvis JSON">
+					</div>
+				</div>
+				<input type="hidden" name="cvfilename" id="cvfilename">
+				<input type="checkbox" name="zoomed" id="zoomed" checked="checked" style="display:none;">
+			</form>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,25 @@
+{% extends "cv/base.html" %}
+
+{% block content %}
+	{% if all_persons %}
+		{% for p in all_persons|dictsort:"name" %}
+			<div class="person">
+				<div class="personhead">
+					<h4>{{ p.name }}</h4>
+					<img src="{{ p.photo }}" class="photo">
+					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit</a>
+				</div>
+				<ul>
+				{% for cv in p.cv_set.all|dictsortreversed:"last_edited" %}
+					<li>
+						<a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}">{{ cv.tags }} <br/>
+						<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+		{% endfor %}
+	{% else %}
+		<p>YOU SHALL NOT FIND ANY LOLS!</p>
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "cv/cvbase.html" %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block content %}
+	{% if doc %}
+	THIS IS A DOC!
+	{% endif %}
+		<div class="part">
+		  <p class="contact">{{ person.phone }}<br/>{{ person.mail }}</p>
+		  <img src="{{ person.photo }}" class="left" id="photo">
+		  <h1>{{ person.name }}</h1>
+		  <h2>{{ person.title }}</h2>
+		</div>
+
+		<div class="part">
+		  <h3 class="left">{{ l.profile }}</h3>
+		  <div class="bigbox">
+			<p class="profile">{{ person.profile }}</p>
+		  </div>
+		</div>
+		
+		<div class="part" id="technologies">
+		{% for te in t %}
+			<div class="techset">
+				<h5 class="left">{{ te.title }}</h5>
+				<div class="bigbox">
+					<ul>
+						{{ te.data_as_list|unordered_list }}
+					</ul>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
+		
+		<div class="part">
+			<h3 class="left">{{ l.experience }}</h3>
+			<div class="bigbox" id="sortwithin">
+				{% for ex in e %}
+					<div class="portlet">
+						<div class="toggle"></div>
+						<h4>{{ ex.title }}</h4>
+						<p class="year">{{ ex.years }}</p>
+						<p class="workplace">{{ ex.company }}</p>
+						<p>{{ ex.description }}</p>
+						<p class="techs">{{ ex.techs }}</p>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		<div class="part">
+			<h3 class="left">{{ l.workplaces }}</h3>
+			<div class="bigbox" id="sortwithin">
+				{% for wp in w %}
+					<section>
+					  <h4>{{ wp.company }}</h4>
+					  <p class="year">{{ wp.years }}</p>
+					  <p class="workplace">{{ wp.title }}</p>
+					</section>
+				{% endfor %}
+			</div>
+		</div>
+		
+		<div class="part job">
+		<h3 class="left">{{ l.education }}</h3>
+		  <div class="bigbox">
+			{% for du in d %}
+			  <section>
+				  <h4>{{ du.title }}</h4>
+				  <p class="year">{{ du.years }}</p>
+				  <p class="workplace">{{ du.school }}</p>
+			  </section>
+			{% endfor %}
+		  </div>
+		</div>
+		
+		<div class="part">
+			{% for ot in o %}
+			<div class="other">
+			<h5 class="left">{{ ot.title }}</h5>
+				<div class="bigbox">
+					<ul>
+						{{ ot.data_as_list|unordered_list }}
+					</ul>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		
+{% endblock %}

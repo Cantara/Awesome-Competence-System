@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+	<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    <title>{% block title %}{% endblock %} CV - FreeCode AS</title>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cv.css" media="screen, print"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvprint.css" media="print"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvprint.css" media="screen" id="printview"/>
+	<!--link href='http://fonts.googleapis.com/css?family=Maven+Pro' rel='stylesheet' type='text/css'-->
+	
+  </head>
+
+  <body>
+
+	<!--script type='text/javascript' src='http://code.jquery.com/jquery-1.5.2.js'></script-->
+	<script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.22.custom.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/cv.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/editcv.js"></script>
+
+	<div id="topmenu">
+		{% block topmenu %}
+		<input type="button" value="Edit" />
+		<input type="button" value="Make PDF" />
+		<input type="button" value="English" />
+		<input type="button" value="Doc" />
+		{% endblock %}
+	</div>
+	
+	<div class="body">
+	<img id="printlogo" src="{{ STATIC_URL }}img/freecodesentrert.png">
+	
+		{% block content %}{% endblock %}
+
+	</div>
+	
+  </body>
+  
+</html>

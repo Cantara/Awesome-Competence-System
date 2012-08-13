@@ -1,0 +1,61 @@
+body {
+	margin: 1em auto 1em auto;
+	text-align: center;
+	background: #eee url(../img/sky.jpg) fixed;
+	background-size: cover;
+	font-family: arial !important;
+	}
+
+#content { display: inline-block !important; text-align:left;}
+
+#header{
+	margin-bottom: 1em;
+	color: #333;
+	background-color: #fff; 
+	border-radius: 5px;
+	display:none !important;
+	}
+
+.breadcrumbs {display:none;}
+
+#content {
+	background-color: #fff; 
+	border-radius: 5px;
+	margin:0;
+	padding:1em;
+	}
+
+h1{ color: #555; width: auto; }
+
+.module h2, .module caption, .inline-group h2 { background: transparent; color: #aaa; }
+
+a { color: #39e !important;}
+
+a.section:link, a.section:visited { color: #666666; }
+
+.module {
+	border-radius: 4px; 
+	}
+
+.object-tools {display:none !important;}
+	
+.form-row {
+	border: 0 !important;
+	padding: .5em !important;
+	}
+
+.inline-group {
+	border-radius: 4px; 
+	}
+
+h3 {border-top: 1px solid #ddd;}
+
+input, textarea { border-radius: 4px;}
+
+input[name="_addanother"], input[name="_continue"] {display:none;}
+input[name="_save"] { font-size: 1.1em !important; background-color: #ddd !important; color: #444 !important; border:0 !important;}
+
+.ui-autocomplete { list-style: none !important; display:inline-block; text-align: left;}
+.ui-autocomplete li { list-style: none !important; display:inline-block;}
+.ui-autocomplete a { color: #444 !important;}
+.ui-autocomplete a:hover { color: #fff !important;}
