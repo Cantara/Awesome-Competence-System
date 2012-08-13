@@ -12,7 +12,7 @@
 				<ul>
 				{% for cv in p.cv_set.all|dictsortreversed:"last_edited" %}
 					<li>
-						<a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}">{{ cv.tags }} <br/>
+						<a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}">{{ cv.tags }} <br/>
 						<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a>
 					</li>
 				{% endfor %}

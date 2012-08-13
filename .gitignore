@@ -1,8 +1,8 @@
-*.pyc 
+*.pyc
 
-cvapp/settings.py 
+cvapp/settings.py
 
-*.json 
+*.json
 
 *~
 

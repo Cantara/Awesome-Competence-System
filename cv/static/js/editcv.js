@@ -23,19 +23,6 @@ var techTags = [
 	"Scala",
 	"Scheme"
 ];
-	
-//Adds checkboxes for all techs when document is ready.
-$(document).ready(function() {
-	addTech();
-	addExp();
-	addWork();
-	addEdu();
-	addOther();
-	$("#cvlist").hide();
-	$("#preview_frame").hide();
-	$("#save_frame").hide();
-	$("#clearcv").hide();
-});
 
 // Declare settings for JqueryUI sortable()
 var sortSettings = {
@@ -144,6 +131,8 @@ $.fn.serializeObject = function() {
 
 	return data;
 };
+
+/*
 		  
 function getCVJson() {
 	var CVJson = $('#cvform').serializeObject();
@@ -305,7 +294,7 @@ function addTech(title, title_en, data) {
 		source: techTags,
 		position: { my : "right top", at: "right bottom"}
 	});*/
-	
+	/*
 	techAutocomplete();
 	
 }
@@ -396,6 +385,7 @@ function loadCV(cvurl) {
 			checkTech(c.technologies, true);
 			*/
 			
+			/*
 			for(x in c.technologies) {
 				var e = c.technologies;
 				addTech(e[x].title, e[x].title_en, e[x].data);
@@ -594,3 +584,4 @@ function RealTypeOf(v) {
   }
   return typeof(v);
 }
+*/

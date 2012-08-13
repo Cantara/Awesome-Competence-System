@@ -3,7 +3,7 @@ import datetime
 import django.contrib.auth.models
 from django.utils import timezone
 
-YEAR_CHOICES = [(0,'Year')]
+YEAR_CHOICES = [(None,'Year')]
 for r in range(1989, (datetime.datetime.now().year+1)):
 	YEAR_CHOICES.append((r,r))
 	
@@ -82,7 +82,7 @@ class Experience(models.Model):
 			t = self.title_en
 		else:
 			t = "No title"
-		return self.title + ", " + self.company
+		return "%s, %s, %s" % (self.title, self.company, self.from_year)
 
 class Workplace(models.Model):
 
@@ -172,3 +172,11 @@ class Cv(models.Model):
 		
 	def __unicode__(self):
 		return self.person.name + ", " + self.tags
+
+	def save(self, *args, **kwargs):
+		
+		# If the tags is "Empty CV", then set it to "Title"
+		if self.tags == "Empty CV" and self.title is not None:
+			self.tags = self.title
+			
+		super(Cv, self).save(*args, **kwargs)

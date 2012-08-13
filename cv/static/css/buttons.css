@@ -29,6 +29,7 @@
 }
 .button:hover, input[name="_save"]:hover {
     outline: none;
+	opacity: 1;
 }
 .button:hover,
 .button:focus, input[name="_save"]:hover, input[name="_save"]:focus {
@@ -52,8 +53,8 @@
     margin: .1em .3em .2em .3em !important;
 }
 
-.red {
-    background-color: #ff6c6f;
-}
+.red { background-color: #ff6c6f; }
 
-.wide {width: 86%;}
+.wide { width: 86%; }
+
+.empty { opacity: 0.6; }

@@ -14,7 +14,93 @@
 {% block content %}
 		<style>
 			input {border:none;}
+			
+			textarea, 
+			pre {
+			  margin: 0;
+			  padding: 0;
+			  outline: 0;
+			  border: 0;
+			}
+			
+			.expandingArea {
+			  position: relative;
+			  border: 1px solid #eee;
+			  background: #fff;
+			}
+			
+			.expandingArea > textarea,
+			.expandingArea > pre {
+			  padding: 5px;
+			  background: transparent;
+			  font: 400 13px/16px helvetica, arial, sans-serif;
+			  /* Make the text soft-wrap */
+			  white-space: pre-wrap;
+			  word-wrap: break-word;
+			}
+			.expandingArea > textarea {
+			  /* The border-box box model is used to allow
+			   * padding whilst still keeping the overall width
+			   * at exactly that of the containing element.
+			   */
+			  -webkit-box-sizing: border-box;
+				 -moz-box-sizing: border-box;
+				  -ms-box-sizing: border-box;
+					  box-sizing: border-box;
+			  width: 100%;
+			  /* This height is used when JS is disabled */
+			  height: 100px;
+			}
+			.expandingArea.active > textarea {
+			  /* Hide any scrollbars */
+			  overflow: hidden;
+			  position: absolute;
+			  top: 0;
+			  left: 0;
+			  height: 100%;
+			  /* Remove WebKit user-resize widget */
+			  resize: none;
+			}
+			.expandingArea > pre {
+			  display: none;
+			}
+			.expandingArea.active > pre {
+			  display: block;
+			  /* Hide the text; just using it for sizing */
+			  visibility: hidden;
+			}
+			
 		</style>
+		<script>
+			console.log("HEI");
+		$(function () {
+			 function makeExpandingArea(container) {
+			 var area = container.querySelector('textarea');
+			 var span = container.querySelector('span');
+			 if (area.addEventListener) {
+			   area.addEventListener('input', function() {
+				 span.textContent = area.value;
+			   }, false);
+			   span.textContent = area.value;
+			 } else if (area.attachEvent) {
+			   // IE8 compatibility
+			   area.attachEvent('onpropertychange', function() {
+				 span.innerText = area.value;
+			   });
+			   span.innerText = area.value;
+			 }
+			 // Enable extra CSS
+			 container.className += ' active';
+			}
+
+			var areas = document.querySelectorAll('.expandingArea');
+			var l = areas.length;
+
+			while (l--) {
+			 makeExpandingArea(areas[l]);
+			}
+		});
+		</script>
 		
 		<form action="" method="post" name="cvform" id="cvform">
 		
@@ -24,14 +110,17 @@
 		  <h2>{{ p.title }}</h2>
 		  <p>
 		  <input type="text" name="phone" value="{{ p.phone }}"/>
-		  <input type="text" name="mail" value="{{ p..mail }}"/>
+		  <input type="text" name="mail" value="{{ p.mail }}"/>
 		  </p>
 		</div>
 
 		<div class="part">
 		  <h3 class="left">{{ l.profile }}</h3>
 		  <div class="bigbox">
-			<textarea class="profile" name="profile">{{ cv.profile }}</textarea>
+			<div class="expandingArea">
+			  <pre><span></span><br></pre>
+			  <textarea class="profile" name="profile">{{ cv.profile }}</textarea>
+			</div>	
 		  </div>
 		</div>
 		
@@ -72,6 +161,7 @@
 					  <h4>{{ wp.company }}</h4>
 					  <p class="year">{{ wp.years }}</p>
 					  <p class="workplace">{{ wp.title }}</p>
+					  <p>{{ wp.description }}</p>
 					</section>
 				{% endfor %}
 			</div>
@@ -85,6 +175,7 @@
 				  <h4>{{ du.title }}</h4>
 				  <p class="year">{{ du.years }}</p>
 				  <p class="workplace">{{ du.school }}</p>
+				  <p>{{ du.description }}</p>
 			  </section>
 			{% endfor %}
 		  </div>
