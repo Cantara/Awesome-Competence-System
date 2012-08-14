@@ -67,7 +67,7 @@
 	h3 {font-size: 1.2em; line-height:1.5em;}
 	
 	/* 3 Skills */
-	h4 {font-size: 1.2em; line-height:1.5em; margin-bottom: 0.2em; font-weight: normal; color: #39e;}
+	h4, .h4 {font-size: 1.2em; line-height:1.4em; margin-bottom: 0.2em; font-weight: normal; color: #39e;}
 	
 	/* Technical skills lists */
 	h5 {padding-top:0.3em; font-size: 1em;}
@@ -86,7 +86,7 @@
 	.techset li:hover {border-color: #bbb;}
 	
 	/* Work experience and Education */
-	.year {color: #999; font-style:italic; float: right;}
+	.year {color: #999; font-style:italic;}
 	.workplace {font-weight: bold;}
 	.techs {font-style: italic; color: #999; font-size: 0.7em;}
 	section {margin-bottom:1em;}
@@ -96,8 +96,8 @@
 	
 
 
-		.portlet {margin-bottom:2em; cursor: move; page-break-inside: avoid;}
+		.portlet {margin-bottom:2em; cursor: move; page-break-inside: avoid; position: relative;}
 		.portlet:hover {background: #f3f3f3;}
-		.toggle {width: 20px; height: 20px; background: red; float: right; cursor: pointer; text-align:center; border-radius: 5px;}
+		.toggle {width: 20px; height: 20px; background: red; position: absolute; top: 0; right: 0; cursor: pointer; text-align:center; border-radius: 5px;}
 		.toggle:hover {background: #d00;}
 		.toggle:before {content: "\00D7"; font-size: 20px; line-height: 20px;color: white;}

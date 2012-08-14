@@ -11,7 +11,7 @@ urlpatterns = patterns('cv.views',
 	url(r'^cv/odt/(?P<person_id>\d+)/$', 'odt'),
 	url(r'^cv/(?P<cv_id>\d+)/$', 'detail'),
 	url(r'^cv/\d+/odt/$', 'odtjson'),
-	url(r'^cv/(?P<cv_id>\d+)/(?P<arg1>eng|doc)/$', 'detail'),
+	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail'),
 	url(r'^cv/(?P<cv_id>\d+)/(?P<arg1>eng|doc)/(?P<arg2>eng|doc)/$', 'detail'),
     # Examples:
     # url(r'^$', 'cvapp.views.home', name='home'),

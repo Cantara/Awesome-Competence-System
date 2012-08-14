@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse
 from django import http
-from cv.models import Cv, Person
+from cv.models import Cv, Person, Experience
 from webodt.shortcuts import _ifile
 import webodt
 from reportlab.pdfgen import canvas
@@ -22,7 +22,38 @@ def index(request):
 		
 def odtjson(request):
 	a = json.loads(request.POST['cvjson'])
-	return HttpResponse( "Hei %s, du har \"%s\"" % (a, request.POST["experience[2][description]"]) );
+	
+	experience_set = []
+	
+	for x, item in a['experience'].iteritems():
+		experience_set.append( 
+			Experience( 
+				title 		= item['description'], 
+				from_year 	= 1239019230
+			) 
+		)
+		
+	dict = {
+		'l': {
+			'profile': 'Profil',
+			'experience': 'Erfaring',
+			'workplaces': 'Arbeidsgivere',
+			'education': 'Utdanning'
+		}, 
+		'p': a, 
+		#'t': t, 
+		'e': experience_set,
+		#'w': w, 
+		#'d': d, 
+		#'img': data,
+	}
+	srcFile = 'cvjsontest.odt'
+	rsltFile = 'result-json.odt'
+	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
+	r.run()
+	
+	return HttpResponse( experience_set );
+	
 
 
 def odt(request, person_id=1):
@@ -76,7 +107,7 @@ def cvlist(request):
 	all_persons = Person.objects.all()
 	return render_to_response('cv/cvlist.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
 	
-def detail(request, cv_id, arg1 = '', arg2 = ''):
+def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
 	p = cv.person
 	t = cv.technology.all()
@@ -85,30 +116,38 @@ def detail(request, cv_id, arg1 = '', arg2 = ''):
 	d = cv.education.all()
 	o = cv.other.all()
 	
+	# Returns the a if it exists and isn't empty, or else b
+	def q(a, b):
+		if a != "" and a != " ": return a
+		if b != "" and a != " ": return b
+		return ""
+	
 	# If they want English, give them English
-	if arg1 == 'eng' or arg2 == 'eng':
-		cv.profile = cv.profile_en
-		cv.title = cv.title_en
+	if lang == 'eng':
+		cv.profile 			= q(cv.profile_en, cv.profile)
+		cv.title 			= q(cv.title_en, cv.title)
 		
 		for te in t:
-			te.title = te.title_en
+			te.title		= q(te.title_en, te.title)
 		
 		for ex in e:
-			ex.title = ex.title_en
-			ex.company = ex.company_en
-			ex.description = ex.description_en
+			ex.title 		= q(ex.title_en, ex.title)
+			ex.company 		= q(ex.company_en, ex.company)
+			ex.description 	= q(ex.description_en, ex.description)
 			
 		for wp in w:
-			wp.title = wp.title_en
-			wp.company = wp.company_en
+			wp.title 		= q(wp.title_en, wp.title)
+			wp.company 		= q(wp.company_en, wp.title)
+			wp.description 	= q(wp.description_en, wp.description)
 			
 		for du in d:
-			du.title = du.title_en
-			du.school = du.school_en
+			du.title 		= q(du.title_en, du.title)
+			du.school 		= q(du.school_en, du.school)
+			du.description 	= q(du.description_en, du.description)
 		
 		for ot in o:
-			ot.title = ot.title_en
-			ot.data = ot.data_en
+			ot.title 		= q(ot.title_en, ot.title)
+			ot.data 		= q(ot.data_en, ot.data)
 		
 		# English subheaders
 		l = {
@@ -118,6 +157,31 @@ def detail(request, cv_id, arg1 = '', arg2 = ''):
 			'education': 'Education',
 		}
 	else:
+		cv.profile 			= q(cv.profile, cv.profile_en)
+		cv.title 			= q(cv.title, cv.title_en)
+		
+		for te in t:
+			te.title		= q(te.title, te.title_en)
+		
+		for ex in e:
+			ex.title 		= q(ex.title, ex.title_en)
+			ex.company 		= q(ex.company, ex.company_en)
+			ex.description 	= q(ex.description, ex.description_en)
+			
+		for wp in w:
+			wp.title 		= q(wp.title, wp.title_en)
+			wp.company 		= q(wp.company, wp.title_en)
+			wp.description 	= q(wp.description, wp.description_en)
+			
+		for du in d:
+			du.title 		= q(du.title, du.title_en)
+			du.school 		= q(du.school, du.school_en)
+			du.description 	= q(du.description, du.description_en)
+		
+		for ot in o:
+			ot.title 		= q(ot.title, ot.title_en)
+			ot.data 		= q(ot.data, ot.data_en)
+	
 		# Norwegian subheaders
 		l = {
 			'profile': 'Profil',
@@ -125,13 +189,8 @@ def detail(request, cv_id, arg1 = '', arg2 = ''):
 			'workplaces': 'Arbeidsgivere',
 			'education': 'Utdanning',
 		}
-		
-	if arg1 == 'doc' or arg2 == 'doc':
-		doc = True
-	else:
-		doc = False
 	
-	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'doc': doc}, context_instance=RequestContext(request))
+	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l}, context_instance=RequestContext(request))
 
 '''
 def odt(request):

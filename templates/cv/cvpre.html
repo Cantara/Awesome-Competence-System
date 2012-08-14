@@ -6,14 +6,14 @@
 {% block topmenu %}
 	<a href="/cv/" class="button">Tilbake til CV-liste</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Rediger CV</a>
-	<a class="button" onClick="document.cvform.submit()">Lag ODT</a>
+	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Lag ODT</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Lag PDF</a>
-	<a class="button" onClick="document.cvform.cvjson.value=FormatJSON($('#cvform').serializeObject());">Test JSON</a>
+	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());">Test JSON</a>
 {% endblock %}
 
 {% block content %}
 		<style>
-			input {border:none;}
+			input {border:none; width: 90%;}
 			
 			textarea, 
 			pre {
@@ -29,7 +29,7 @@
 			
 			.expandingArea > textarea,
 			.expandingArea > pre {
-			  background: transparent;
+			  background: white;
 			  font: 400 13px/16px helvetica, arial, sans-serif;
 			  /* Make the text soft-wrap */
 			  white-space: pre-wrap;
@@ -98,16 +98,17 @@
 		});
 		</script>
 		
-		<form action="/cv/{{ cv.id }}/odt/" method="post" name="cvform" id="cvform" target="_blank">
-		{% csrf_token %}
+		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
 		  <img src="{{ p.photo }}" class="left" id="photo">
-		  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
-		  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
-		  <p>
-		  <input type="text" name="phone" value="{{ p.phone }}"/>
-		  <input type="text" name="mail" value="{{ p.mail }}"/>
-		  </p>
+		  <div class="bigbox">
+			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
+			  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
+			  <p>
+			  <input type="text" name="phone" value="{{ p.phone }}"/>
+			  <input type="text" name="mail" value="{{ p.mail }}"/>
+			  </p>
+		  </div>
 		</div>
 
 		<div class="part">
@@ -125,7 +126,7 @@
 				<h5 class="left">{{ te.title }}</h5>
 				<div class="bigbox">
 					<ul>
-						{{ te.data_as_list|unordered_list }}
+						{{ te.data }}
 					</ul>
 				</div>
 			</div>
@@ -138,13 +139,13 @@
 				{% for ex in e %}
 					<div class="portlet">
 						<div class="toggle"></div>
-						<h4>{{ ex.title }}</h4>
-						<p class="year">{{ ex.years }}</p>
-						<p class="workplace">{{ ex.company }}</p>
+						<input type="text" name="experience[{{ forloop.counter }}][title]" value="{{ ex.title }}" class="h4"/>
+						<input type="text" name="experience[{{ forloop.counter }}][years]" value="{{ ex.from_year }}" class="year"/>
+						<input type="text" name="experience[{{ forloop.counter }}][company]" value="{{ ex.company }}" class="workplace"/>
 						<div class="expandingArea"><pre><span></span><br></pre>
 						  <textarea name="experience[{{ forloop.counter }}][description]" id="experience[{{ forloop.counter }}][description]">{{ ex.description }}</textarea>
 						</div>	
-						<p class="techs">{{ ex.techs }}</p>
+						<input type="text" name="experience[{{ forloop.counter }}][techs]" value="{{ ex.techs }}" class="techs"/>
 					</div>
 				{% endfor %}
 			</div>
@@ -155,10 +156,12 @@
 			<div class="bigbox" id="sortwithin">
 				{% for wp in w %}
 					<section>
-					  <h4>{{ wp.company }}</h4>
-					  <p class="year">{{ wp.from_year }}</p>
-					  <p class="workplace">{{ wp.title }}</p>
-					  <p>{{ wp.description }}</p>
+						<input type="text" name="workplace[{{ forloop.counter }}][company]" value="{{ wp.company }}" class="h4"/>
+						<input type="text" name="workplace[{{ forloop.counter }}][years]" value="{{ wp.from_year }}" class="year"/>
+						<input type="text" name="workplace[{{ forloop.counter }}][title]" value="{{ wp.title }}" class="workplace"/>
+						<div class="expandingArea"><pre><span></span><br></pre>
+						  <textarea name="workplace[{{ forloop.counter }}][description]" id="workplace[{{ forloop.counter }}][description]">{{ wp.description }}</textarea>
+						</div>	
 					</section>
 				{% endfor %}
 			</div>
@@ -169,10 +172,12 @@
 		  <div class="bigbox">
 			{% for du in d %}
 			  <section>
-				  <h4>{{ du.title }}</h4>
-				  <p class="year">{{ du.years }}</p>
-				  <p class="workplace">{{ du.school }}</p>
-				  <p>{{ du.description }}</p>
+					<input type="text" name="education[{{ forloop.counter }}][title]" value="{{ du.title }}" class="h4"/>
+					<input type="text" name="education[{{ forloop.counter }}][years]" value="{{ du.from_year }}" class="year"/>
+					<input type="text" name="education[{{ forloop.counter }}][school]" value="{{ du.school }}" class="workplace"/>
+					<div class="expandingArea"><pre><span></span><br></pre>
+					  <textarea name="education[{{ forloop.counter }}][description]" id="education[{{ forloop.counter }}][description]">{{ du.description }}</textarea>
+					</div>	
 			  </section>
 			{% endfor %}
 		  </div>
@@ -190,6 +195,10 @@
 			</div>
 			{% endfor %}
 		</div>
+		</form>
+		
+		<form action="/cv/{{ cv.id }}/odt/" method="post" name="cvjsonform" id="cvjsonform" target="_blank">
+			{% csrf_token %}
 			<div class="expandingArea"><pre><span></span><br></pre>
 				<textarea name="cvjson" id="cvjson"></textarea>
 			</div>	
