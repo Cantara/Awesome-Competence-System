@@ -64,13 +64,13 @@
 		page-break-inside: avoid;
 	}
 	
-	h3 {font-size: 1.2em; line-height:1.5em;}
+	h3, .h3 {font-size: 1.2em; line-height:1.5em;}
 	
 	/* 3 Skills */
-	h4, .h4 {font-size: 1.2em; line-height:1.4em; margin-bottom: 0.2em; font-weight: normal; color: #39e;}
+	h4, .h4 {font-size: 1.2em; line-height:1.4em; font-weight: normal; color: #39e;}
 	
 	/* Technical skills lists */
-	h5 {padding-top:0.3em; font-size: 1em;}
+	h5, .h5 {font-size: 1em;}
 	
 	/* Tekniske listerier */
 	.techset, .other {margin-bottom:0.5em; overflow: auto;}

@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse
 from django import http
-from cv.models import Cv, Person, Experience
+from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other
 from webodt.shortcuts import _ifile
 import webodt
 from reportlab.pdfgen import canvas
@@ -21,15 +21,65 @@ def index(request):
         """)
 		
 def odtjson(request):
-	a = json.loads(request.POST['cvjson'])
 	
-	experience_set = []
+	a = json.loads(request.POST['cvjson'], strict=False)
+	
+	a['profile'] = a['profile'].replace('\n','<br/>').encode( "utf-8" )
+	
+	imgUrl = a['photo']
+	re = requests.get(imgUrl)
+	data = re.content
+	
+	t_set = []
+	e_set = []
+	w_set = []
+	d_set = []
+	o_set = []
+	
+	for x, item in a['technology'].iteritems():
+		t_set.append( 
+			Technology( 
+				title 		= item['title'], 
+				data 		= item['data']
+			) 
+		)
 	
 	for x, item in a['experience'].iteritems():
-		experience_set.append( 
+		e_set.append( 
 			Experience( 
-				title 		= item['description'], 
-				from_year 	= 1239019230
+				title 		= item['title'], 
+				from_year 	= item['years'], # Must fix this later
+				company		= item['company'],
+				description = item['description'],
+				techs		= item['techs'],
+			) 
+		)
+	
+	for x, item in a['workplace'].iteritems():
+		w_set.append( 
+			Workplace( 
+				title 		= item['title'], 
+				from_year 	= item['years'], # Must fix this later
+				company		= item['company'],
+				description = item['description'],
+			) 
+		)
+	
+	for x, item in a['education'].iteritems():
+		d_set.append( 
+			Education( 
+				title 		= item['title'], 
+				from_year 	= item['years'], # Must fix this later
+				school		= item['school'],
+				description = item['description'],
+			) 
+		)
+	
+	for x, item in a['other'].iteritems():
+		o_set.append( 
+			Other( 
+				title 		= item['title'], 
+				data 		= item['data'].replace('\n','<br/>').encode( "utf-8" )
 			) 
 		)
 		
@@ -37,24 +87,22 @@ def odtjson(request):
 		'l': {
 			'profile': 'Profil',
 			'experience': 'Erfaring',
-			'workplaces': 'Arbeidsgivere',
+			'workplace': 'Arbeidsgivere',
 			'education': 'Utdanning'
 		}, 
 		'p': a, 
-		#'t': t, 
-		'e': experience_set,
-		#'w': w, 
-		#'d': d, 
-		#'img': data,
+		't': t_set, 
+		'e': e_set,
+		'w': w_set, 
+		'd': d_set, 
+		'o': o_set,
+		'img': data,
 	}
 	srcFile = 'cvjsontest.odt'
-	rsltFile = 'result-json.odt'
+	rsltFile = 'odtoutput/%s.odt' % a['name']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
-	
-	return HttpResponse( experience_set );
-	
-
+	return HttpResponse( "lol" )
 
 def odt(request, person_id=1):
 
@@ -63,6 +111,7 @@ def odt(request, person_id=1):
 	imgUrl = p.photo
 	re = requests.get(imgUrl)
 	data = re.content
+	
 	p.profile = p.profile.replace('\n','<br/>')
 	pro = p.profile.encode( "utf-8" )
 	p.profile = pro
@@ -74,7 +123,7 @@ def odt(request, person_id=1):
 		'l': {
 			'profile': 'Profil',
 			'experience': 'Erfaring',
-			'workplaces': 'Arbeidsgivere',
+			'workplace': 'Arbeidsgivere',
 			'education': 'Utdanning'
 		}, 
 		'p': p, 
@@ -153,7 +202,7 @@ def detail(request, cv_id, lang = ''):
 		l = {
 			'profile': 'Profile',
 			'experience': 'Experience',
-			'workplaces': 'Workplaces',
+			'workplace': 'Workplaces',
 			'education': 'Education',
 		}
 	else:
@@ -186,7 +235,7 @@ def detail(request, cv_id, lang = ''):
 		l = {
 			'profile': 'Profil',
 			'experience': 'Erfaring',
-			'workplaces': 'Arbeidsgivere',
+			'workplace': 'Arbeidsgivere',
 			'education': 'Utdanning',
 		}
 	

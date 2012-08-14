@@ -101,6 +101,7 @@
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
 		  <img src="{{ p.photo }}" class="left" id="photo">
+		  <input type="hidden" name="photo" value="{{ p.photo }}"/>
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
 			  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
@@ -120,14 +121,14 @@
 		  </div>
 		</div>
 		
-		<div class="part" id="technologies">
+		<div class="part" id="technology">
 		{% for te in t %}
 			<div class="techset">
-				<h5 class="left">{{ te.title }}</h5>
+				<input type="text" name="technology[{{ forloop.counter }}][title]" value="{{ te.title }}" class="h5 left"/>
 				<div class="bigbox">
-					<ul>
-						{{ te.data }}
-					</ul>
+					<div class="expandingArea"><pre><span></span><br></pre>
+					  <textarea name="technology[{{ forloop.counter }}][data]" id="technology[{{ forloop.counter }}][data]">{{ te.data }}</textarea>
+					</div>	
 				</div>
 			</div>
 		{% endfor %}
@@ -152,7 +153,7 @@
 		</div>
 
 		<div class="part">
-			<h3 class="left">{{ l.workplaces }}</h3>
+			<h3 class="left">{{ l.workplace }}</h3>
 			<div class="bigbox" id="sortwithin">
 				{% for wp in w %}
 					<section>
@@ -186,11 +187,11 @@
 		<div class="part">
 			{% for ot in o %}
 			<div class="other">
-			<h5 class="left">{{ ot.title }}</h5>
+				<input type="text" name="other[{{ forloop.counter }}][title]" value="{{ ot.title }}" class="h5 left"/>
 				<div class="bigbox">
-					<ul>
-						{{ ot.data_as_list|unordered_list }}
-					</ul>
+					<div class="expandingArea"><pre><span></span><br></pre>
+					  <textarea name="other[{{ forloop.counter }}][data]" id="other[{{ forloop.counter }}][data]">{{ ot.data }}</textarea>
+					</div>	
 				</div>
 			</div>
 			{% endfor %}
@@ -199,9 +200,7 @@
 		
 		<form action="/cv/{{ cv.id }}/odt/" method="post" name="cvjsonform" id="cvjsonform" target="_blank">
 			{% csrf_token %}
-			<div class="expandingArea"><pre><span></span><br></pre>
-				<textarea name="cvjson" id="cvjson"></textarea>
-			</div>	
+			<textarea name="cvjson" id="cvjson" style="display:none;"></textarea>
 		</form>
 		
 {% endblock %}
