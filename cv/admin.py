@@ -11,6 +11,10 @@ medium = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':3, 'cols':36 } ) },
 		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
 	}
+wide = {
+		models.TextField: { 'widget': Textarea( attrs = {'rows':5, 'cols':80 } ) },
+		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
+	}
 
 class TechnologyInline(admin.StackedInline):
 	model = Technology
@@ -39,13 +43,17 @@ class EducationInline(admin.StackedInline):
 class OtherInline(admin.StackedInline):
 	model = Other
 	extra = 0
-	formfield_overrides = medium
-	fields = (('title', 'title_en'), ('data', 'data_en'))
+	formfield_overrides = wide
+	fields = ('title', 'data', 'title_en', 'data_en')
 
 class PersonAdmin(admin.ModelAdmin):
+	fields = ('name', 'mail', 'phone', 'image')
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	def response_change(self, request, obj, post_url_continue=None):
-		return HttpResponseRedirect("/cv/")
+		if request.POST.has_key("_continue"):
+			return HttpResponseRedirect("/admin/cv/person/%s" % obj.pk)
+		else:
+			return HttpResponseRedirect("/cv/")
 	def response_add(self, request, obj, post_url_continue=None):
 		return HttpResponseRedirect("/cv/")
 	def response_delete(self, request, obj, post_url_continue=None):

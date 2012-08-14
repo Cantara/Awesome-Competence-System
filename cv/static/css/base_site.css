@@ -51,8 +51,8 @@ h3 {border-top: 1px solid #ddd;}
 
 input, textarea { border-radius: 4px;}
 
-input[name="_addanother"], input[name="_continue"] {display:none;}
-input[name="_save"] { font-size: 1.1em !important; background-color: #ddd !important; color: #444 !important; border:0 !important;}
+input[name="_addanother"] {display:none;}
+input[name="_save"], input[name="_continue"] { font-size: 1.1em !important; background-color: #ddd !important; color: #444 !important; border:0 !important; float: right;}
 
 .ui-autocomplete { list-style: none !important; display:inline-block; text-align: left;}
 .ui-autocomplete li { list-style: none !important; display:inline-block;}

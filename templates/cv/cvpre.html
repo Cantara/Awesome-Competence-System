@@ -4,11 +4,12 @@
 
 
 {% block topmenu %}
-	<a href="/cv/" class="button">Tilbake til CV-liste</a>
-	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Rediger CV</a>
+	<a href="/cv/" class="button">Back to CV-list</a>
+	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Title or Profile<br/>Add/Remove CV content</a>
+	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Person <br/>(name, phone, mail, technologies, experiences, workplaces, others)</a>
 	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Lag ODT</a>
-	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Lag PDF</a>
-	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());">Test JSON</a>
+	<br/>
+	<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
 {% endblock %}
 
 {% block content %}
@@ -137,7 +138,7 @@
 		<div class="part">
 			<h3 class="left">{{ l.experience }}</h3>
 			<div class="bigbox" id="sortwithin">
-				{% for ex in e %}
+				{% for ex in e|dictsortreversed:"from_year" %}
 					<div class="portlet">
 						<div class="toggle"></div>
 						<input type="text" name="experience[{{ forloop.counter }}][title]" value="{{ ex.title }}" class="h4"/>
@@ -155,7 +156,7 @@
 		<div class="part">
 			<h3 class="left">{{ l.workplace }}</h3>
 			<div class="bigbox" id="sortwithin">
-				{% for wp in w %}
+				{% for wp in w|dictsortreversed:"from_year" %}
 					<section>
 						<input type="text" name="workplace[{{ forloop.counter }}][company]" value="{{ wp.company }}" class="h4"/>
 						<input type="text" name="workplace[{{ forloop.counter }}][years]" value="{{ wp.from_year }}" class="year"/>
@@ -169,7 +170,7 @@
 		</div>
 		
 		<div class="part job">
-		<h3 class="left">{{ l.education }}</h3>
+		<h3 class="left">{{ l.education|dictsortreversed:"from_year" }}</h3>
 		  <div class="bigbox">
 			{% for du in d %}
 			  <section>
@@ -198,7 +199,7 @@
 		</div>
 		</form>
 		
-		<form action="/cv/{{ cv.id }}/odt/" method="post" name="cvjsonform" id="cvjsonform" target="_blank">
+		<form action="/cv/{{ cv.id }}/odt/" method="post" name="cvjsonform" id="cvjsonform">
 			{% csrf_token %}
 			<textarea name="cvjson" id="cvjson" style="display:none;"></textarea>
 		</form>

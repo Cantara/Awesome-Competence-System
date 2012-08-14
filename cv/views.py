@@ -79,7 +79,7 @@ def odtjson(request):
 		o_set.append( 
 			Other( 
 				title 		= item['title'], 
-				data 		= item['data'].replace('\n','<br/>').encode( "utf-8" )
+				data 		= "<ul><li>" + item['data'].replace('\n','</li><li>').encode( "utf-8" ) + "</li></ul>"
 			) 
 		)
 		
@@ -102,7 +102,9 @@ def odtjson(request):
 	rsltFile = 'odtoutput/%s.odt' % a['name']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
-	return HttpResponse( "lol" )
+	response = HttpResponse(open(rsltFile, 'rb').read(),mimetype='application/vnd.oasis.opendocument.text')
+	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'], a['title'])
+	return response
 
 def odt(request, person_id=1):
 
