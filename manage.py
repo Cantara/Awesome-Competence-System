@@ -2,6 +2,8 @@
 import os
 import sys
 
+sys.path.append('/srv/vhosts/cv.dev.freecode.no')
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cvapp.settings")
 
