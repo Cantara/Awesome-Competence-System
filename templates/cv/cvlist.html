@@ -1,4 +1,5 @@
 {% extends "cv/base.html" %}
+{% load image_tags %}
 
 {% block content %}
 	{% if all_persons %}
@@ -7,6 +8,7 @@
 				<div class="personhead">
 					<h4>{{ p.name }}</h4>
 					<img src="{{ p.photo }}" class="photo">
+					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo">
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit</a>
 				</div>
 				<ul>

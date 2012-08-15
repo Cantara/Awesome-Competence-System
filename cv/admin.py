@@ -1,8 +1,9 @@
 from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv
 from django.contrib import admin
-from django.forms import TextInput, Textarea, ModelForm
+from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
 from django.http import HttpResponseRedirect
+from django import forms
 
 small = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':2, 'cols':30 } ) },
@@ -47,7 +48,9 @@ class OtherInline(admin.StackedInline):
 	fields = ('title', 'data', 'title_en', 'data_en')
 
 class PersonAdmin(admin.ModelAdmin):
-	fields = ('name', 'mail', 'phone', 'image')
+	
+	birthdate = forms.DateField(input_formats=('%d.%m.%Y',), label="Birthdate dd.mm.yyyy", widget = DateTimeInput(format='%d.%m.%Y'))
+	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	def response_change(self, request, obj, post_url_continue=None):
 		if request.POST.has_key("_continue"):
@@ -79,6 +82,9 @@ class CvAdmin(admin.ModelAdmin):
 	list_display = ('person', 'tags', 'title', 'last_edited', 'is_recent')
 	#filter_horizontal = ['experience']
 	def response_change(self, request, obj, post_url_continue=None):
-		return HttpResponseRedirect("/cv/%s" % obj.id)
+		if request.POST.has_key("_continue"):
+			return HttpResponseRedirect("/admin/cv/cv/%s" % obj.pk)
+		else:
+			return HttpResponseRedirect("/cv/%s" % obj.id)
 
 admin.site.register(Cv, CvAdmin)

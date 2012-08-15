@@ -25,12 +25,12 @@ MONTH_CHOICES = (
 
 # Create your models here.
 class Person(models.Model):
-	name = models.CharField(max_length=50)
+	name = models.CharField("Name*", max_length=50)
 	phone = models.CharField(max_length=20, null=True, blank=True)
-	mail = models.EmailField()
-	photo = models.URLField(null=True, blank=True)
+	mail = models.EmailField("E-mail*")
+	photo = models.URLField("Photo-URL", null=True, blank=True)
 	image = models.ImageField(upload_to="photos", null=True, blank=True)
-	birthdate = models.DateField(null=True, blank=True)
+	birthdate = models.DateField("Date of birth (yyyy-mm-dd)", null=True, blank=True)
 	
 	def __unicode__(self):
 		return self.name
@@ -49,7 +49,7 @@ class Technology(models.Model):
 	person = models.ForeignKey(Person)
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
-	data = models.TextField(null=True, blank=True)
+	data = models.TextField("Data (separate with comma)", null=True, blank=True)
 	data_en = models.TextField(null=True, blank=True)
 	def data_as_list(self):
 		return self.data.split(',')
@@ -63,12 +63,12 @@ class Experience(models.Model):
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
 	
-	from_year = models.IntegerField('From year', max_length=4, choices=YEAR_CHOICES, default=0)
-	from_month = models.IntegerField('', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
+	from_year = models.IntegerField('From year*', max_length=4, choices=YEAR_CHOICES, default=0)
+	from_month = models.IntegerField('From month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
-	company = models.CharField(max_length=50, null=True, blank=True)
+	company = models.CharField("Client company, Project title", max_length=50, null=True, blank=True)
 	company_en = models.CharField(max_length=50, null=True, blank=True)
 	
 	description = models.TextField(null=True, blank=True)
@@ -92,8 +92,8 @@ class Workplace(models.Model):
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
 	
-	from_year = models.IntegerField('From year', max_length=4, choices=YEAR_CHOICES, default=0)
-	from_month = models.IntegerField('', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
+	from_year = models.IntegerField('From year*', max_length=4, choices=YEAR_CHOICES, default=0)
+	from_month = models.IntegerField('From month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
@@ -113,8 +113,8 @@ class Education(models.Model):
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
 	
-	from_year = models.IntegerField('From year', max_length=4, choices=YEAR_CHOICES, default=0)
-	from_month = models.IntegerField('', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
+	from_year = models.IntegerField('From year*', max_length=4, choices=YEAR_CHOICES, default=0)
+	from_month = models.IntegerField('From month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	

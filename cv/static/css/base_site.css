@@ -19,33 +19,40 @@ body {
 .breadcrumbs {display:none;}
 
 #content {
-	background-color: #fff; 
-	border-radius: 5px;
-	margin:0;
-	padding:1em;
 	}
 
-h1{ color: #555; width: auto; }
+h1 { color: #555; 
+	width: auto; 
+	border-radius: 5px; 
+	border: none;
+	background: white; 
+	padding: 0.5em; 
+	font-size: 1.8em; 
+	font-weight: normal;
+	margin-bottom: 0.5em;
+	}
+	
+.object-tools a, li { background: none !important;}
 
-.module h2, .module caption, .inline-group h2 { background: transparent; color: #aaa; }
+.module h2, .module caption, .inline-group h2 { background: transparent; color: #777; font-size: 1.7em; font-weight: normal; padding: 0.5em;}
 
 a { color: #39e !important;}
 
 a.section:link, a.section:visited { color: #666666; }
 
-.module {
-	border-radius: 4px; 
+.module, .inline-group, .submit-row {
+	border-radius: 5px; 
+	border: none;
+	background: white;
+	padding: 1em;
 	}
-
 	
 .form-row {
 	border: 0 !important;
 	padding: .5em !important;
 	}
-
-.inline-group {
-	border-radius: 4px; 
-	}
+	
+.add-row {background: transparent !important;}
 
 h3 {border-top: 1px solid #ddd;}
 
