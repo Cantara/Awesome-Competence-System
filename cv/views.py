@@ -19,6 +19,13 @@ def index(request):
             <p><a href="odf/">OpenDocument with Picture-insert - Test</a></p>
         </body></html>
         """)
+
+def getjpg(request, file_name):
+    return HttpResponse("""
+        <html><body>
+            <h1>%s</h1>
+        </body></html>
+        """ % file_name)
 		
 def odtjson(request):
 	
