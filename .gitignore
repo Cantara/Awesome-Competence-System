@@ -1,7 +1,5 @@
 *.pyc
 
-cvapp/settings.py
-
 *.json
 
 *~
