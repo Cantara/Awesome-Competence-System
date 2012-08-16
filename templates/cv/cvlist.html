@@ -9,16 +9,18 @@
 					<h4>{{ p.name }}</h4>
 					<img src="{{ p.photo }}" class="photo">
 					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo">
-					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit</a>
+					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
 				</div>
-				<ul>
+				<table>
 				{% for cv in p.cv_set.all|dictsortreversed:"last_edited" %}
-					<li>
-						<a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}">{{ cv.tags }} <br/>
-						<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a>
-					</li>
+					<tr>
+						<td><a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}">{{ cv.tags }} <br/>
+						<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a></td>
+						<td><a href="/admin/cv/cv/{{ cv.id }}" class="button{% if not cv.is_recent %} red{% endif %}">Edit<br/>
+						<span class="dato"> &nbsp;</span></a></td>
+					</tr>
 				{% endfor %}
-				</ul>
+				</table>
 			</div>
 		{% endfor %}
 	{% else %}

@@ -5,9 +5,10 @@
 
 {% block topmenu %}
 	<a href="/cv/" class="button">Back to CV-list</a>
-	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Title or Profile<br/>Add/Remove CV content</a>
-	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Person <br/>(name, phone, mail, technologies, experiences, workplaces, others)</a>
+	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
+	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Person</a>
 	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Lag ODT</a>
+	<br/>
 	<br/>
 	<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
 {% endblock %}
@@ -101,7 +102,7 @@
 		
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
-		  <img src="{{ p.image.url }}" class="left" id="photo">
+		  <img src="{% if p.image %}{{ p.image.url }}{% endif %}" class="left" id="photo">
 		  <input type="hidden" name="photo" value="{{ p.photo }}"/>
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
@@ -170,9 +171,9 @@
 		</div>
 		
 		<div class="part job">
-		<h3 class="left">{{ l.education|dictsortreversed:"from_year" }}</h3>
+		<h3 class="left">{{ l.education }}</h3>
 		  <div class="bigbox">
-			{% for du in d %}
+			{% for du in d|dictsortreversed:"from_year" %}
 			  <section>
 					<input type="text" name="education[{{ forloop.counter }}][title]" value="{{ du.title }}" class="h4"/>
 					<input type="text" name="education[{{ forloop.counter }}][years]" value="{{ du.from_year }}" class="year"/>
