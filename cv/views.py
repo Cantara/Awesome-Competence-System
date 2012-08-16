@@ -117,7 +117,10 @@ def odt(request, person_id=1):
 
 	p = get_object_or_404(Person, pk=person_id)
 	
-	imgUrl = p.image.url
+	if p.image:
+		imgUrl = p.image.url
+	else:
+		imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
 	re = requests.get(imgUrl)
 	data = re.content
 	
