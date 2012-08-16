@@ -7,7 +7,7 @@
 	<a href="/cv/" class="button">Back to CV-list</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Person</a>
-	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Lag ODT</a>
+	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Download as .odt</a>
 	<br/>
 	<br/>
 	<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
@@ -102,7 +102,7 @@
 		
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
-		  <img src="{% if p.image %}{{ p.image.url }}{% endif %}" class="left" id="photo">
+		  <img src="{% firstof p.photo p.image.url %}" class="left" id="photo">
 		  <input type="hidden" name="photo" value="{{ p.photo }}"/>
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
