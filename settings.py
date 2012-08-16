@@ -4,7 +4,7 @@ import os
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -165,3 +165,8 @@ WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
 WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
 
 WEBODT_TEMPLATE_PATH = 'C:/Users/LH/BitNami DjangoStack projects/templates/odt/'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

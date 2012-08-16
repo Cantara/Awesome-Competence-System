@@ -5,6 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('cv.views',
+    url(r'^$', 'cvlist'),
 	url(r'^cv/$', 'cvlist'),
 	url(r'^test/$', 'index'),
 	url(r'^media/photos/(?P<file_name>[A-Za-z0-9_\-]+).jpg/$', 'getjpg'),

@@ -2,7 +2,7 @@
 # Install CV application in a python virtualenv.
 
 # First, grab systemwide stuff we need.
-sudo apt-get install libapache2-mod-wsgi python-django virtualenv python-<virtualenv python-virtualenv build-essential libxml2-dev libxslt-dev python-dev libjpeg-dev libpng-dev
+sudo apt-get install libapache2-mod-wsgi python-django virtualenv python-<virtualenv python-virtualenv build-essential libxml2-dev libxslt-dev python-dev libjpeg-dev libpng-dev python-psycopg2
 sudo apt-get remove python-imaging
 
 # PIL might not find these libraries on 64-bit systems,
