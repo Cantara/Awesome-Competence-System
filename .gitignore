@@ -1,7 +1,7 @@
 *.pyc
-
 *.json
-
 *~
-
 backup
+cv.db
+deps
+static
