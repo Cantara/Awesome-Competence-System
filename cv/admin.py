@@ -49,7 +49,7 @@ class OtherInline(admin.StackedInline):
 
 class PersonAdmin(admin.ModelAdmin):
 	
-	birthdate = forms.DateField(input_formats=('%d.%m.%Y',), label="Birthdate dd.mm.yyyy", widget = DateTimeInput(format='%d.%m.%Y'))
+	fields = ('name', 'phone', 'mail', 'image', 'birthdate')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	def response_change(self, request, obj, post_url_continue=None):
