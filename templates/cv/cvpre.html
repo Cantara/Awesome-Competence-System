@@ -6,7 +6,7 @@
 {% block topmenu %}
 	<a href="/cv/" class="button">Back to CV-list</a>
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
-	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit Person</a>
+	<a href="/admin/cv/person/{{ p.id }}/" class="button">Edit Person</a>
 	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Download as .odt</a>
 	<br/>
 	<br/>
