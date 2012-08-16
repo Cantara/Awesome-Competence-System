@@ -33,7 +33,10 @@ def odtjson(request):
 	
 	a['profile'] = a['profile'].replace('\n','<br/>').encode( "utf-8" )
 	
-	imgUrl = a['photo']
+	try:
+		imgUrl = p.image.url
+	except:
+		imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
 	re = requests.get(imgUrl)
 	data = re.content
 	
@@ -117,9 +120,9 @@ def odt(request, person_id=1):
 
 	p = get_object_or_404(Person, pk=person_id)
 	
-	if p.image:
+	try:
 		imgUrl = p.image.url
-	else:
+	except:
 		imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
 	re = requests.get(imgUrl)
 	data = re.content
