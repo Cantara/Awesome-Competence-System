@@ -7,7 +7,6 @@
 			<div class="person">
 				<div class="personhead">
 					<h4>{{ p.name }}</h4>
-					<img src="{{ p.photo }}" class="photo">
 					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo">
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
 				</div>
