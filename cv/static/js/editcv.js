@@ -117,9 +117,9 @@ $.fn.serializeObject = function() {
 
 		  // at the end, psuh or assign the value
 		  if ( lookup.length != undefined ) {
-			   lookup.push( $(this).val() );
+			   lookup.push( unQuote( $(this).val()) );
 		  }else {
-				lookup[ named[ cap ] ]  = $(this).val();
+				lookup[ named[ cap ] ]  = unQuote( $(this).val() );
 		  }
 
 		  // assign the reference back to root
@@ -130,6 +130,12 @@ $.fn.serializeObject = function() {
 
 	return data;
 };
+
+//Remove illegal characters from word
+function unQuote(word) {
+	return word.replace(/"/g, "'");
+}
+
 
 /*
 		  
