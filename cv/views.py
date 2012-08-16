@@ -117,7 +117,7 @@ def odt(request, person_id=1):
 
 	p = get_object_or_404(Person, pk=person_id)
 	
-	imgUrl = p.photo
+	imgUrl = p.image.url
 	re = requests.get(imgUrl)
 	data = re.content
 	
