@@ -36,6 +36,16 @@ h1 { color: #555;
 
 .module h2, .module caption, .inline-group h2 { background: transparent; color: #777; font-size: 1.7em; font-weight: normal; padding: 0.5em;}
 
+.inline-group h2 {cursor: pointer;}
+.inline-group h2:before {
+	content: "- ";
+	font-weight: 800;
+	font-family: fixedsys, courier new, sans-serif;
+}
+.inline-group h2.closed:before {
+	content: "+ ";
+}
+
 a { color: #39e !important;}
 
 a.section:link, a.section:visited { color: #666666; }

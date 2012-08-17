@@ -55,6 +55,11 @@ $(document).ready( function()
 	$('.add-row a').click(function() {
 		activateDrag();
 	});
+	$('.inline-group h2').click(function() {
+		$(this).toggleClass("closed");
+		$(this).parent().children("div").toggle(200);
+		$(this).parent().children(".empty-form").toggle();
+	});
 });
 
 function activateDrag() {
