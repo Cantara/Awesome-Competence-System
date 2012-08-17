@@ -111,8 +111,8 @@ def odtjson(request):
 		'o': o_set,
 		'img': data,
 	}
-	srcFile = PROJECT_ROOT + 'cvjsontest.odt'
-	rsltFile = PROJECT_ROOT + 'odtoutput/%s.odt' % a['name']
+	srcFile = PROJECT_ROOT + '/cvjsontest.odt'
+	rsltFile = PROJECT_ROOT + '/odtoutput/%s.odt' % a['name']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(),mimetype='application/vnd.oasis.opendocument.text')
