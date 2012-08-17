@@ -4,7 +4,7 @@ import django.contrib.auth.models
 from django.utils import timezone
 
 YEAR_CHOICES = [(None,'Year')]
-for r in range(1989, (datetime.datetime.now().year+1)):
+for r in range(1969, (datetime.datetime.now().year+1)):
 	YEAR_CHOICES.append((r,r))
 	
 MONTH_CHOICES = (

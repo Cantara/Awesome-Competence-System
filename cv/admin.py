@@ -26,18 +26,21 @@ class TechnologyInline(admin.StackedInline):
 class WorkplaceInline(admin.StackedInline):
 	model = Workplace
 	extra = 0
+	ordering = ('-from_year')
 	formfield_overrides = medium
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'))
 
 class ExperienceInline(admin.StackedInline):
 	model = Experience
 	extra = 0
+	ordering = ('-from_year')
 	formfield_overrides = medium
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), 'techs')
 
 class EducationInline(admin.StackedInline):
 	model = Education
 	extra = 0
+	ordering = ('-from_year')
 	formfield_overrides = medium
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('school', 'school_en'), ('description', 'description_en'))
 
