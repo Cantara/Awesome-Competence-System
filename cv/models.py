@@ -68,13 +68,13 @@ class Experience(models.Model):
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
-	company = models.CharField("Client company, Project title", max_length=50, null=True, blank=True)
-	company_en = models.CharField(max_length=50, null=True, blank=True)
+	company = models.CharField("Client company, Project title", max_length=140, null=True, blank=True)
+	company_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	description = models.TextField(null=True, blank=True)
 	description_en = models.TextField(null=True, blank=True)
 	
-	techs = models.CharField(max_length=100, null=True, blank=True)
+	techs = models.CharField(max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
 		if self.title is not None:
@@ -97,8 +97,8 @@ class Workplace(models.Model):
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
-	company = models.CharField(max_length=50, null=True, blank=True)
-	company_en = models.CharField(max_length=50, null=True, blank=True)
+	company = models.CharField(max_length=140, null=True, blank=True)
+	company_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	description = models.TextField(null=True, blank=True)
 	description_en = models.TextField(null=True, blank=True)
@@ -118,8 +118,8 @@ class Education(models.Model):
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
-	school = models.CharField(max_length=50, null=True, blank=True)
-	school_en = models.CharField(max_length=50, null=True, blank=True)
+	school = models.CharField(max_length=140, null=True, blank=True)
+	school_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	description = models.TextField(null=True, blank=True)
 	description_en = models.TextField(null=True, blank=True)
