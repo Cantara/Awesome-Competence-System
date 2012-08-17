@@ -12,6 +12,8 @@ import json
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
 
+import os.path
+
 def index(request):
     return HttpResponse("""
         <html><body>
@@ -108,7 +110,8 @@ def odtjson(request):
 		'o': o_set,
 		'img': data,
 	}
-	srcFile = 'cv/cvjsontest.odt'
+	
+	srcFile = '%s/cv/cvjsontest.odt' % os.path.dirname()
 	rsltFile = 'odtoutput/%s.odt' % a['name']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
