@@ -8,24 +8,25 @@ from webodt.shortcuts import _ifile
 import webodt
 from reportlab.pdfgen import canvas
 import json
+import settings
 
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
 
 def index(request):
-    return HttpResponse("""
-        <html><body>
-            <h1>Testing ODF-writing from Django</h1>
-            <p><a href="odf/">OpenDocument with Picture-insert - Test</a></p>
-        </body></html>
-        """)
+	return HttpResponse("""
+		<html><body>
+			<h1>Testing ODF-writing from Django</h1>
+			<p><a href="odf/">OpenDocument with Picture-insert - Test</a></p>
+		</body></html>
+		""")
 
 def getjpg(request, file_name):
-    return HttpResponse("""
-        <html><body>
-            <h1>%s</h1>
-        </body></html>
-        """ % file_name)
+	return HttpResponse("""
+		<html><body>
+			<h1>%s</h1>
+		</body></html>
+		""" % file_name)
 		
 def odtjson(request):
 	
@@ -34,11 +35,14 @@ def odtjson(request):
 	a['profile'] = a['profile'].replace('\n','<br/>').encode( "utf-8" )
 	
 	try:
-		imgUrl = p.image.url
+		imgUrl = settings.PROJECT_ROOT + a['photo']
+		f = open(imgUrl, 'r')
+		data = f.read()
+		f.close()
 	except:
 		imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
-	re = requests.get(imgUrl)
-	data = re.content
+		re = requests.get(imgUrl)
+		data = re.content
 	
 	t_set = []
 	e_set = []
@@ -46,52 +50,57 @@ def odtjson(request):
 	d_set = []
 	o_set = []
 	
-	for x, item in a['technology'].iteritems():
-		t_set.append( 
-			Technology( 
-				title 		= item['title'], 
-				data 		= item['data']
-			) 
-		)
+	if 'technology' in a:
+		for x, item in a['technology'].iteritems():
+			t_set.append( 
+				Technology( 
+					title		= item['title'], 
+					data		= item['data']
+				) 
+			)
 	
-	for x, item in a['experience'].iteritems():
-		e_set.append( 
-			Experience( 
-				title 		= item['title'], 
-				from_year 	= item['years'], # Must fix this later
-				company		= item['company'],
-				description = item['description'],
-				techs		= item['techs'],
-			) 
-		)
+	if 'experience' in a:
+		for x, item in a['experience'].iteritems():
+			e_set.append( 
+				Experience( 
+					title		= item['title'], 
+					from_year	= item['years'], # Must fix this later
+					company		= item['company'],
+					description = item['description'],
+					techs		= item['techs'],
+				) 
+			)
 	
-	for x, item in a['workplace'].iteritems():
-		w_set.append( 
-			Workplace( 
-				title 		= item['title'], 
-				from_year 	= item['years'], # Must fix this later
-				company		= item['company'],
-				description = item['description'],
-			) 
-		)
+	if 'workplace' in a:
+		for x, item in a['workplace'].iteritems():
+			w_set.append( 
+				Workplace( 
+					title		= item['title'], 
+					from_year	= item['years'], # Must fix this later
+					company		= item['company'],
+					description = item['description'],
+				) 
+			)
 	
-	for x, item in a['education'].iteritems():
-		d_set.append( 
-			Education( 
-				title 		= item['title'], 
-				from_year 	= item['years'], # Must fix this later
-				school		= item['school'],
-				description = item['description'],
-			) 
-		)
+	if 'education' in a:
+		for x, item in a['education'].iteritems():
+			d_set.append( 
+				Education( 
+					title		= item['title'], 
+					from_year	= item['years'], # Must fix this later
+					school		= item['school'],
+					description = item['description'],
+				) 
+			)
 	
-	for x, item in a['other'].iteritems():
-		o_set.append( 
-			Other( 
-				title 		= item['title'], 
-				data 		= "<ul><li>" + item['data'].replace('\n','</li><li>').encode( "utf-8" ) + "</li></ul>"
-			) 
-		)
+	if 'other' in a:
+		for x, item in a['other'].iteritems():
+			o_set.append( 
+				Other( 
+					title		= item['title'], 
+					data		= "<ul><li>" + item['data'].replace('\n','</li><li>').encode( "utf-8" ) + "</li></ul>"
+				) 
+			)
 		
 	dict = {
 		'l': {
@@ -108,11 +117,11 @@ def odtjson(request):
 		'o': o_set,
 		'img': data,
 	}
-	srcFile = 'cv/cvjsontest.odt'
-	rsltFile = 'odtoutput/%s.odt' % a['name']
+	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
+	rsltFile = '/tmp/%s.odt' % a['name']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
-	response = HttpResponse(open(rsltFile, 'rb').read(),mimetype='application/vnd.oasis.opendocument.text')
+	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
 	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'], a['title'])
 	return response
 
@@ -154,10 +163,10 @@ def odt(request, person_id=1):
 	r.run()
 	
 	return HttpResponse("""
-        <html><body>
-            <h1>Fil skrevet</h1>
-        </body></html>
-        """)
+		<html><body>
+			<h1>Fil skrevet</h1>
+		</body></html>
+		""")
 	
 	'''response = HttpResponse(open(rsltFile, 'rb').read(),mimetype='application/vnd.oasis.opendocument.text')
 	response['Content-Disposition'] = 'attachment; filename=lol.odt'
@@ -188,30 +197,30 @@ def detail(request, cv_id, lang = ''):
 	
 	# If they want English, give them English
 	if lang == 'eng':
-		cv.profile 			= q(cv.profile_en, cv.profile)
-		cv.title 			= q(cv.title_en, cv.title)
+		cv.profile			= q(cv.profile_en, cv.profile)
+		cv.title			= q(cv.title_en, cv.title)
 		
 		for te in t:
 			te.title		= q(te.title_en, te.title)
 		
 		for ex in e:
-			ex.title 		= q(ex.title_en, ex.title)
-			ex.company 		= q(ex.company_en, ex.company)
-			ex.description 	= q(ex.description_en, ex.description)
+			ex.title		= q(ex.title_en, ex.title)
+			ex.company		= q(ex.company_en, ex.company)
+			ex.description	= q(ex.description_en, ex.description)
 			
 		for wp in w:
-			wp.title 		= q(wp.title_en, wp.title)
-			wp.company 		= q(wp.company_en, wp.title)
-			wp.description 	= q(wp.description_en, wp.description)
+			wp.title		= q(wp.title_en, wp.title)
+			wp.company		= q(wp.company_en, wp.title)
+			wp.description	= q(wp.description_en, wp.description)
 			
 		for du in d:
-			du.title 		= q(du.title_en, du.title)
-			du.school 		= q(du.school_en, du.school)
-			du.description 	= q(du.description_en, du.description)
+			du.title		= q(du.title_en, du.title)
+			du.school		= q(du.school_en, du.school)
+			du.description	= q(du.description_en, du.description)
 		
 		for ot in o:
-			ot.title 		= q(ot.title_en, ot.title)
-			ot.data 		= q(ot.data_en, ot.data)
+			ot.title		= q(ot.title_en, ot.title)
+			ot.data			= q(ot.data_en, ot.data)
 		
 		# English subheaders
 		l = {
@@ -221,30 +230,30 @@ def detail(request, cv_id, lang = ''):
 			'education': 'Education',
 		}
 	else:
-		cv.profile 			= q(cv.profile, cv.profile_en)
-		cv.title 			= q(cv.title, cv.title_en)
+		cv.profile			= q(cv.profile, cv.profile_en)
+		cv.title			= q(cv.title, cv.title_en)
 		
 		for te in t:
 			te.title		= q(te.title, te.title_en)
 		
 		for ex in e:
-			ex.title 		= q(ex.title, ex.title_en)
-			ex.company 		= q(ex.company, ex.company_en)
-			ex.description 	= q(ex.description, ex.description_en)
+			ex.title		= q(ex.title, ex.title_en)
+			ex.company		= q(ex.company, ex.company_en)
+			ex.description	= q(ex.description, ex.description_en)
 			
 		for wp in w:
-			wp.title 		= q(wp.title, wp.title_en)
-			wp.company 		= q(wp.company, wp.title_en)
-			wp.description 	= q(wp.description, wp.description_en)
+			wp.title		= q(wp.title, wp.title_en)
+			wp.company		= q(wp.company, wp.title_en)
+			wp.description	= q(wp.description, wp.description_en)
 			
 		for du in d:
-			du.title 		= q(du.title, du.title_en)
-			du.school 		= q(du.school, du.school_en)
-			du.description 	= q(du.description, du.description_en)
+			du.title		= q(du.title, du.title_en)
+			du.school		= q(du.school, du.school_en)
+			du.description	= q(du.description, du.description_en)
 		
 		for ot in o:
-			ot.title 		= q(ot.title, ot.title_en)
-			ot.data 		= q(ot.data, ot.data_en)
+			ot.title		= q(ot.title, ot.title_en)
+			ot.data			= q(ot.data, ot.data_en)
 	
 		# Norwegian subheaders
 		l = {

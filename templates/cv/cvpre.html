@@ -103,7 +103,8 @@
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
 		  <img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="left" id="photo">
-		  <input type="hidden" name="photo" value="{{ p.photo }}"/>
+		  <input type="hidden" name="userid" value="{{ p.id }}"/>
+		  <input type="hidden" name="photo" value="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}"/>
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
 			  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
