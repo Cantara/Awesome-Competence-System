@@ -67,3 +67,9 @@ input[name="_save"], input[name="_continue"] { font-size: 1.1em !important; back
 .ui-autocomplete a:hover { color: #fff !important;}
 
 a.add-link {color: white !important;}
+
+@media (max-width: 1366px) {
+	body {
+		padding-left: 220px;
+	}
+}

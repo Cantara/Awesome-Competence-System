@@ -7,6 +7,15 @@
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base_site.css"/>
+<style>
+#DragDiv {position: fixed; left:5px; top:5px; z-index: 9000; background-color: white; border-radius: 5px; padding: 10px; max-height: 90%; width: 200px;}
+#DragWordList {-moz-user-select: none;-webkit-user-select: none; cursor: move; list-style: none !important; padding: 0;}
+.ui-draggable {list-style: none !important; border: 1px solid #eee; width: 200px; background: rgba(255,255,255,0.3) !important;}
+.ui-draggable:hover {color: #39e; background-color: #eee !important;}
+#MakeDrag {color: #333 !important;}
+#delete {float:right;}
+.dropHover {background-color: #ddd !important;}
+</style>
 {% endblock %}
 
 {% block branding %}
@@ -15,7 +24,90 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/cv.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/editcv.js"></script>
+	
+<script language="JavaScript" type="text/javascript">
+$(document).ready( function() 
+{
+	$("#delete").droppable({
+		accept: "#DragWordList li",
+		hoverClass: "dropHover",
+		tolerance: "pointer",
+		drop: function(ev, ui) {
+			ui.draggable.remove(); // remove original item
+		}
+	});
+	activateDrag();
+	$('#MakeDrag').click(function() {
+		if($("#DragText").val()!="") {
+			$.each(
+				$("#DragText").val().split("\n"),
+				function(i, o){
+					$("#DragWordList").append('<li>'+o+"</li>");
+				}
+			);
+			$("#DragText").val("");
+			activateDrag();
+		} else {
+			alert("You should paste some text first...");
+		}
+		return false
+	});
+	$('.add-row a').click(function() {
+		activateDrag();
+	});
+});
+
+function activateDrag() {
+	$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:3, top: 3} });
+	$("textarea, input[type=text]").droppable({
+		accept: "#DragWordList li",
+		hoverClass: "dropHover",
+		tolerance: "pointer",
+		drop: function(ev, ui) {
+			$(this).insertAtCaret(ui.draggable.text());
+			ui.draggable.remove(); // remove original item
+		}
+	});
+}
+
+$.fn.insertAtCaret = function (myValue) {
+	return this.each(function(){
+			//IE support
+			if (document.selection) {
+					this.focus();
+					sel = document.selection.createRange();
+					sel.text = myValue;
+					this.focus();
+			}
+			//MOZILLA / NETSCAPE support
+			else if (this.selectionStart || this.selectionStart == '0') {
+					var startPos = this.selectionStart;
+					var endPos = this.selectionEnd;
+					var scrollTop = this.scrollTop;
+					this.value = this.value.substring(0, startPos)+ myValue+ this.value.substring(endPos,this.value.length);
+					this.focus();
+					this.selectionStart = startPos + myValue.length;
+					this.selectionEnd = startPos + myValue.length;
+					this.scrollTop = scrollTop;
+			} else {
+					this.value += myValue;
+					this.focus();
+			}
+	});
+};
+</script>
+	
 <h1 id="site-name">{% trans 'CV FreeCode' %}</h1>
 {% endblock %}
 
-{% block nav-global %}{% endblock %}
+{% block sidebar %}
+<div id="DragDiv">
+	<h4>Copy-Paste-Helper</h4>
+	<p><img src="{{ STATIC_URL }}img/trash.png" id="delete">You can paste text into the textarea, click "Make draggable text", and then drag the text to the form to paste the text. To remove a bit of unwanted text, drop it in the bin!</p>
+    <ul id="DragWordList">
+      <li>FreeCode AS</li>
+    </ul>
+	<textarea id="DragText" rows="5"></textarea><br/>
+	<a class="button" id="MakeDrag">Make draggable text</a>
+</div>
+{% endblock %}
