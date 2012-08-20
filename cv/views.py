@@ -35,7 +35,7 @@ def odtjson(request):
 	a = json.loads(request.POST['cvjson'], strict=False)
 	
 	p = Person(
-		name = a['name'].replace('\n','<br/>').encode( "utf-8" ),
+		name = a['name'],
 		phone = a['phone'],
 		mail = a['mail'],
 	)
