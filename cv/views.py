@@ -68,7 +68,7 @@ def odtjson(request):
 					title		= item['title'], 
 					from_year	= item['years'], # Must fix this later
 					company		= item['company'],
-					description = item['description'],
+					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
 					techs		= item['techs'],
 				) 
 			)
@@ -80,7 +80,7 @@ def odtjson(request):
 					title		= item['title'], 
 					from_year	= item['years'], # Must fix this later
 					company		= item['company'],
-					description = item['description'],
+					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
 				) 
 			)
 	
@@ -91,7 +91,7 @@ def odtjson(request):
 					title		= item['title'], 
 					from_year	= item['years'], # Must fix this later
 					school		= item['school'],
-					description = item['description'],
+					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
 				) 
 			)
 	
