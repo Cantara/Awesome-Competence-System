@@ -32,7 +32,7 @@ def getjpg(request, file_name):
 		
 def odtjson(request):
 	
-	a = json.loads(request.POST['cvjson'].decode(), strict=False)
+	a = json.loads(request.POST['cvjson'], strict=False)
 	
 	p = Person(
 		name = a['name'],
