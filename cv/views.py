@@ -35,14 +35,14 @@ def odtjson(request):
 	a = json.loads(request.POST['cvjson'].decode(), strict=False)
 	
 	p = Person(
-		name = a['name']
-		phone = a['phone']
-		mail = a['mail']
+		name = a['name'],
+		phone = a['phone'],
+		mail = a['mail'],
 	)
 	
 	c = Cv(
-		title = a['title']
-		profile = a['profile'].replace('\n','<br/>').encode( "utf-8" )
+		title = a['title'],
+		profile = a['profile'].replace('\n','<br/>').encode( "utf-8" ),
 	)
 	
 	try:
