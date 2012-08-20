@@ -3,7 +3,7 @@
 	body {
 		width:750px;
 		margin:auto;
-		font-family: 'Maven Pro', arial, segoe ui, sans serif;
+		font-family: arial, segoe ui, sans serif;
 		font-size: 11pt;
 		color: #333;
 		background: #eee url(../img/sky.jpg) fixed;
@@ -35,7 +35,6 @@
 	li {font-size: 0.8em; line-height: 1.5em; font-style: italic; margin-left: 2em; font-family: arial;}
 	
 	.contact {float: right; margin-top: 1.5em;}
-	.h1, .h2  {font-family: 'Maven Pro', Arial, sans-serif;}
 	h1, .h1 {font-size: 2.2em; margin-top: 0.2em; color: #39e; font-weight: bold; }
 	h2, .h2 {font-weight: normal; font-size: 1.6em; margin-top: 0.5em; margin-bottom: 0.3em;}
 	.profile {font-size: 1.1em; line-height: 1.5em;}
