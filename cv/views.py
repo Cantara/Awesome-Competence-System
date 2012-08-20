@@ -36,7 +36,7 @@ def odtjson(request):
 	
 	a['profile'] = a['profile'].replace('\n','<br/>').encode( "utf-8" )
 	
-	a['name'] = a['name'].encode( "utf-8" )
+	a['name'] = a['name'].replace('\n','<br/>').encode( "utf-8" )
 	
 	try:
 		imgUrl = settings.PROJECT_ROOT + a['photo']
