@@ -32,9 +32,9 @@ def getjpg(request, file_name):
 		
 def odtjson(request):
 	
-	a = json.loads(request.POST['cvjson'], strict=False)
+	a = json.loads(request.POST['cvjson'].encode( "utf-8" ), strict=False)
 	
-	a['profile'] = a['profile'].replace('\n','<br/>').encode( "utf-8" )
+	a['profile'] = a['profile'].replace('\n','<br/>')
 	
 	try:
 		imgUrl = settings.PROJECT_ROOT + a['photo']
@@ -68,7 +68,7 @@ def odtjson(request):
 					title		= item['title'], 
 					from_year	= item['years'], # Must fix this later
 					company		= item['company'],
-					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
+					description = item['description'].replace('\n','<br/>'),
 					techs		= item['techs'],
 				) 
 			)
@@ -80,7 +80,7 @@ def odtjson(request):
 					title		= item['title'], 
 					from_year	= item['years'], # Must fix this later
 					company		= item['company'],
-					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
+					description = item['description'].replace('\n','<br/>'),
 				) 
 			)
 	
@@ -91,7 +91,7 @@ def odtjson(request):
 					title		= item['title'], 
 					from_year	= item['years'], # Must fix this later
 					school		= item['school'],
-					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
+					description = item['description'].replace('\n','<br/>'),
 				) 
 			)
 	
