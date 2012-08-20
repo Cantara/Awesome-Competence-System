@@ -34,8 +34,6 @@ def getjpg(request, file_name):
 		
 def odtjson(request):
 	
-	request.encoding = 'utf-8'
-	
 	a = json.loads(request.POST['cvjson'], strict=False)
 	
 	p = Person(
@@ -136,11 +134,11 @@ def odtjson(request):
 	}
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
-	rsltFile = '/tmp/%s.odt' % a['name']
+	rsltFile = '/tmp/%s.odt' % a['id']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'], a['title'])
+	response['Content-Disposition'] = u'attachment; filename=%s %s CV.odt' % (a['name'], a['title'])
 	return response
 
 def odt(request, person_id=1):
