@@ -7,7 +7,7 @@ from cv.models import Cv, Person, Technology, Experience, Workplace, Education, 
 from webodt.shortcuts import _ifile
 import webodt
 from reportlab.pdfgen import canvas
-import json
+import json, re
 import settings
 
 from appy.pod.renderer import Renderer
@@ -132,11 +132,11 @@ def odtjson(request):
 	}
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
-	rsltFile = '/tmp/%s.odt' % a['name'].encode('utf-8', 'ignore')
+	rsltFile = '/tmp/%s.odt' % re.sub(r'[ÆØÅæøå]', '_', a['name'])
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'].encode('utf-8', 'ignore'), a['title'].encode('utf-8', 'ignore'))
+	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (re.sub(r'[ÆØÅæøå]', '_', a['name']), re.sub(r'[ÆØÅæøå]', '_', a['title']))
 	return response
 
 def odt(request, person_id=1):
