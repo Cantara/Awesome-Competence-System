@@ -1,3 +1,5 @@
+
+
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
@@ -31,6 +33,8 @@ def getjpg(request, file_name):
 		""" % file_name)
 		
 def odtjson(request):
+	
+	request.encoding = 'utf-8'
 	
 	a = json.loads(request.POST['cvjson'], strict=False)
 	
@@ -132,11 +136,11 @@ def odtjson(request):
 	}
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
-	rsltFile = '/tmp/%s.odt' % re.sub(r'[ÆØÅæøå]', '_', a['name'])
+	rsltFile = '/tmp/%s.odt' % a['name']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (re.sub(r'[ÆØÅæøå]', '_', a['name']), re.sub(r'[ÆØÅæøå]', '_', a['title']))
+	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'], a['title'])
 	return response
 
 def odt(request, person_id=1):
