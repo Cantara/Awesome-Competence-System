@@ -32,11 +32,18 @@ def getjpg(request, file_name):
 		
 def odtjson(request):
 	
-	a = json.loads(request.POST['cvjson'], strict=False)
+	a = json.loads(request.POST['cvjson'].decode(), strict=False)
 	
-	a['profile'] = a['profile'].replace('\n','<br/>').encode( "utf-8" )
+	p = Person(
+		name = a['name']
+		phone = a['phone']
+		mail = a['mail']
+	)
 	
-	a['name'] = a['name'].replace('\n','<br/>').encode( "utf-8" )
+	c = Cv(
+		title = a['title']
+		profile = a['profile'].replace('\n','<br/>').encode( "utf-8" )
+	)
 	
 	try:
 		imgUrl = settings.PROJECT_ROOT + a['photo']
@@ -113,7 +120,9 @@ def odtjson(request):
 			'workplace': 'Arbeidsgivere',
 			'education': 'Utdanning'
 		}, 
-		'p': a, 
+		'a': a, # Contains age (as it is calculated and don't need special encoding - Also, it doesn't exist in the model :-/ )
+		'p': p, # Person-related data
+		'c': c, # CV-related data
 		't': t_set, 
 		'e': e_set,
 		'w': w_set, 
