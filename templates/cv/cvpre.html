@@ -46,7 +46,7 @@
 				 -moz-box-sizing: border-box;
 				  -ms-box-sizing: border-box;
 					  box-sizing: border-box;
-			  width: 100%;
+			  width: 90%;
 			  /* This height is used when JS is disabled */
 			  height: 100px;
 			}
@@ -124,9 +124,10 @@
 		  </div>
 		</div>
 		
-		<div class="part" id="technology">
+		<div class="part sortwithin">
 		{% for te in t %}
 			<div class="techset">
+				<div class="toggle"></div>
 				<input type="text" name="technology[{{ forloop.counter }}][title]" value="{{ te.title }}" class="h5 left"/>
 				<div class="bigbox">
 					<div class="expandingArea"><pre><span></span><br></pre>
@@ -139,29 +140,30 @@
 		
 		<div class="part">
 			<h3 class="left">{{ l.experience }}</h3>
-			<div class="bigbox" id="sortwithin">
-				{% for ex in e|dictsortreversed:"from_year" %}
-					<div class="portlet">
+			<div class="bigbox sortwithin">
+				{% for ex in e|dictsortreversed:"from_ym" %}
+					<section>
 						<div class="toggle"></div>
 						<input type="text" name="experience[{{ forloop.counter }}][title]" value="{{ ex.title }}" class="h4"/>
-						<input type="text" name="experience[{{ forloop.counter }}][years]" value="{{ ex.from_year }}{% if ex.from_month %}.{{ ex.from_month }}{% endif %}{% if ex.to_year %} - {{ ex.to_year }}{% endif %}{% if ex.to_month %}.{{ ex.to_month }}{% endif %}" class="year"/>
+						<input type="text" name="experience[{{ forloop.counter }}][years]" value="{{ ex.from_year }}{% if ex.from_month %} {{ ex.from_monthname }}{% endif %}{% if ex.to_year %} - {{ ex.to_year }}{% endif %}{% if ex.to_month %} {{ ex.to_monthname }}{% endif %}" class="year"/>
 						<input type="text" name="experience[{{ forloop.counter }}][company]" value="{{ ex.company }}" class="workplace"/>
 						<div class="expandingArea"><pre><span></span><br></pre>
 						  <textarea name="experience[{{ forloop.counter }}][description]" id="experience[{{ forloop.counter }}][description]">{{ ex.description }}</textarea>
 						</div>	
 						<input type="text" name="experience[{{ forloop.counter }}][techs]" value="{{ ex.techs }}" class="techs"/>
-					</div>
+					</section>
 				{% endfor %}
 			</div>
 		</div>
 
 		<div class="part">
 			<h3 class="left">{{ l.workplace }}</h3>
-			<div class="bigbox" id="sortwithin">
-				{% for wp in w|dictsortreversed:"from_year" %}
+			<div class="bigbox sortwithin">
+				{% for wp in w|dictsortreversed:"from_ym" %}
 					<section>
+						<div class="toggle"></div>
 						<input type="text" name="workplace[{{ forloop.counter }}][company]" value="{{ wp.company }}" class="h4"/>
-						<input type="text" name="workplace[{{ forloop.counter }}][years]" value="{{ wp.from_year }}{% if wp.from_month %}.{{ wp.from_month }}{% endif %}{% if wp.to_year %} - {{ wp.to_year }}{% endif %}{% if wp.to_month %}.{{ wp.to_month }}{% endif %}" class="year"/>
+						<input type="text" name="workplace[{{ forloop.counter }}][years]" value="{{ wp.from_year }}{% if wp.from_month %} {{ wp.from_monthname }}{% endif %}{% if wp.to_year %} - {{ wp.to_year }}{% endif %}{% if wp.to_month %} {{ wp.to_monthname }}{% endif %}" class="year"/>
 						<input type="text" name="workplace[{{ forloop.counter }}][title]" value="{{ wp.title }}" class="workplace"/>
 						<div class="expandingArea"><pre><span></span><br></pre>
 						  <textarea name="workplace[{{ forloop.counter }}][description]" id="workplace[{{ forloop.counter }}][description]">{{ wp.description }}</textarea>
@@ -173,11 +175,12 @@
 		
 		<div class="part job">
 		<h3 class="left">{{ l.education }}</h3>
-		  <div class="bigbox">
-			{% for du in d|dictsortreversed:"from_year" %}
+		  <div class="bigbox sortwithin">
+			{% for du in d|dictsortreversed:"from_ym" %}
 			  <section>
+					<div class="toggle"></div>
 					<input type="text" name="education[{{ forloop.counter }}][title]" value="{{ du.title }}" class="h4"/>
-					<input type="text" name="education[{{ forloop.counter }}][years]" value="{{ du.from_year }}{% if du.from_month %}.{{ du.from_month }}{% endif %}{% if du.to_year %} - {{ du.to_year }}{% endif %}{% if du.to_month %}.{{ du.to_month }}{% endif %}" class="year"/>
+					<input type="text" name="education[{{ forloop.counter }}][years]" value="{{ du.from_year }}{% if du.from_month %} {{ du.from_monthname }}{% endif %}{% if du.to_year %} - {{ du.to_year }}{% endif %}{% if du.to_month %} {{ du.to_monthname }}{% endif %}" class="year"/>
 					<input type="text" name="education[{{ forloop.counter }}][school]" value="{{ du.school }}" class="workplace"/>
 					<div class="expandingArea"><pre><span></span><br></pre>
 					  <textarea name="education[{{ forloop.counter }}][description]" id="education[{{ forloop.counter }}][description]">{{ du.description }}</textarea>
@@ -187,9 +190,10 @@
 		  </div>
 		</div>
 		
-		<div class="part">
+		<div class="part sortwithin">
 			{% for ot in o %}
 			<div class="other">
+				<div class="toggle"></div>
 				<input type="text" name="other[{{ forloop.counter }}][title]" value="{{ ot.title }}" class="h5 left"/>
 				<div class="bigbox">
 					<div class="expandingArea"><pre><span></span><br></pre>

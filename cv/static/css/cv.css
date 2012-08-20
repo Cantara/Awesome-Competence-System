@@ -73,31 +73,17 @@
 	h5, .h5 {font-size: 1em;}
 	
 	/* Tekniske listerier */
-	.techset, .other {margin-bottom:0.5em; overflow: auto;}
-	.techset ul {list-style:none;}
-	.techset li {
-		float: left; 
-		font-size: 0.7em; 
-		padding: 0.1em 0.4em 0.1em 0.4em; 
-		margin: 0.5em 0.5em 0 0; 
-		border: 1px solid #ddd; 
-		border-radius: 5px;
-		}
-	.techset li:hover {border-color: #bbb;}
+	.techset, .other {margin-bottom:0.5em; overflow: hidden; position: relative;}
+	.techset:hover , .other:hover{background: #ddd; cursor: move;}
 	
 	/* Work experience and Education */
 	.year {color: #999; font-style:italic;}
 	.workplace {font-weight: bold;}
 	.techs {font-style: italic; color: #999; font-size: 0.7em;}
 	section {margin-bottom:1em;}
-	
-	.pagebreak {page-break-before: always;}
-	
-	
 
-
-		.portlet {margin-bottom:2em; cursor: move; page-break-inside: avoid; position: relative;}
-		.portlet:hover {background: #f3f3f3;}
-		.toggle {width: 20px; height: 20px; background: red; position: absolute; top: 0; right: 0; cursor: pointer; text-align:center; border-radius: 5px;}
-		.toggle:hover {background: #d00;}
-		.toggle:before {content: "\00D7"; font-size: 20px; line-height: 20px;color: white;}
+	section {margin-bottom:2em; cursor: move; page-break-inside: avoid; position: relative;}
+	section:hover {background: #ddd;}
+	.toggle {width: 16px; height: 16px; background: red; position: absolute; top: 0; right: 0; cursor: pointer; text-align:center; border-radius: 3px; z-index: 2000;}
+	.toggle:hover {background: #d00;}
+	.toggle:before {content: "\00D7"; font-size: 16px; line-height: 16px;color: white;}

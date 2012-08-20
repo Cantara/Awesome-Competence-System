@@ -7,9 +7,15 @@
 			<div class="person">
 				<div class="personhead">
 					<h4>{{ p.name }}</h4>
-					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo">
+					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: left;">
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
-					<p><small>Tech: {{ p.technology_set.count }} | Exp: {{ p.experience_set.count }} | Wp: {{ p.workplace_set.count }} | Ed: {{ p.education_set.count }} | Ot: {{ p.other_set.count }} </small></p>
+					<table style="font-size: 0.7em;">
+						<tr><td>Technology:</td><td>{{ p.technology_set.count }}</td></tr>
+						<tr><td>Experience:</td><td>{{ p.experience_set.count }}</td></tr>
+						<tr><td>Workplace:</td><td>{{ p.workplace_set.count }}</td></tr>
+						<tr><td>Education:</td><td>{{ p.education_set.count }}</td></tr>
+						<tr><td>Other:</td><td>{{ p.other_set.count }}</td></tr>
+					</table>
 				</div>
 				<table>
 				{% for cv in p.cv_set.all|dictsortreversed:"last_edited" %}

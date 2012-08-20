@@ -5,7 +5,7 @@ $(function() {
 		placeholder: 'dragplaceholder',
 		axis: 'y'
 	}).disableSelection();
-	$( "#sortwithin" ).sortable({
+	$( ".sortwithin" ).sortable({
 		forcePlaceholderSize: true,
 		placeholder: 'dragplaceholder',
 		axis: 'y'

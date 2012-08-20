@@ -13,14 +13,14 @@ MONTH_CHOICES = (
 	(2, 'Feb'),
 	(3, 'Mar'),
 	(4, 'Apr'),
-	(5, 'May'),
+	(5, 'Mai'),
 	(6, 'Jun'),
 	(7, 'Jul'),
 	(8, 'Aug'),
 	(9, 'Sep'),
-	(10, 'Oct'),
+	(10, 'Okt'),
 	(11, 'Nov'),
-	(12, 'Dec'),
+	(12, 'Des'),
 )
 
 # Create your models here.
@@ -76,6 +76,17 @@ class Experience(models.Model):
 	
 	techs = models.CharField(max_length=140, null=True, blank=True)
 	
+	def from_ym(self):
+		ym = self.from_year*100
+		if self.from_month:
+			ym += self.from_month
+		return  ym
+	
+	def from_monthname(self):
+		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
+	def to_monthname(self):
+		return MONTH_CHOICES[self.to_month][1]
+	
 	def __unicode__(self):
 		if self.title is not None:
 			t = self.title
@@ -103,6 +114,17 @@ class Workplace(models.Model):
 	description = models.TextField(null=True, blank=True)
 	description_en = models.TextField(null=True, blank=True)
 	
+	def from_ym(self):
+		ym = self.from_year*100
+		if self.from_month:
+			ym += self.from_month
+		return  ym
+	
+	def from_monthname(self):
+		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
+	def to_monthname(self):
+		return MONTH_CHOICES[self.to_month][1]
+	
 	def __unicode__(self):
 		return self.title + ", " + self.company
 	
@@ -123,6 +145,17 @@ class Education(models.Model):
 	
 	description = models.TextField(null=True, blank=True)
 	description_en = models.TextField(null=True, blank=True)
+	
+	def from_ym(self):
+		ym = self.from_year*100
+		if self.from_month:
+			ym += self.from_month
+		return  ym
+	
+	def from_monthname(self):
+		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
+	def to_monthname(self):
+		return MONTH_CHOICES[self.to_month][1]
 	
 	def __unicode__(self):
 		return self.title + ", " + self.school

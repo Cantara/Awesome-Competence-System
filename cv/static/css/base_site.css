@@ -78,7 +78,9 @@ input[name="_save"], input[name="_continue"] { font-size: 1.1em !important; back
 
 a.add-link {color: white !important;}
 
-select {height: 200px; width: 70%;}
+select[multiple] {height: 150px; width: 70%;}
+
+.errorlist li {color: red !important;}
 
 @media (max-width: 1366px) {
 	body {
