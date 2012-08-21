@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
@@ -134,11 +134,11 @@ def odtjson(request):
 	}
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
-	rsltFile = '/tmp/temp%s.odt' % p.phone
+	rsltFile = '/tmp/%s temp.odt' % p.name.encode('ascii', 'ignore')
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'].decode('ascii'), c.title)
+	response['Content-Disposition'] = 'attachment; filename=CV-%s.odt' % p.name.encode('ascii', 'ignore')
 	return response
 
 def odt(request, person_id=1):
@@ -297,4 +297,4 @@ def pdf(request):
 	p.drawString(100, 100, "Hello world")
 	p.showPage()
 	p.save()
-	return response
+	r
