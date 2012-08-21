@@ -34,7 +34,7 @@ def getjpg(request, file_name):
 		
 def odtjson(request):
 	
-	a = json.loads(request.POST['cvjson'], strict=False)
+	a = json.loads(request.POST['cvjson'].encode('utf-8'), strict=False)
 	
 	p = Person(
 		name = a['name'],
@@ -64,7 +64,7 @@ def odtjson(request):
 	o_set = []
 	
 	if 'technology' in a:
-		for x, item in a['technology'].iteritems():
+		for x, item in a['technology'].items():
 			t_set.append( 
 				Technology( 
 					title		= item['title'], 
@@ -73,7 +73,7 @@ def odtjson(request):
 			)
 	
 	if 'experience' in a:
-		for x, item in a['experience'].iteritems():
+		for x, item in a['experience'].items():
 			e_set.append( 
 				Experience( 
 					title		= item['title'], 
@@ -85,7 +85,7 @@ def odtjson(request):
 			)
 	
 	if 'workplace' in a:
-		for x, item in a['workplace'].iteritems():
+		for x, item in a['workplace'].items():
 			w_set.append( 
 				Workplace( 
 					title		= item['title'], 
@@ -96,7 +96,7 @@ def odtjson(request):
 			)
 	
 	if 'education' in a:
-		for x, item in a['education'].iteritems():
+		for x, item in a['education'].items():
 			d_set.append( 
 				Education( 
 					title		= item['title'], 
@@ -107,7 +107,7 @@ def odtjson(request):
 			)
 	
 	if 'other' in a:
-		for x, item in a['other'].iteritems():
+		for x, item in a['other'].items():
 			o_set.append( 
 				Other( 
 					title		= item['title'], 
@@ -138,7 +138,7 @@ def odtjson(request):
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=CV-%s.odt' % p.name.encode('ascii', 'ignore')
+	response['Content-Disposition'] = 'attachment; filename=%s-%s-Freecode-CV.odt' % (p.name.encode('ascii', 'ignore').replace(" ", "_"), c.title.encode('ascii', 'ignore').replace(" ", "_"))
 	return response
 
 def odt(request, person_id=1):

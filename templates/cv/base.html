@@ -39,9 +39,28 @@
 				margin: 0 20px 20px 0;
 				padding: 10px; 
 				width: 300px;
+				height: 120px;
 				float: left; 
 				text-align: left;
+				position: relative;
 				}
+			
+			.cvset {
+				background: white;
+				border-radius: 5px;
+				max-height: 0px;
+				overflow: hidden;
+				position: relative;
+				z-index: 500;
+				        transition: max-height 500ms;
+				     -o-transition: max-height 500ms; /* Opera */
+				   -moz-transition: max-height 500ms; /* Firefox 4 */
+				-webkit-transition: max-height 500ms; /* Safari and Chrome */
+			}
+				
+			.person:hover .cvset {
+				max-height: 200px;
+			}
 				
 			.photo {
 				max-width: 80px;
@@ -52,7 +71,7 @@
 			
 			ul {list-style: none;}
 			
-			.person, #menu {
+			.person, #menu, .cvset {
 				background: white;
 				-moz-box-shadow: 	0px 2px 2px rgba(0,0,0,0.5);
 				-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.5);
@@ -69,18 +88,49 @@
 			#printlogo {width: 60px; margin: 10px auto 20px auto; clear: both;}
 			
 			.dato {font-size: 0.7em;}
+			
 		</style>
 	
 	</head>
 	<body>
 		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+		<script>
+			//Extend selector
+			$.extend($.expr[':'], {
+			'containsi': function (elem, i, match, array) {
+			/* For example $('#ShowItems li:containsi("Share")'), then match[3] will be Share*/
+			return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+			}
+			});
+			
+			$.expr[':'].icontains = function(obj, index, meta, stack){
+				return (obj.textContent || obj.innerText || jQuery(obj).text() || '').toLowerCase().indexOf(meta[3].toLowerCase()) >= 0;
+			};
+			
+			$(function() {
+				var curVal;
+				$('#filter').keyup( function(event) {
+					curVal = $(this).val();
+					if(curVal != "") {
+						//alert($(this).val());
+						$('h4:icontains("'+curVal+'")').css("color", "blue");
+					}
+				});
+			});
+		</script>
 	
 		<form name="cvform" action="cv.php" method="get" target="_blank">
+			
 			<div id="menu">
 				<img id="printlogo" src="{{ STATIC_URL }}img/freecodesentrert.png">
 				<h1>CV</h1>
+				Search name:
+				<input type="text" name="filter" id="filter" size="10"/>
+				<br/>
+				<br/>
 				<a href="/admin/cv/person/add/" class="button">Add new person</a>
 			</div>
+			
 			<div id="content">
 			{% block content %}{% endblock %}
 			</div>

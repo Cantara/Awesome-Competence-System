@@ -19,6 +19,7 @@ wide = {
 
 class TechnologyInline(admin.StackedInline):
 	model = Technology
+	verbose_name_plural = "Technologies"
 	extra = 0
 	formfield_overrides = medium
 	fields = (('title', 'title_en'), ('data', 'data_en'))
@@ -39,6 +40,7 @@ class ExperienceInline(admin.StackedInline):
 
 class EducationInline(admin.StackedInline):
 	model = Education
+	verbose_name_plural = "Education"
 	extra = 0
 	ordering = ('-from_year','-from_month',)
 	formfield_overrides = medium
