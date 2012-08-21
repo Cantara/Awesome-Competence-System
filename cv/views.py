@@ -138,7 +138,7 @@ def odtjson(request):
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'].encoding('ascii', 'ignore'), c.title)
+	response['Content-Disposition'] = u'attachment; filename=%s %s CV.odt' % (a['name'].ec, c.title)
 	return response
 
 def odt(request, person_id=1):
