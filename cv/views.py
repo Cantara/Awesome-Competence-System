@@ -134,11 +134,11 @@ def odtjson(request):
 	}
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
-	rsltFile = '/tmp/%s.odt' % a['id']
+	rsltFile = '/tmp/user%s.odt' % a['id']
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = u'attachment; filename=%s %s CV.odt' % (a['name'], a['title'])
+	response['Content-Disposition'] = 'attachment; filename=%s %s CV.odt' % (a['name'].encoding('ascii', 'ignore'), a['title'].encoding('ascii', 'ignore'))
 	return response
 
 def odt(request, person_id=1):
