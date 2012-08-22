@@ -59,10 +59,8 @@ class Technology(models.Model):
 			return self.title
 		else:
 			return self.title_en
-	
-class Experience(models.Model):
 
-	person = models.ForeignKey(Person)
+class TimedSkill(models.Model):
 	
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
@@ -72,13 +70,8 @@ class Experience(models.Model):
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
-	company = models.CharField("Client company, Project title", max_length=140, null=True, blank=True)
-	company_en = models.CharField(max_length=140, null=True, blank=True)
-	
 	description = models.TextField(null=True, blank=True)
 	description_en = models.TextField(null=True, blank=True)
-	
-	techs = models.CharField(max_length=140, null=True, blank=True)
 	
 	def from_ym(self):
 		if self.to_year:
@@ -95,6 +88,18 @@ class Experience(models.Model):
 		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
 	def to_monthname(self):
 		return MONTH_CHOICES[self.to_month][1]
+	
+	class Meta:
+		abstract = True
+			
+class Experience(TimedSkill):
+
+	person = models.ForeignKey(Person)
+	
+	company = models.CharField("Client company, Project title", max_length=140, null=True, blank=True)
+	company_en = models.CharField(max_length=140, null=True, blank=True)
+	
+	techs = models.CharField(max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
 		if self.title is not None:
@@ -105,76 +110,22 @@ class Experience(models.Model):
 			t = "No title"
 		return "%s, %s, %s" % (t, self.company, self.from_year)
 
-class Workplace(models.Model):
+class Workplace(TimedSkill):
 
 	person = models.ForeignKey(Person)
-	
-	title = models.CharField(max_length=50, null=True, blank=True)
-	title_en = models.CharField(max_length=50, null=True, blank=True)
-	
-	from_year = models.IntegerField('From year*', max_length=4, choices=YEAR_CHOICES, default=0)
-	from_month = models.IntegerField('From month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
-	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
-	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
 	company = models.CharField(max_length=140, null=True, blank=True)
 	company_en = models.CharField(max_length=140, null=True, blank=True)
 	
-	description = models.TextField(null=True, blank=True)
-	description_en = models.TextField(null=True, blank=True)
-	
-	def from_ym(self):
-		if self.to_year:
-			ym = self.to_year*100
-			if self.to_month:
-				ym += self.to_month
-		else:
-			ym = self.from_year*100
-			if self.from_month:
-				ym += self.from_month
-		return  ym
-	
-	def from_monthname(self):
-		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
-	def to_monthname(self):
-		return MONTH_CHOICES[self.to_month][1]
-	
 	def __unicode__(self):
 		return self.title + ", " + self.company
 	
-class Education(models.Model):
+class Education(TimedSkill):
 
 	person = models.ForeignKey(Person)
 	
-	title = models.CharField(max_length=50, null=True, blank=True)
-	title_en = models.CharField(max_length=50, null=True, blank=True)
-	
-	from_year = models.IntegerField('From year*', max_length=4, choices=YEAR_CHOICES, default=0)
-	from_month = models.IntegerField('From month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
-	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
-	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
-	
 	school = models.CharField(max_length=140, null=True, blank=True)
 	school_en = models.CharField(max_length=140, null=True, blank=True)
-	
-	description = models.TextField(null=True, blank=True)
-	description_en = models.TextField(null=True, blank=True)
-	
-	def from_ym(self):
-		if self.to_year:
-			ym = self.to_year*100
-			if self.to_month:
-				ym += self.to_month
-		else:
-			ym = self.from_year*100
-			if self.from_month:
-				ym += self.from_month
-		return  ym
-	
-	def from_monthname(self):
-		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
-	def to_monthname(self):
-		return MONTH_CHOICES[self.to_month][1]
 	
 	def __unicode__(self):
 		return self.title + ", " + self.school
