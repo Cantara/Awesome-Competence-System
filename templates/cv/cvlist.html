@@ -8,7 +8,9 @@
 				<div class="personhead">
 					<h4>{{ p.name }}</h4>
 					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: left;">
+					{% if not user.is_anonymous %}
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
+					{% endif %}
 					<table style="font-size: 0.7em;">
 						<tr><td>Technology:</td><td>{{ p.technology_set.count }}</td></tr>
 						<tr><td>Experience:</td><td>{{ p.experience_set.count }}</td></tr>
@@ -16,6 +18,7 @@
 						<tr><td>Education:</td><td>{{ p.education_set.count }}</td></tr>
 						<tr><td>Other:</td><td>{{ p.other_set.count }}</td></tr>
 					</table>
+					<p class="techs">{% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}</p>
 				</div>
 				
 				<div class="cvset">
@@ -24,9 +27,11 @@
 						<tr>
 							<td><a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}">{{ cv.tags }} <br/>
 							<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a></td>
-							<td><a href="/admin/cv/cv/{{ cv.id }}" class="button{% if not cv.is_recent %} red{% endif %}">Edit<br/>
-							<span class="dato"> &nbsp;</span></a></td>
-						</tr>
+							{% if not user.is_anonymous %}
+								<td><a href="/admin/cv/cv/{{ cv.id }}" class="button{% if not cv.is_recent %} red{% endif %}">Edit<br/>
+								<span class="dato"> &nbsp;</span></a></td>
+							{% endif %}
+					</tr>
 					{% endfor %}
 					</table>
 				</div>

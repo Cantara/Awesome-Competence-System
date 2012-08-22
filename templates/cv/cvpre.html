@@ -5,15 +5,25 @@
 
 {% block topmenu %}
 	<a href="/cv/" class="button">Back to CV-list</a>
+{% if not user.is_anonymous %}
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
 	<a href="/admin/cv/person/{{ p.id }}/" class="button">Edit Person</a>
+{% endif %}
 	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Download as .odt</a>
+{% if not user.is_anonymous %}
 	<br/>
 	<br/>
 	<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
+{% endif %}
 {% endblock %}
 
+
+
+
 {% block content %}
+
+{% if not user.is_anonymous %}
+
 		<style>
 			input {border:none; width: 90%;}
 			
@@ -209,5 +219,91 @@
 			{% csrf_token %}
 			<textarea name="cvjson" id="cvjson" style="display:none;"></textarea>
 		</form>
+
+{% else %}
+
+		<div class="part">
+		  <p class="contact">{{ p.phone }}<br/>{{ p.mail }}</p>
+		  <img src="{{ p.image|scale:"110x110" }}" class="left" id="photo">
+		  <h1>{{ p.name }}</h1>
+		  <h2>{{ cv.title }}</h2>
+		</div>
+
+		<div class="part">
+		  <h3 class="left">{{ l.profile }}</h3>
+		  <div class="bigbox">
+			<p class="profile">{{ cv.profile }}</p>
+		  </div>
+		</div>
 		
+		<div class="part">
+		{% for te in t %}
+			<div class="techset">
+				<h5 class="left">{{ te.title }}</h5>
+				<div class="bigbox">
+				<p>{{ te.data }}</p>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
+		
+		<div class="part">
+			<h3 class="left">{{ l.experience }}</h3>
+			<div class="bigbox">
+				{% for ex in e %}
+					<div class="portlet">
+						<div class="toggle"></div>
+						<h4>{{ ex.title }}</h4>
+						<p class="year">{{ ex.years }}</p>
+						<p class="workplace">{{ ex.company }}</p>
+						<p>{{ ex.description }}</p>
+						<p class="techs">{{ ex.techs }}</p>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		<div class="part">
+			<h3 class="left">{{ l.workplace }}</h3>
+			<div class="bigbox">
+				{% for wp in w %}
+					<section>
+					  <h4>{{ wp.company }}</h4>
+					  <p class="year">{{ wp.years }}</p>
+					  <p class="workplace">{{ wp.title }}</p>
+						<p>{{ wp.description }}</p>
+					</section>
+				{% endfor %}
+			</div>
+		</div>
+		
+		<div class="part job">
+		<h3 class="left">{{ l.education }}</h3>
+		  <div class="bigbox">
+			{% for du in d %}
+			  <section>
+				  <h4>{{ du.title }}</h4>
+				  <p class="year">{{ du.years }}</p>
+				  <p class="workplace">{{ du.school }}</p>
+						<p>{{ du.description }}</p>
+			  </section>
+			{% endfor %}
+		  </div>
+		</div>
+		
+		<div class="part">
+			{% for ot in o %}
+			<div class="other">
+			<h5 class="left">{{ ot.title }}</h5>
+				<div class="bigbox">
+					<ul>
+						{{ ot.data_as_list|unordered_list }}
+					</ul>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+
+{% endif %}
+
 {% endblock %}

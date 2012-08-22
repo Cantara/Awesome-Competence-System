@@ -54,7 +54,10 @@ class Technology(models.Model):
 	def data_as_list(self):
 		return self.data.split(',')
 	def __unicode__(self):
-		return self.title
+		if self.title != "":
+			return self.title
+		else:
+			return self.title_en
 	
 class Experience(models.Model):
 
@@ -94,7 +97,7 @@ class Experience(models.Model):
 			t = self.title_en
 		else:
 			t = "No title"
-		return "%s, %s, %s" % (self.title, self.company, self.from_year)
+		return "%s, %s, %s" % (t, self.company, self.from_year)
 
 class Workplace(models.Model):
 

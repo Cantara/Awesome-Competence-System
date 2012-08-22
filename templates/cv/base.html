@@ -38,11 +38,15 @@
 				border-radius: 5px;
 				margin: 0 20px 20px 0;
 				padding: 10px; 
-				width: 300px;
+				max-width: 300px;
 				height: 120px;
 				float: left; 
 				text-align: left;
 				position: relative;
+				        transition: max-width 0.5s, opacity 0.5s;
+				     -o-transition: max-width 0.5s, opacity 0.5s; /* Opera */
+				   -moz-transition: max-width 0.5s, opacity 0.5s; /* Firefox 4 */
+				-webkit-transition: max-width 0.5s, opacity 0.5s; /* Safari and Chrome */
 				}
 			
 			.cvset {
@@ -89,6 +93,16 @@
 			
 			.dato {font-size: 0.7em;}
 			
+			.hidden {
+				max-width: 0px;
+				opacity: 0;
+				padding:0;
+				margin:0;
+				overflow: hidden;
+			}
+			
+			.techs {display:none;}
+			
 		</style>
 	
 	</head>
@@ -108,33 +122,34 @@
 			};
 			
 			$(function() {
-				var curVal;
+				var filterTxt;
 				$('#filter').keyup( function(event) {
-					curVal = $(this).val();
-					if(curVal != "") {
-						//alert($(this).val());
-						$('h4:icontains("'+curVal+'")').css("color", "blue");
-					}
+					filterTxt = $(this).val();
+					$('h4, .techs').parent().parent().addClass('hidden');
+					$('h4, .techs')
+						.filter( function(index) {
+							return $(this).text().toLowerCase().indexOf(filterTxt.toLowerCase()) >= 0;
+						})
+						.parent().parent().removeClass('hidden');
 				});
 			});
 		</script>
-	
-		<form name="cvform" action="cv.php" method="get" target="_blank">
 			
 			<div id="menu">
 				<img id="printlogo" src="{{ STATIC_URL }}img/freecodesentrert.png">
 				<h1>CV</h1>
-				Search name:
+				Search:
 				<input type="text" name="filter" id="filter" size="10"/>
 				<br/>
 				<br/>
-				<a href="/admin/cv/person/add/" class="button">Add new person</a>
+					<a href="/admin/cv/person/add/" class="button">
+{% if not user.is_anonymous %}Add new person{% else %}Log in{% endif %}</a>
 			</div>
 			
 			<div id="content">
 			{% block content %}{% endblock %}
 			</div>
-		</form>
+			
 		
 		<script>
 			$("input").change(function () {

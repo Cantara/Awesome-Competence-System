@@ -19,6 +19,8 @@
 {% endblock %}
 
 {% block branding %}
+
+{% if not user.is_anonymous %}
 <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.22.custom.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
@@ -101,11 +103,12 @@ $.fn.insertAtCaret = function (myValue) {
 	});
 };
 </script>
-	
+{% endif %}
 <h1 id="site-name">{% trans 'CV FreeCode' %}</h1>
 {% endblock %}
 
 {% block sidebar %}
+{% if not user.is_anonymous %}
 <div id="DragDiv">
 	<h4>Copy-Paste-Helper</h4>
 	<p><img src="{{ STATIC_URL }}img/trash.png" id="delete">You can paste text into the textarea, click "Make draggable text", and then drag the text to the form to paste the text. To remove a bit of unwanted text, drop it in the bin!</p>
@@ -115,4 +118,5 @@ $.fn.insertAtCaret = function (myValue) {
 	<textarea id="DragText" rows="5"></textarea><br/>
 	<a class="button" id="MakeDrag">Make draggable text</a>
 </div>
+{% endif %}
 {% endblock %}
