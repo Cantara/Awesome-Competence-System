@@ -54,7 +54,7 @@ class OtherInline(admin.StackedInline):
 
 class PersonAdmin(admin.ModelAdmin):
 	
-	fields = ('name', 'phone', 'mail', 'image', 'birthdate')
+	fields = ('name', 'title', 'phone', 'mail', 'image', 'birthdate')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	def response_change(self, request, obj, post_url_continue=None):

@@ -26,6 +26,7 @@ MONTH_CHOICES = (
 # Create your models here.
 class Person(models.Model):
 	name = models.CharField("Name*", max_length=50)
+	title = models.CharField("Job title", max_length=60, null=True, blank=True)
 	phone = models.CharField(max_length=20, null=True, blank=True)
 	mail = models.EmailField("E-mail*")
 	photo = models.URLField("Photo-URL", null=True, blank=True)
@@ -80,9 +81,14 @@ class Experience(models.Model):
 	techs = models.CharField(max_length=140, null=True, blank=True)
 	
 	def from_ym(self):
-		ym = self.from_year*100
-		if self.from_month:
-			ym += self.from_month
+		if self.to_year:
+			ym = self.to_year*100
+			if self.to_month:
+				ym += self.to_month
+		else:
+			ym = self.from_year*100
+			if self.from_month:
+				ym += self.from_month
 		return  ym
 	
 	def from_monthname(self):
@@ -118,9 +124,14 @@ class Workplace(models.Model):
 	description_en = models.TextField(null=True, blank=True)
 	
 	def from_ym(self):
-		ym = self.from_year*100
-		if self.from_month:
-			ym += self.from_month
+		if self.to_year:
+			ym = self.to_year*100
+			if self.to_month:
+				ym += self.to_month
+		else:
+			ym = self.from_year*100
+			if self.from_month:
+				ym += self.from_month
 		return  ym
 	
 	def from_monthname(self):
@@ -150,9 +161,14 @@ class Education(models.Model):
 	description_en = models.TextField(null=True, blank=True)
 	
 	def from_ym(self):
-		ym = self.from_year*100
-		if self.from_month:
-			ym += self.from_month
+		if self.to_year:
+			ym = self.to_year*100
+			if self.to_month:
+				ym += self.to_month
+		else:
+			ym = self.from_year*100
+			if self.from_month:
+				ym += self.from_month
 		return  ym
 	
 	def from_monthname(self):

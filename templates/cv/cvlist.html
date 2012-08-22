@@ -7,15 +7,16 @@
 			<div class="person">
 				<div class="personhead">
 					<h4>{{ p.name }}</h4>
+					<h5>{% if p.title %}{{ p.title }}{% else %} ---{% endif %}</h5>
 					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: left;">
 					{% if not user.is_anonymous %}
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
 					{% endif %}
-					<table style="font-size: 0.7em;">
-						<tr><td>Technology:</td><td>{{ p.technology_set.count }}</td></tr>
-						<tr><td>Experience:</td><td>{{ p.experience_set.count }}</td></tr>
-						<tr><td>Workplace:</td><td>{{ p.workplace_set.count }}</td></tr>
-						<tr><td>Education:</td><td>{{ p.education_set.count }}</td></tr>
+					<table style="font-size: 0.6em;">
+						<tr><td>Tech:</td><td>{{ p.technology_set.count }}</td></tr>
+						<tr><td>Exp:</td><td>{{ p.experience_set.count }}</td></tr>
+						<tr><td>Work:</td><td>{{ p.workplace_set.count }}</td></tr>
+						<tr><td>Edu:</td><td>{{ p.education_set.count }}</td></tr>
 						<tr><td>Other:</td><td>{{ p.other_set.count }}</td></tr>
 					</table>
 					<p class="techs">{% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}</p>

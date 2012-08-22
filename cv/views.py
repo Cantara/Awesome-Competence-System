@@ -34,7 +34,7 @@ def getjpg(request, file_name):
 		
 def odtjson(request):
 	
-	a = json.loads(request.POST['cvjson'].encode('utf-8'), strict=False)
+	a = json.loads(request.POST['cvjson'].encode('utf-8', 'ignore'))
 	
 	p = Person(
 		name = a['name'],
@@ -108,10 +108,11 @@ def odtjson(request):
 	
 	if 'other' in a:
 		for x, item in a['other'].items():
+			datalist = "<ul><li>" + item['data'].replace('\n','</li><li>') + "</li></ul>"
 			o_set.append( 
 				Other( 
 					title		= item['title'], 
-					data		= "<ul><li>" + item['data'].replace('\n','</li><li>').encode( "utf-8" ) + "</li></ul>"
+					data		= datalist.encode( "ascii", "ignore" )
 				) 
 			)
 		
