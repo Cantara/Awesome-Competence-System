@@ -16,6 +16,9 @@ wide = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':5, 'cols':80 } ) },
 		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
 	}
+	
+# Originally I wanted to sort first on to_year and to_month, but if I add those, then it would place first all entries without those fields. I wanted to use my custom "from_ym", but it's not possible.
+order = ('-from_year','-from_month',)
 
 class TechnologyInline(admin.StackedInline):
 	model = Technology
@@ -27,22 +30,22 @@ class TechnologyInline(admin.StackedInline):
 class WorkplaceInline(admin.StackedInline):
 	model = Workplace
 	extra = 0
-	ordering = ('-from_year','-from_month',)
+	ordering = order
 	formfield_overrides = medium
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'))
 
 class ExperienceInline(admin.StackedInline):
 	model = Experience
 	extra = 0
-	ordering = ('-from_year','-from_month',)
+	ordering = order
 	formfield_overrides = medium
-	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), 'techs')
+	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), ('techs',))
 
 class EducationInline(admin.StackedInline):
 	model = Education
 	verbose_name_plural = "Education"
 	extra = 0
-	ordering = ('-from_year','-from_month',)
+	ordering = order
 	formfield_overrides = medium
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('school', 'school_en'), ('description', 'description_en'))
 
@@ -53,6 +56,8 @@ class OtherInline(admin.StackedInline):
 	fields = ('title', 'data', 'title_en', 'data_en')
 
 class PersonAdmin(admin.ModelAdmin):
+	
+	save_on_top = True
 	
 	fields = ('name', 'title', 'phone', 'mail', 'image', 'birthdate')
 	
@@ -66,6 +71,39 @@ class PersonAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect("/cv/")
 	def response_delete(self, request, obj, post_url_continue=None):
 		return HttpResponseRedirect("/cv/")
+
+	def render_change_form(self, request, context, *args, **kwargs):
+		
+		techlist = {}
+		
+		for p in Person.objects.all():
+			for t_set in p.technology_set.all():
+				for t in t_set.data_as_list():
+					item = t.encode('utf-8','ignore').replace('\n','').strip()
+					if len(item) < 20 and len(item) > 0:
+						if item in techlist:
+							techlist[item] +=1
+						else:
+							techlist[item] = 1
+		
+		sortedtechlist = [x for x in techlist.iteritems()]
+		sortedtechlist.sort(key=lambda x: x[1])
+		sortedtechlist.reverse()
+		
+		t = []
+		for i in sortedtechlist:
+			if i[1] > 1:
+				t.append(i[0])
+		
+		extra = {
+			'has_file_field': True, # Make your form render as multi-part.
+			'techlist': t,
+		}
+
+		context.update(extra)
+        
+		superclass = super(PersonAdmin, self)
+		return superclass.render_change_form(request, context, *args, **kwargs)
 	
 admin.site.register(Person, PersonAdmin)
 

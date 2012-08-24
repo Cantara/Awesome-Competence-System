@@ -1,4 +1,4 @@
-{% extends "cv/base.html" %}
+{% extends "cv/cvlistbase.html" %}
 {% load image_tags %}
 
 {% block content %}
@@ -24,7 +24,7 @@
 				
 				<div class="cvset">
 					<table>
-					{% for cv in p.cv_set.all|dictsortreversed:"last_edited" %}
+					{% for cv in p.cv_set.all|dictsortreversed:"cvsort" %}
 						<tr>
 							<td><a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}">{{ cv.tags }} <br/>
 							<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a></td>

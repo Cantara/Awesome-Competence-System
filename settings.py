@@ -164,7 +164,7 @@ WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
 
 WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
 
-WEBODT_TEMPLATE_PATH = 'C:/Users/LH/BitNami DjangoStack projects/templates/odt/'
+WEBODT_TEMPLATE_PATH = '/tmp/'
 
 try:
     from local_settings import *

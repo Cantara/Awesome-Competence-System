@@ -8,13 +8,70 @@
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base_site.css"/>
 <style>
-#DragDiv {position: fixed; left:5px; top:5px; z-index: 9000; background-color: white; border-radius: 5px; padding: 10px; max-height: 90%; width: 200px;}
+body li {text-align: left;}
+
+#DragDiv {position: fixed; left:-180px; top:5px; z-index: 200; background-color: white; border-radius: 5px; padding: 20px; padding-right: 40px; max-height: 90%; width: 200px;
+		max-height: 80%; overflow: hidden; overflow-y: auto;
+			transition: left 500ms;
+		 -o-transition: left 500ms; /* Opera */
+	   -moz-transition: left 500ms; /* Firefox 4 */
+	-webkit-transition: left 500ms; /* Safari and Chrome */
+}
+
+#DragDiv h4 {
+	position: absolute;
+	top:0;
+	right:0;
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin:    100% 100%;
+    -ms-transform-origin:     100% 100%;
+    -o-transform-origin:      100% 100%;
+    
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform:    rotate(-90deg); 
+    -ms-transform:     rotate(-90deg); 
+    -o-transform:      rotate(-90deg); 	
+	z-index: 250;
+}
+
+#DragDiv:hover {
+	left: 5px;
+}
+
 #DragWordList {-moz-user-select: none;-webkit-user-select: none; cursor: move; list-style: none !important; padding: 0;}
-.ui-draggable {list-style: none !important; border: 1px solid #eee; width: 200px; background: rgba(255,255,255,0.3) !important;}
-.ui-draggable:hover {color: #39e; background-color: #eee !important;}
+
+.ui-draggable {list-style: none !important; max-width: 200px; background: rgba(0,0,0,0.1) !important; margin: 2px; padding:2px; border-radius: 3px;}
+.ui-draggable:hover {color: #fff; background-color: #39e !important;}
+
 #MakeDrag {color: #333 !important;}
+
 #delete {float:right;}
+
 .dropHover {background-color: #ddd !important;}
+
+#popTechs {border: 1px solid #ddd; border-radius: 5px; margin: 5px; padding: 5px; max-width: 850px;}
+#popTechs span {cursor: move; display: inline-block; font-size: 0.9em;}
+
+
+/* TOOLTIP */
+#workplace_set-group .form-row {overflow: visible !important;}
+.tooltip {position: relative;}
+
+#workplace_set-group textarea:hover ~ .tooltip:after,
+#workplace_set-group textarea:focus ~ .tooltip:after {
+	background: white; 
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	position: absolute; 
+	top:0px; 
+	left:0px;
+	width: 200px;
+	padding: 5px;
+	margin-left: 5px;
+	border-radius: 5px;
+	color: #333;
+	content: "Remember to write about your: Responsibility, added value, technologies"; 
+	}
+
 </style>
 {% endblock %}
 
@@ -24,12 +81,11 @@
 <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.22.custom.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}js/cv.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}js/editcv.js"></script>
 	
 <script language="JavaScript" type="text/javascript">
 $(document).ready( function() 
 {
+	// Trash can 
 	$("#delete").droppable({
 		accept: "#DragWordList li",
 		hoverClass: "dropHover",
@@ -38,7 +94,11 @@ $(document).ready( function()
 			ui.draggable.remove(); // remove original item
 		}
 	});
+	
+	// Activate drag upon load
 	activateDrag();
+	
+	// Make draggable elements on click
 	$('#MakeDrag').click(function() {
 		if($("#DragText").val()!="") {
 			$.each(
@@ -54,24 +114,49 @@ $(document).ready( function()
 		}
 		return false
 	});
+	
+	// Reactivate drag when new element is added
 	$('.add-row a').click(function() {
 		activateDrag();
 	});
+	
+	// Toggle subsections
 	$('.inline-group h2').click(function() {
 		$(this).toggleClass("closed");
 		$(this).parent().children("div").toggle(200);
 		$(this).parent().children(".empty-form").toggle();
 	});
+	
+	// Append stuff to Technologies
+	var popTechs = 
+	'<div id="popTechs"><h4>Popular technologies! Drag and drop it!</h4>' +
+		{% for t in techlist %}
+		'<span>{{ t }}</span> ' +{% endfor %}
+	'</div>';
+	$('#technology_set-group .empty-form').after(popTechs);
+	$("#popTechs span").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
+	
+	// Tooltip for textarea
+	$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
+	
 });
 
 function activateDrag() {
-	$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:3, top: 3} });
+	$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
 	$("textarea, input[type=text]").droppable({
-		accept: "#DragWordList li",
+		accept: "#DragWordList li, #popTechs span",
 		hoverClass: "dropHover",
 		tolerance: "pointer",
 		drop: function(ev, ui) {
-			$(this).insertAtCaret(ui.draggable.text());
+			if(ui.draggable.is("span")) {
+				var comma = "";
+				if($(this).val() != "") { 
+					comma = ", ";
+				}
+				$(this).val($(this).val() + comma + ui.draggable.text());
+			} else {
+				$(this).insertAtCaret(ui.draggable.text());
+			}
 			ui.draggable.remove(); // remove original item
 		}
 	});
@@ -109,6 +194,7 @@ $.fn.insertAtCaret = function (myValue) {
 
 {% block sidebar %}
 {% if not user.is_anonymous %}
+
 <div id="DragDiv">
 	<h4>Copy-Paste-Helper</h4>
 	<p><img src="{{ STATIC_URL }}img/trash.png" id="delete">You can paste text into the textarea, click "Make draggable text", and then drag the text to the form to paste the text. To remove a bit of unwanted text, drop it in the bin!</p>
@@ -118,5 +204,6 @@ $.fn.insertAtCaret = function (myValue) {
 	<textarea id="DragText" rows="5"></textarea><br/>
 	<a class="button" id="MakeDrag">Make draggable text</a>
 </div>
+
 {% endif %}
 {% endblock %}

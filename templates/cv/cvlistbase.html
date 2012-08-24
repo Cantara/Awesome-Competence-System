@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+	<head>
+		<title>FreeCode CV</title>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvlist.css"/>
+	</head>
+	<body>
+		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+		<script>
+			$(function() {
+				var filterTxt;
+				$('#filter').keyup( function(event) {
+					filterTxt = $(this).val();
+					$('h4, .techs').parent().parent().addClass('hidden');
+					$('h4, .techs')
+						.filter( function(index) {
+							return $(this).text().toLowerCase().indexOf(filterTxt.toLowerCase()) >= 0;
+						})
+						.parent().parent().removeClass('hidden');
+				});
+			});
+		</script>
+			
+			<div id="menu">
+				<img id="printlogo" src="{{ STATIC_URL }}img/freecodesentrert.png">
+				<h1>CV</h1>
+				Search:
+				<input type="text" name="filter" id="filter" size="10"/>
+				<br/>
+				<br/>
+					<a href="/admin/cv/person/add/" class="button">
+					{% if not user.is_anonymous %}Add new person{% else %}Log in{% endif %}</a>
+			</div>
+			
+			<div id="content">
+			{% block content %}{% endblock %}
+			</div>
+			
+		
+		<script>
+			$("input").change(function () {
+				var isChecked = this.checked;
+				var thisId = this.id;
+				$('a').each(function(i, t) {
+				
+					var tempUrl = $(this).attr('href');
+					
+					if(isChecked) {
+					
+						switch(thisId) {
+						case 'eng':
+							tempUrl += 'eng/';
+							break;
+						case 'doc':
+							tempUrl += 'doc/';
+							break;
+						}
+						
+					} else {
+					
+						switch(thisId) {
+						case 'eng':
+							tempUrl = tempUrl.replace(/\/eng\//, "/");
+							break;
+						case 'doc':
+							tempUrl = tempUrl.replace(/\/doc\//, "/");
+							break;
+						}
+						
+					}
+					
+				  $(this).attr('href', tempUrl);
+				  
+				});
+			});
+		</script>
+	</body>
+</html>

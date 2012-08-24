@@ -1,4 +1,4 @@
-{% extends "cv/cvbase.html" %}
+{% extends "cv/cvprebase.html" %}
 {% load image_tags %}
 {% block title %}{{ person.name }}{% endblock %}
 
@@ -9,15 +9,22 @@
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
 	<a href="/admin/cv/person/{{ p.id }}/" class="button">Edit Person</a>
 {% endif %}
-	<a class="button" onClick="document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());document.cvjsonform.submit();">Download as .odt</a>
+	<script>
+		function dl(format) {
+			document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());
+			document.cvjsonform.action = "/cv/{{ cv.id }}/download/" + format + "/";
+			document.cvjsonform.submit();
+		}
+	</script>
+	<a class="button" onClick="dl('odt');">Download .odt</a>
+	<a class="button" onClick="dl('doc');">Download .doc</a>
+	<a class="button" onClick="dl('pdf');">Download .pdf</a>
 {% if not user.is_anonymous %}
 	<br/>
 	<br/>
 	<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
 {% endif %}
 {% endblock %}
-
-
 
 
 {% block content %}
@@ -80,35 +87,6 @@
 			}
 			
 		</style>
-		<script>
-		$(function () {
-			 function makeExpandingArea(container) {
-			 var area = container.querySelector('textarea');
-			 var span = container.querySelector('span');
-			 if (area.addEventListener) {
-			   area.addEventListener('input', function() {
-				 span.textContent = area.value;
-			   }, false);
-			   span.textContent = area.value;
-			 } else if (area.attachEvent) {
-			   // IE8 compatibility
-			   area.attachEvent('onpropertychange', function() {
-				 span.innerText = area.value;
-			   });
-			   span.innerText = area.value;
-			 }
-			 // Enable extra CSS
-			 container.className += ' active';
-			}
-
-			var areas = document.querySelectorAll('.expandingArea');
-			var l = areas.length;
-
-			while (l--) {
-			 makeExpandingArea(areas[l]);
-			}
-		});
-		</script>
 		
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">

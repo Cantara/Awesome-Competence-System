@@ -32,9 +32,13 @@ class Person(models.Model):
 	photo = models.URLField("Photo-URL", null=True, blank=True)
 	image = models.ImageField(upload_to="photos", null=True, blank=True)
 	birthdate = models.DateField("Date of birth (yyyy-mm-dd)", null=True, blank=True)
+	last_edited = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
 		return self.name
+	
+	def is_recent(self):
+		return self.last_edited >= timezone.now() - datetime.timedelta(days=60)
 		
 	def save(self, *args, **kwargs):
 		
@@ -52,8 +56,10 @@ class Technology(models.Model):
 	title_en = models.CharField(max_length=50, null=True, blank=True)
 	data = models.TextField("Data (separate with comma)", null=True, blank=True)
 	data_en = models.TextField(null=True, blank=True)
+	
 	def data_as_list(self):
 		return self.data.split(',')
+		
 	def __unicode__(self):
 		if self.title != "":
 			return self.title
@@ -173,14 +179,11 @@ class Cv(models.Model):
 	is_recent.admin_order_field = 'last_edited'
 	is_recent.boolean = True
 	is_recent.short_description = 'Less than two months old'
+	
+	def cvsort(self):
+		if self.tags == "Empty CV":
+			return self.last_edited - datetime.timedelta(days=60)
+		return self.last_edited
 		
 	def __unicode__(self):
 		return self.person.name + ", " + self.tags
-
-	def save(self, *args, **kwargs):
-		
-		# If the tags is "Empty CV", then set it to "Title"
-		if self.tags == "Empty CV" and self.title is not None:
-			self.tags = self.title
-			
-		super(Cv, self).save(*args, **kwargs)

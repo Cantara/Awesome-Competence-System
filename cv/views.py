@@ -6,7 +6,8 @@ from django.template import RequestContext, Context
 from django.http import HttpResponse
 from django import http
 from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other
-from webodt.shortcuts import _ifile
+from webodt.shortcuts import _ifile, render_to_response as rtr
+from webodt.converters import converter
 import webodt
 from reportlab.pdfgen import canvas
 import json, re
@@ -14,27 +15,10 @@ import settings
 
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
-
-import os.path
-
-def index(request):
-	return HttpResponse("""
-		<html><body>
-			<h1>Testing ODF-writing from Django</h1>
-			<p><a href="odf/">OpenDocument with Picture-insert - Test</a></p>
-		</body></html>
-		""")
-
-def getjpg(request, file_name):
-	return HttpResponse("""
-		<html><body>
-			<h1>%s</h1>
-		</body></html>
-		""" % file_name)
 		
-def odtjson(request):
+def download(request, format):
 	
-	a = json.loads(request.POST['cvjson'].encode('utf-8', 'ignore'))
+	a = json.loads(request.POST['cvjson'].encode('utf-8', 'ignore'), strict=False)
 	
 	p = Person(
 		name = a['name'],
@@ -134,13 +118,20 @@ def odtjson(request):
 		'img': data,
 	}
 	
-	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest.odt'
-	rsltFile = '/tmp/%s temp.odt' % p.name.encode('ascii', 'ignore')
+	doc=""
+	if format != "odt": doc = "doc"
+	
+	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest%s.odt' % doc
+	
+	rsltFile = '/tmp/%s.odt' % p.name.encode('ascii', 'ignore')
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
-	response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=%s-%s-Freecode-CV.odt' % (p.name.encode('ascii', 'ignore').replace(" ", "_"), c.title.encode('ascii', 'ignore').replace(" ", "_"))
-	return response
+	if format == "odt":
+		response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
+		response['Content-Disposition'] = 'attachment; filename=%s %s Freecode CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"))
+		return response
+	else:
+		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename=p.name.encode('ascii', 'ignore'), format=format) # Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
 
 def odt(request, person_id=1):
 
@@ -188,10 +179,6 @@ def odt(request, person_id=1):
 	'''response = HttpResponse(open(rsltFile, 'rb').read(),mimetype='application/vnd.oasis.opendocument.text')
 	response['Content-Disposition'] = 'attachment; filename=lol.odt'
 	return response'''
-
-def odtlist(request):
-	all_persons = Person.objects.all()
-	return render_to_response('cv/odtlist.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
 
 def cvlist(request):
 	all_persons = Person.objects.all()
@@ -298,4 +285,3 @@ def pdf(request):
 	p.drawString(100, 100, "Hello world")
 	p.showPage()
 	p.save()
-	r
