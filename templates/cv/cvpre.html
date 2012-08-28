@@ -8,7 +8,6 @@
 {% if not user.is_anonymous %}
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
 	<a href="/admin/cv/person/{{ p.id }}/" class="button">Edit Person</a>
-{% endif %}
 	<script>
 		function dl(format) {
 			document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());
@@ -19,6 +18,11 @@
 	<a class="button" onClick="dl('odt');">Download .odt</a>
 	<a class="button" onClick="dl('doc');">Download .doc</a>
 	<a class="button" onClick="dl('pdf');">Download .pdf</a>
+{% else %}
+	<a class="button" href="download/odt/">Download .odt</a>
+	<a class="button" href="download/doc/">Download .doc</a>
+	<a class="button" href="download/odt/">Download .pdf</a>
+{% endif %}
 {% if not user.is_anonymous %}
 	<br/>
 	<br/>
@@ -116,7 +120,9 @@
 		{% for te in t %}
 			<div class="techset">
 				<div class="toggle"></div>
-				<input type="text" name="technology[{{ forloop.counter }}][title]" value="{{ te.title }}" class="h5 left"/>
+				<div class="expandingArea" style="width:17%; float: left;"><pre><span></span><br></pre>
+				  <textarea name="technology[{{ forloop.counter }}][title]" id="technology[{{ forloop.counter }}][title]" class="h5 left">{{ te.title }}</textarea>
+				</div>
 				<div class="bigbox">
 					<div class="expandingArea"><pre><span></span><br></pre>
 					  <textarea name="technology[{{ forloop.counter }}][data]" id="technology[{{ forloop.counter }}][data]">{{ te.data }}</textarea>

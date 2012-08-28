@@ -1,3 +1,4 @@
+.add-row a,
 .button, 
 input[name="_save"], 
 input[name="_continue"] {
@@ -29,6 +30,7 @@ input[name="_continue"] {
 	position:relative;
 }
 
+.add-row a:hover,
 .button:hover,
 input[name="_save"]:hover,
 input[name="_continue"]:hover {
@@ -36,6 +38,8 @@ input[name="_continue"]:hover {
 	opacity: 1;
 }
 
+.add-row a:hover,
+.add-row a:focus,
 .button:hover,
 .button:focus, 
 input[name="_save"]:hover, 
@@ -50,6 +54,8 @@ input[name="_continue"]:focus {
                 inset 0 0 0 3em hsla(0,0%,100%,.2),
                 0 .25em .25em hsla(0,0%,0%,.1);
 }
+
+.add-row a:active,
 .button:active, 
 input[name="_save"]:active, 
 input[name="_continue"]:active {
@@ -68,4 +74,4 @@ input[name="_continue"]:active {
 
 .wide { width: 215px; }
 
-.empty { opacity: 0.6; }
+.empty { opacity: 0.3; }

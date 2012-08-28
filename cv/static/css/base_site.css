@@ -52,17 +52,20 @@ a.section:link, a.section:visited { color: #666666; }
 
 .module, .inline-group, .submit-row {
 	border-radius: 5px; 
-	border: none;
-	background: white;
+	border: none !important;
+	background: white !important;
 	padding: 1em;
 	}
+
+.submit-row { margin-bottom: 10px !important;}
 	
 .form-row {
 	border: 0 !important;
 	padding: .5em !important;
 	}
 	
-.add-row {background: transparent !important;}
+.add-row {background: transparent !important; border:none !important;}
+.add-row a {background-color: #ddd !important; color: #444 !important;}
 
 h3 {border-top: 1px solid #ddd;}
 
@@ -84,6 +87,6 @@ select[multiple] {height: 150px; width: 70%;}
 
 @media (max-width: 1366px) {
 	body {
-		padding-left: 220px;
+		padding-left: 80px;
 	}
 }

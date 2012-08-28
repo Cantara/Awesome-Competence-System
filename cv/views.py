@@ -10,113 +10,120 @@ from webodt.shortcuts import _ifile, render_to_response as rtr
 from webodt.converters import converter
 import webodt
 from reportlab.pdfgen import canvas
-import json, re
+import simplejson as json
 import settings
+import ordereddict as odict
 
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
-		
+
 def download(request, format):
 	
-	a = json.loads(request.POST['cvjson'].encode('utf-8', 'ignore'), strict=False)
+	if(request.POST['cvjson']):
 	
-	p = Person(
-		name = a['name'],
-		phone = a['phone'],
-		mail = a['mail'],
-	)
-	
-	c = Cv(
-		title = a['title'],
-		profile = a['profile'].replace('\n','<br/>').encode( "utf-8" ),
-	)
-	
-	try:
-		imgUrl = settings.PROJECT_ROOT + a['photo']
-		f = open(imgUrl, 'r')
-		data = f.read()
-		f.close()
-	except:
-		imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
-		re = requests.get(imgUrl)
-		data = re.content
-	
-	t_set = []
-	e_set = []
-	w_set = []
-	d_set = []
-	o_set = []
-	
-	if 'technology' in a:
-		for x, item in a['technology'].items():
-			t_set.append( 
-				Technology( 
-					title		= item['title'], 
-					data		= item['data']
-				) 
-			)
-	
-	if 'experience' in a:
-		for x, item in a['experience'].items():
-			e_set.append( 
-				Experience( 
-					title		= item['title'], 
-					from_year	= item['years'], # Must fix this later
-					company		= item['company'],
-					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
-					techs		= item['techs'],
-				) 
-			)
-	
-	if 'workplace' in a:
-		for x, item in a['workplace'].items():
-			w_set.append( 
-				Workplace( 
-					title		= item['title'], 
-					from_year	= item['years'], # Must fix this later
-					company		= item['company'],
-					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
-				) 
-			)
-	
-	if 'education' in a:
-		for x, item in a['education'].items():
-			d_set.append( 
-				Education( 
-					title		= item['title'], 
-					from_year	= item['years'], # Must fix this later
-					school		= item['school'],
-					description = item['description'].replace('\n','<br/>').encode( "utf-8" ),
-				) 
-			)
-	
-	if 'other' in a:
-		for x, item in a['other'].items():
-			datalist = "<ul><li>" + item['data'].replace('\n','</li><li>') + "</li></ul>"
-			o_set.append( 
-				Other( 
-					title		= item['title'], 
-					data		= datalist.encode( "ascii", "ignore" )
-				) 
-			)
+		a = json.loads(request.POST['cvjson'], object_pairs_hook = odict.OrderedDict, strict=False)
+			
+		p = Person(
+			name = a['name'],
+			phone = a['phone'],
+			mail = a['mail'],
+		)
 		
-	dict = {
-		'l': {
-			'profile': 'Profil',
-			'experience': 'Erfaring',
-			'workplace': 'Arbeidsgivere',
-			'education': 'Utdanning'
-		}, 
-		'a': a, # Contains age (as it is calculated and don't need special encoding - Also, it doesn't exist in the model :-/ )
-		'p': p, # Person-related data
-		'c': c, # CV-related data
-		't': t_set, 
-		'e': e_set,
-		'w': w_set, 
-		'd': d_set, 
-		'o': o_set,
-		'img': data,
-	}
+		c = Cv(
+			title = a['title'],
+			profile = a['profile'].encode( "utf-8" ),
+		)
+		
+		try:
+			imgUrl = settings.PROJECT_ROOT + a['photo']
+			f = open(imgUrl, 'r')
+			data = f.read()
+			f.close()
+		except:
+			imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
+			re = requests.get(imgUrl)
+			data = re.content
+		
+		t_set = []
+		e_set = []
+		w_set = []
+		d_set = []
+		o_set = []
+		
+		if 'technology' in a:
+			for x, item in a['technology'].items():
+				t_set.append( 
+					Technology( 
+						title		= item['title'], 
+						data		= item['data']
+					) 
+				)
+		
+		if 'experience' in a:
+			for x in a['experience']:
+				e_set.append( 
+					Experience( 
+						title		= x['title'], 
+						from_year	= x['years'], # Must fix this later
+						company		= x['company'],
+						description = x['description'].encode( "utf-8" ),
+						techs		= x['techs'],
+					) 
+				)
+		
+		if 'workplace' in a:
+			for x in a['workplace']:
+				w_set.append( 
+					Workplace( 
+						title		= x['title'], 
+						from_year	= x['years'], # Must fix this later
+						company		= x['company'],
+						description = x['description'].encode( "utf-8" ),
+					) 
+				)
+		
+		if 'education' in a:
+			for x in a['education']:
+				d_set.append( 
+					Education( 
+						title		= x['title'], 
+						from_year	= x['years'], # Must fix this later
+						school		= x['school'],
+						description = x['description'].encode( "utf-8" ),
+					) 
+				)
+		
+		if 'other' in a:
+			for x, item in a['other'].items():
+				datalist = "<ul><li>" + item['data'].replace('<br/>','</li><li>') + "</li></ul>"
+				o_set.append( 
+					Other( 
+						title		= item['title'], 
+						data		= datalist.encode( "utf-8", "ignore" )
+					) 
+				)
+			
+		dict = {
+			'l': {
+				'profile': 'Profil',
+				'experience': 'Erfaring',
+				'workplace': 'Arbeidsgivere',
+				'education': 'Utdanning'
+			}, 
+			'a': a, # Contains age (as it is calculated and don't need special encoding - Also, it doesn't exist in the model :-/ )
+			'p': p, # Person-related data
+			'c': c, # CV-related data
+			't': t_set, 
+			'e': e_set,
+			'w': w_set, 
+			'd': d_set, 
+			'o': o_set,
+			'img': data,
+		}
+		
+	#else:
+		#get cvid from url and render the entire set of stuff from cv
+	
 	
 	doc=""
 	if format != "odt": doc = "doc"
