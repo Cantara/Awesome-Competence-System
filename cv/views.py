@@ -3,7 +3,7 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django import http
 from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other
 from webodt.shortcuts import _ifile, render_to_response as rtr
@@ -13,6 +13,7 @@ from reportlab.pdfgen import canvas
 import simplejson as json
 import settings
 import ordereddict as odict
+from django.contrib.auth import authenticate, login, logout
 
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
@@ -276,19 +277,21 @@ def detail(request, cv_id, lang = ''):
 	
 	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l}, context_instance=RequestContext(request))
 
-'''
-def odt(request):
-	t = webodt.ODFTemplate('cvtest.zip')
-	c = Context( {'navn':'Sky Lukewalker','tittel':'Champion','photo':'leontest','techs':{1:{'title':'Lang','data':'Java, C'},2:{'title':'Tools','data':'Eclipse, Confluence'}}} )
-	d = t.render(c)
-	response = HttpResponse(_ifile(d),mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=lol.odt'
-	return response'''
-	
-def pdf(request):
-	response = HttpResponse(mimetype='application/pdf')
-	response['Content-Disposition'] = 'attachment; filename=test.pdf'
-	p = canvas.Canvas(response)
-	p.drawString(100, 100, "Hello world")
-	p.showPage()
-	p.save()
+def mylogin(request):
+	if request.method == 'POST':
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
+		if user is not None:
+			if user.is_active:
+				login(request, user)
+				# You are now logged in, dog!
+				return HttpResponseRedirect('/')
+			else:
+				# This account is stupid!
+				return HttpResponseRedirect('/')
+		else:
+			# This didn't work lol
+			return HttpResponseRedirect('/')
+			
+def mylogout(request):
+	logout(request)
+	return HttpResponseRedirect('/')

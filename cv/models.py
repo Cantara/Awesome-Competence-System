@@ -37,6 +37,18 @@ class Person(models.Model):
 	def __unicode__(self):
 		return self.name
 	
+	def age(self):
+		born = self.birthdate
+		today = datetime.date.today()
+		try:
+			birthday = born.replace(year=today.year)
+		except ValueError:
+			birthday = born.replace(year=today.year, day=born.day-1)
+		if birthday > today:
+			return today.year - born.year - 1
+		else:
+			return today.year - born.year
+	
 	def is_recent(self):
 		return self.last_edited >= timezone.now() - datetime.timedelta(days=60)
 		
@@ -96,6 +108,7 @@ class TimedSkill(models.Model):
 		return MONTH_CHOICES[self.to_month][1]
 	
 	class Meta:
+		ordering = ['-to_year','-from_year']
 		abstract = True
 			
 class Experience(TimedSkill):
@@ -114,7 +127,7 @@ class Experience(TimedSkill):
 			t = self.title_en
 		else:
 			t = "No title"
-		return "%s, %s, %s" % (t, self.company, self.from_year)
+		return "%s, %s, %s - %s" % (t, self.company, self.from_year, self.to_year)
 
 class Workplace(TimedSkill):
 
@@ -124,7 +137,7 @@ class Workplace(TimedSkill):
 	company_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
-		return self.title + ", " + self.company
+		return "%s, %s, %s - %s" % (self.title, self.company, self.from_year, self.to_year)
 	
 class Education(TimedSkill):
 
@@ -134,7 +147,7 @@ class Education(TimedSkill):
 	school_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
-		return self.title + ", " + self.school
+		return "%s, %s, %s - %s" % (self.title, self.school, self.from_year, self.to_year)
 	
 class Other(models.Model):
 

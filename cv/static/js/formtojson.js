@@ -73,7 +73,7 @@ $.fn.serializeObject = function() {
 //Remove illegal characters from word
 function legalize(word) {
 	// Remove double quotes and line breaks
-	return word.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/\n/g, "<br/>");
+	return word.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/\n/g, "<br/>");
 }
 
 // Formats the JSON to be more readable - http://joncom.be/code/javascript-json-formatter/

@@ -11,6 +11,8 @@ urlpatterns = patterns('cv.views',
 	url(r'^cv/\d+/download/$', 'download'),
 	url(r'^cv/\d+/download/(?P<format>pdf|doc|odt)/$', 'download'),
 	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail'),
+	url(r'^login/$', 'mylogin'),
+	url(r'^logout/$', 'mylogout'),
     # Examples:
     # url(r'^$', 'cvapp.views.home', name='home'),
     # url(r'^cvapp/', include('cvapp.foo.urls')),

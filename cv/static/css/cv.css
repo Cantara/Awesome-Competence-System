@@ -82,7 +82,7 @@
 	section {margin-bottom:1em;}
 
 	section {margin-bottom:2em; cursor: move; page-break-inside: avoid; position: relative;}
-	section:hover {background: #ddd;}
+	section:hover {background: #fff; -webkit-transform: rotate(-0.5deg); -webkit-box-shadow: -2px 0 3px #aaa;}
 	.toggle {width: 16px; height: 16px; background: red; position: absolute; top: 0; right: 0; cursor: pointer; text-align:center; border-radius: 3px; z-index: 2000;}
-	.toggle:hover {background: #d00;}
+	.toggle:hover {background: #300;}
 	.toggle:before {content: "\00D7"; font-size: 16px; line-height: 16px;color: white;}

@@ -9,7 +9,7 @@
 					<h4>{{ p.name }}</h4>
 					<h5>{% if p.title %}{{ p.title }}{% else %} ---{% endif %}</h5>
 					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: left;">
-					{% if not user.is_anonymous %}
+					{% if user.is_authenticated %}
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
 					{% endif %}
 					<table style="font-size: 0.6em;">
@@ -28,7 +28,7 @@
 						<tr>
 							<td><a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}">{{ cv.tags }} <br/>
 							<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a></td>
-							{% if not user.is_anonymous %}
+							{% if user.is_authenticated %}
 								<td><a href="/admin/cv/cv/{{ cv.id }}" class="button{% if not cv.is_recent %} red{% endif %}">Edit<br/>
 								<span class="dato"> &nbsp;</span></a></td>
 							{% endif %}

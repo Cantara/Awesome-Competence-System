@@ -52,7 +52,7 @@
 			
 			.expandingArea > textarea,
 			.expandingArea > pre {
-			  background: white;
+			  background: transparent;
 			  font: 400 13px/16px helvetica, arial, sans-serif;
 			  /* Make the text soft-wrap */
 			  white-space: pre-wrap;
@@ -89,7 +89,7 @@
 			  /* Hide the text; just using it for sizing */
 			  visibility: hidden;
 			}
-			
+			input[type=text] {background: transparent;}
 		</style>
 		
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
@@ -103,6 +103,7 @@
 			  <p>
 			  <input type="text" name="phone" value="{{ p.phone }}"/>
 			  <input type="text" name="mail" value="{{ p.mail }}"/>
+			  <input type="text" name="age" value="{{ p.age }}"/>
 			  </p>
 		  </div>
 		</div>
@@ -188,7 +189,9 @@
 			{% for ot in o %}
 			<div class="other">
 				<div class="toggle"></div>
-				<input type="text" name="other[{{ forloop.counter }}][title]" value="{{ ot.title }}" class="h5 left"/>
+				<div class="expandingArea" style="width:17%; float: left;"><pre><span></span><br></pre>
+				  <textarea name="other[{{ forloop.counter }}][title]" id="other[{{ forloop.counter }}][title]" class="h5 left">{{ ot.title }}</textarea>
+				</div>
 				<div class="bigbox">
 					<div class="expandingArea"><pre><span></span><br></pre>
 					  <textarea name="other[{{ forloop.counter }}][data]" id="other[{{ forloop.counter }}][data]">{{ ot.data }}</textarea>

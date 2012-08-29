@@ -29,8 +29,18 @@
 				<input type="text" name="filter" id="filter" size="10"/>
 				<br/>
 				<br/>
-					<a href="/admin/cv/person/add/" class="button">
-					{% if not user.is_anonymous %}Add new person{% else %}Log in{% endif %}</a>
+					{% if user.is_authenticated %}
+						<a href="/admin/cv/person/add/" class="button">Add new person</a>
+						<a href="/logout/" class="button">Log out</a>
+					{% else %}
+						<h3>Log in</h3>
+						<form action="/login/" method="post" accept-charset="utf-8">
+							{% csrf_token %}
+							<label for="username">Username</label><input type="text" name="username" value="" id="username" size="10"/>
+							<label for="password">Password</label><input type="password" name="password" value="" id="password" size="10"/>
+							<p><input type="submit" value="Log in" class="button" style="margin-top: 1em !important;"></p>
+						</form>
+					{% endif %}
 			</div>
 			
 			<div id="content">

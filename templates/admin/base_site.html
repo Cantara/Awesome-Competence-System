@@ -142,6 +142,21 @@ $(document).ready( function()
 	// Add back-button
 	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd;" href="../../../../">Exit without saving</a>');
 	
+	// Add "SELECT_ALL"-button to CV-edit
+	var set = ['technology','experience','workplace','education','other'];
+	for(var i=0;i<set.length;i++){
+		$('#id_'+set[i]).after('<a href="#" class="button" id="deselectall' + set[i] + '" style="color: #444 !important; background: #ddd;">Deselect all in ' + set[i] + '</a>');
+		$('#id_'+set[i]).after('<br/><a href="#" class="button" id="selectall' + set[i] + '" style="margin-left: 12em !important; color: #444 !important; background: #ddd;">Select all in ' + set[i] + '</a>');
+		$('#selectall'+set[i]).click(function(){
+			$(this).prev().prev().children().prop('selected', true);
+			return false;
+		});
+		$('#deselectall'+set[i]).click(function(){
+			$(this).prev().prev().prev().children().prop('selected', false);
+			return false;
+		});
+	}
+	
 });
 
 function activateDrag() {

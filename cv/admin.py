@@ -12,6 +12,10 @@ medium = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':3, 'cols':36 } ) },
 		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
 	}
+large = {
+		models.TextField: { 'widget': Textarea( attrs = {'rows':7, 'cols':36 } ) },
+		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
+	}
 wide = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':5, 'cols':80 } ) },
 		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
@@ -121,7 +125,7 @@ class CvAdmin(admin.ModelAdmin):
 	form = CvForm
 	readonly_fields = ['person']
 	fields = ('person','tags', ('title', 'title_en'), ('profile', 'profile_en'), 'technology', 'experience', 'workplace', 'education', 'other')
-	formfield_overrides = medium
+	formfield_overrides = large
 	list_display = ('person', 'tags', 'title', 'last_edited', 'is_recent')
 	#filter_horizontal = ['experience']
 	def response_change(self, request, obj, post_url_continue=None):
