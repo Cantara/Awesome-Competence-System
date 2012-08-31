@@ -70,7 +70,7 @@ input[name="_continue"]:active {
     margin: .1em .3em .2em .3em !important;
 }
 
-.red { background-color: #ff6c6f; }
+.red { color: darkred; background-color: #e66;}
 
 .wide { width: 160px; }
 

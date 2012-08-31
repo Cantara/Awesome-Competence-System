@@ -242,29 +242,61 @@ class Cv(models.Model):
 	is_recent.boolean = True
 	is_recent.short_description = 'Less than two months old'
 	
+	# Returns a dictionary of status-related stuff, e.g. is this CV done? If not, what's wrong.
 	def status(self):
-		has_title = False
-		has_profile = False
+		complete = False
+		maxscore = 0
+		myscore = 0
+		comment = []
 		
-		if (self.title or self.title_en):
-			has_title = True
-		if (self.profile or self.profile_en):
-			if len(self.profile) > 100:
-				has_profile = True
+		# Has title and profile?
+		maxscore += 2
+		if self.title or self.title_en:
+			myscore += 1
 		else:
-			has_profile = False
-			
-		str = []
+			comment.append("Lacks title")
+		if len(self.profile) > 100 or len(self.profile_en) > 100:
+			myscore += 1
+		else:
+			comment.append("Lacks profile, or profile too short")
 		
-		if not has_title:
-			str.append("Lacks title")
-		if not has_profile:
-			str.append("Lacks profile, or profile too short.")
-		if has_title and has_profile:
-			str.append("Has title and profile")
+		# Minimum 1 skillset
+		maxscore += 1
+		if self.technology.count() >= 1:
+			myscore += 1
+		else:
+			comment.append("Does not have at least one set of technology")
 		
-		return {'complete': has_title and has_profile, 'comment': ", ".join(str)}
+		# Minimum 4 entries in experience and workplace combined
+		maxscore += 4
+		if self.experience.count() + self.workplace.count() >= 4:
+			myscore +=4
+		else:
+			myscore += self.experience.count() + self.workplace.count()
+			comment.append("Does not have at least four entries in experience and workplace combined")
+		
+		# Minimum 1 entry in education
+		maxscore += 1
+		if self.education.count() > 0:
+			myscore += 1
+		else:
+			comment.append("Does not have at least one entry in education")
+		
+		if len(comment) < 1:
+			comment.append("Your CV is complete! Give yourself a pat on the back!")
+			complete = True
+		
+		completeness = {
+			'maxscore': maxscore, 
+			'myscore': myscore, 
+			'complete': complete,
+			'percent': int(100 * float(myscore) / float (maxscore)),
+			'comment': ", ".join(comment),
+			}
+		
+		return completeness
 	
+	# Custom sorting, returns an older date for all Empty CVs, so they don't get listed first. 
 	def cvsort(self):
 		if self.tags == "Empty CV":
 			return self.last_edited - datetime.timedelta(days=60)

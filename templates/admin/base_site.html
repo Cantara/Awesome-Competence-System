@@ -140,7 +140,7 @@ $(document).ready( function()
 	$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
 	
 	// Add back-button
-	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd;" href="../../../../">Exit without saving</a>');
+	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd; float: left;" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="../../../../">Exit without saving</a>');
 	
 	// Add "SELECT_ALL"-button to CV-edit
 	var set = ['technology','experience','workplace','education','other'];

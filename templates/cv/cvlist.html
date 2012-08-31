@@ -11,7 +11,7 @@
 					<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: left;">
 					{% if user.is_authenticated %}
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
-					<div class="completeness"><div class="percent" style="width: {{ p.completeness.percent }}%;"></div></div>
+					<div class="completeness"><div class="percent" style="width: {{ p.completeness.percent }}%; {% if p.completeness.percent < 100 %} background-color: red; {% endif %}"></div></div>
 					<p style="font-size: 0.8em">
 						<acronym title="{{ p.completeness.comment }}">{{ p.completeness.percent }}% complete</acronym></p>
 					{% endif %}
@@ -23,7 +23,7 @@
 					{% for cv in p.cv_set.all|dictsortreversed:"cvsort" %}
 						<tr>
 							<td><a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent or not cv.status.complete and cv.tags != "Empty CV" %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}" title="{{ cv.status.comment }}">{{ cv.tags }}<br/>
-							<span class="dato">{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }}</span></a></td>
+							<span class="dato">{% if cv.tags != "Empty CV" %}{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }} <span class="completeness"><span class="percent" style="width: {{ cv.status.percent }}%; {% if cv.status.percent < 100 %} background-color: red; {% endif %}"></span></span> {{ cv.status.percent }}%{% else %}&nbsp;{% endif %}</span></a></td>
 							{% if user.is_authenticated %}
 								<td><a href="/admin/cv/cv/{{ cv.id }}" class="button{% if not cv.is_recent %} red{% endif %}">Edit<br/>
 								<span class="dato"> &nbsp;</span></a></td>
