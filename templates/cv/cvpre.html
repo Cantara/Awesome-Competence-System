@@ -5,9 +5,10 @@
 
 {% block topmenu %}
 	<a href="/cv/" class="button">Back to CV-list</a>
-{% if not user.is_anonymous %}
+{% if user.is_authenticated %}
 	<a href="/admin/cv/cv/{{ cv.id }}/" class="button">Edit CV</a>
 	<a href="/admin/cv/person/{{ p.id }}/" class="button">Edit Person</a>
+{% endif %}
 	<script>
 		function dl(format) {
 			document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());
@@ -18,12 +19,7 @@
 	<a class="button" onClick="dl('odt');">Download .odt</a>
 	<a class="button" onClick="dl('doc');">Download .doc</a>
 	<a class="button" onClick="dl('pdf');">Download .pdf</a>
-{% else %}
-	<a class="button" href="download/odt/">Download .odt</a>
-	<a class="button" href="download/doc/">Download .doc</a>
-	<a class="button" href="download/odt/">Download .pdf</a>
-{% endif %}
-{% if not user.is_anonymous %}
+{% if user.is_authenticated %}
 	<br/>
 	<br/>
 	<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
@@ -32,8 +28,6 @@
 
 
 {% block content %}
-
-{% if not user.is_anonymous %}
 
 		<style>
 			input {border:none; width: 90%;}
@@ -206,8 +200,19 @@
 			{% csrf_token %}
 			<textarea name="cvjson" id="cvjson" style="display:none;"></textarea>
 		</form>
+		
+{% if user.is_anonymous %}
+	<script>
+		$(function() {
+			$('textarea,input[type=text]').prop('disabled', true);
+			$('#cvjson').prop('disabled',false);
+			$('.toggle').remove();
+		});
+	</script>
+{% endif %}
 
-{% else %}
+
+{% if False %}
 
 		<div class="part">
 		  <p class="contact">{{ p.phone }}<br/>{{ p.mail }}</p>

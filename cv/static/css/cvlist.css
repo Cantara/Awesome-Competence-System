@@ -1,0 +1,130 @@
+* {margin:0; padding:0;}
+
+body {
+	font-family: arial; 
+	color: #777; 
+	background: #ddd url(../img/sky.jpg) fixed; 
+	background-size: cover;
+	}
+
+#content {position: absolute; top: 20px; left: 160px;}
+
+#menu { 
+	background: #fff; 
+	border-radius:5px; 
+	width: 100px; 
+	padding: 10px; 
+	position:fixed; 
+	left: 20px; 
+	top: 20px; 
+	text-align: center;
+	}
+
+h1 {
+	margin-bottom: 10px; 
+	font-size: 1.9em; 
+	font-weight: normal; 
+	color: #000;
+	}
+
+.person {
+	border-radius: 5px;
+	margin: 0 20px 20px 0;
+	padding: 20px; 
+	max-width: 260px;
+	height: 110px;
+	float: left; 
+	text-align: left;
+	position: relative;
+			transition: max-width 0.5s, opacity 0.5s;
+		 -o-transition: max-width 0.5s, opacity 0.5s; /* Opera */
+	   -moz-transition: max-width 0.5s, opacity 0.5s; /* Firefox 4 */
+	-webkit-transition: max-width 0.5s, opacity 0.5s; /* Safari and Chrome */
+	}
+
+.cvset {
+	background: white;
+	border-radius: 0 0 5px 5px;
+	max-height: 0px;
+	overflow: hidden;
+	position: relative;
+	z-index: 500;
+			transition: max-height 500ms;
+		 -o-transition: max-height 500ms; /* Opera */
+	   -moz-transition: max-height 500ms; /* Firefox 4 */
+	-webkit-transition: max-height 500ms; /* Safari and Chrome */
+}
+	
+.person:hover .cvset {
+	max-height: 200px;
+}
+	
+.photo {
+	max-width: 50px;
+	max-height: 50px;
+	margin-right: 10px; 
+	border-radius: 3px;
+	}
+
+ul {list-style: none;}
+
+.person, #menu, .cvset {
+	background: white;
+	-moz-box-shadow: 	0px 2px 2px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.5);
+	box-shadow: 		0px 2px 2px rgba(0,0,0,0.5);
+	}
+
+.personhead {
+	height: 130px;
+}
+
+
+.edit {float: right;}
+
+#printlogo {width: 60px; margin: 10px auto 20px auto; clear: both;}
+
+.dato {font-size: 0.7em;}
+
+.hidden {
+	max-width: 0px;
+	opacity: 0;
+	padding:0;
+	margin:0;
+	overflow: hidden;
+}
+
+.techs {display:none;}
+
+h4 {font-weight: normal; color: #39e; font-size: 1.1em; margin-bottom: 5px;}
+
+h5 {color: #777; font-weight: normal; margin-bottom: 15px;}
+
+acronym {
+	cursor: help;
+	border-bottom: 1px dotted #999;
+}
+
+.completeness {
+	display: inline-block;
+	width: 90px;
+	height: 10px;
+	background: #ddd;
+	margin-bottom: 5px;
+	padding: 0px;
+	border-radius: 30px; 
+	box-shadow: 
+	inset 0 5px 10px rgba(0,0,0,0.2);
+	overflow: hidden;
+}
+
+.percent {
+	height: 100%;
+border-radius: 50px 5px 5px 50px;
+background-color: #39e;
+box-shadow: 
+/* This is the top gradient for the color bar */
+inset 0 4px 0 rgba(255,255,255,0.2),
+inset 0 1px 2px rgba(0,0,0,0.125);
+border-right: 1px solid rgba(0,0,0,0.1);
+}

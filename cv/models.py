@@ -49,6 +49,55 @@ class Person(models.Model):
 		else:
 			return today.year - born.year
 	
+	def test(self):
+		return self.experience_set.count()
+	
+	def completeness(self):
+		maxscore = 0
+		myscore = 0
+		comment = []
+		
+		# Has a picture
+		maxscore += 1
+		if self.image:
+			myscore += 1
+		else:
+			comment.append("No picture")
+			
+		# Minimum 1 skillset
+		maxscore += 1
+		if self.technology_set.count() >= 1:
+			myscore += 1
+		else:
+			comment.append("Does not have at least one set of technology")
+		
+		# Minimum 4 entries in experience and workplace combined
+		maxscore += 4
+		if self.experience_set.count() + self.workplace_set.count() >= 4:
+			myscore +=4
+		else:
+			myscore += self.experience_set.count() + self.workplace_set.count()
+			comment.append("Does not have at least four entries in experience and workplace combined")
+		
+		# Minimum 1 entry in education
+		maxscore += 1
+		if self.education_set.count() > 0:
+			myscore += 1
+		else:
+			comment.append("Does not have at least one entry in education")
+		
+		if len(comment) < 1:
+			comment.append("Your profile is complete! Give yourself a pat on the back!")
+		
+		completeness = {
+			'maxscore': maxscore, 
+			'myscore': myscore, 
+			'percent': int(100 * float(myscore) / float (maxscore)),
+			'comment': ", ".join(comment),
+			}
+		
+		return completeness
+	
 	def is_recent(self):
 		return self.last_edited >= timezone.now() - datetime.timedelta(days=60)
 		
@@ -192,6 +241,29 @@ class Cv(models.Model):
 	is_recent.admin_order_field = 'last_edited'
 	is_recent.boolean = True
 	is_recent.short_description = 'Less than two months old'
+	
+	def status(self):
+		has_title = False
+		has_profile = False
+		
+		if (self.title or self.title_en):
+			has_title = True
+		if (self.profile or self.profile_en):
+			if len(self.profile) > 100:
+				has_profile = True
+		else:
+			has_profile = False
+			
+		str = []
+		
+		if not has_title:
+			str.append("Lacks title")
+		if not has_profile:
+			str.append("Lacks profile, or profile too short.")
+		if has_title and has_profile:
+			str.append("Has title and profile")
+		
+		return {'complete': has_title and has_profile, 'comment': ", ".join(str)}
 	
 	def cvsort(self):
 		if self.tags == "Empty CV":

@@ -12,8 +12,8 @@
 				var filterTxt;
 				$('#filter').keyup( function(event) {
 					filterTxt = $(this).val();
-					$('h4, .techs').parent().parent().addClass('hidden');
-					$('h4, .techs')
+					$('.person').addClass('hidden');
+					$('.techs')
 						.filter( function(index) {
 							return $(this).text().toLowerCase().indexOf(filterTxt.toLowerCase()) >= 0;
 						})
