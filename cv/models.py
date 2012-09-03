@@ -73,10 +73,11 @@ class Person(models.Model):
 		
 		# Minimum 4 entries in experience and workplace combined
 		maxscore += 4
-		if self.experience_set.count() + self.workplace_set.count() >= 4:
+		workexp = self.experience_set.count() + self.workplace_set.count()
+		if workexp >= 4:
 			myscore +=4
 		else:
-			myscore += self.experience_set.count() + self.workplace_set.count()
+			myscore += workexp
 			comment.append("Does not have at least four entries in experience and workplace combined")
 		
 		# Minimum 1 entry in education
@@ -85,6 +86,13 @@ class Person(models.Model):
 			myscore += 1
 		else:
 			comment.append("Does not have at least one entry in education")
+		
+		# Updated within past 60 days?
+		maxscore += 1
+		if self.is_recent:
+			myscore += 1
+		else:
+			comment.append("Not updated in last 60 days")
 		
 		if len(comment) < 1:
 			comment.append("Your profile is complete! Give yourself a pat on the back!")
@@ -100,6 +108,11 @@ class Person(models.Model):
 	
 	def is_recent(self):
 		return self.last_edited >= timezone.now() - datetime.timedelta(days=60)
+		
+	def has_cv(self):
+		for c in self.cv_set:
+			if c.status:
+				return true
 		
 	def save(self, *args, **kwargs):
 		
