@@ -86,13 +86,13 @@ class Person(models.Model):
 			myscore += 1
 		else:
 			comment.append("Does not have at least one entry in education")
-		
-		# Updated within past 60 days?
+			
+		# Has a valid CV?
 		maxscore += 1
-		if self.is_recent:
+		if self.has_cv():
 			myscore += 1
 		else:
-			comment.append("Not updated in last 60 days")
+			comment.append("Has not filled in at least one valid CV")
 		
 		if len(comment) < 1:
 			comment.append("Your profile is complete! Give yourself a pat on the back!")
@@ -105,14 +105,17 @@ class Person(models.Model):
 			}
 		
 		return completeness
-	
+
 	def is_recent(self):
 		return self.last_edited >= timezone.now() - datetime.timedelta(days=60)
 		
 	def has_cv(self):
-		for c in self.cv_set:
-			if c.status:
-				return true
+		for cv in self.cv_set.all():
+			if cv.tags != "Empty CV":
+				status = cv.status()
+				if status['complete']:
+					return True
+		return False
 		
 	def save(self, *args, **kwargs):
 		

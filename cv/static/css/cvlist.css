@@ -42,6 +42,10 @@ h1 {
 	-webkit-transition: max-width 0.5s, opacity 0.5s; /* Safari and Chrome */
 	}
 
+.last {
+	margin-bottom: 15em;
+}	
+	
 .cvset {
 	background: white;
 	border-radius: 0 0 5px 5px;
