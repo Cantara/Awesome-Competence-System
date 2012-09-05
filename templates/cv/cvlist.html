@@ -13,8 +13,8 @@
 					{% if user.is_authenticated %}
 					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
 					<div class="completeness"><div class="percent" style="width: {{ p.completeness.percent }}%; {% if p.completeness.percent < 100 %} background-color: red; {% endif %}"></div></div>
-					<p style="font-size: 0.8em"><acronym title="{{ p.completeness.comment }}">{{ p.completeness.percent }}% complete</acronym><br/>
-					Updated: {{ p.last_edited|date:"SHORT_DATE_FORMAT" }}</p>
+					<p style="font-size: 0.8em"><acronym title="{{ p.completeness.comment }}">{{ p.completeness.percent }}% complete</acronym></p>
+					<p style="font-size: 0.6em; margin-top: 0.5em;">Updated: {{ p.last_edited|date:"SHORT_DATE_FORMAT" }}</p>
 					{% endif %}
 					<p class="techs">{{ p.name }} {% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}</p>
 				</div>

@@ -31,7 +31,7 @@ h1 {
 	border-radius: 5px;
 	margin: 0 20px 20px 0;
 	padding: 20px; 
-	max-width: 260px;
+	width: 260px;
 	height: 110px;
 	float: left; 
 	text-align: left;
@@ -50,17 +50,25 @@ h1 {
 	background: white;
 	border-radius: 0 0 5px 5px;
 	max-height: 0px;
+	max-width: 0px;
 	overflow: hidden;
 	position: relative;
 	z-index: 500;
-			transition: max-height 500ms;
-		 -o-transition: max-height 500ms; /* Opera */
-	   -moz-transition: max-height 500ms; /* Firefox 4 */
-	-webkit-transition: max-height 500ms; /* Safari and Chrome */
+	/* onMouseOut: Width waits until height is done before shrinking */
+			transition: max-height 0.3s, max-width 0 ease 0.3s;
+		 -o-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Opera */
+	   -moz-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Firefox 4 */
+	-webkit-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Safari and Chrome */
 }
-	
+
 .person:hover .cvset {
 	max-height: 200px;
+	max-width: 260px;
+	/* onMouseOver: Width expands immediately before height transitions */
+			transition: max-height 0.3s, max-width 0 ease 0;
+		 -o-transition: max-height 0.3s, max-width 0 ease 0; /* Opera */
+	   -moz-transition: max-height 0.3s, max-width 0 ease 0; /* Firefox 4 */
+	-webkit-transition: max-height 0.3s, max-width 0 ease 0; /* Safari and Chrome */
 }
 	
 .photo {
@@ -116,26 +124,31 @@ acronym {
 	background: #ddd;
 	margin-bottom: 5px;
 	padding: 0px;
-	border-radius: 30px; 
-	box-shadow: 
-	inset 0 5px 10px rgba(0,0,0,0.2);
+	border-radius: 3px; 
+/*	box-shadow: 
+	inset 0 5px 10px rgba(0,0,0,0.2);*/
 	overflow: hidden;
 }
 
 .percent {
 	height: 100%;
 	display: inline-block;
-border-radius: 50px 5px 5px 50px;
-background-color: #39e;
-box-shadow: 
-/* This is the top gradient for the color bar */
-inset 0 4px 0 rgba(255,255,255,0.2),
-inset 0 1px 2px rgba(0,0,0,0.125);
-border-right: 1px solid rgba(0,0,0,0.1);
+	border-radius: 3px 0 0 3px;
+	background-color: #39e;
+	/*box-shadow: 
+	 This is the top gradient for the color bar
+	inset 0 4px 0 rgba(255,255,255,0.2),
+	inset 0 1px 2px rgba(0,0,0,0.125); */
+	border-right: 1px solid rgba(0,0,0,0.2);
 }
 
 span.completeness {
 	background: #fff;
+	border-radius: 2px;
 	width: 50px;
-	height: 5px;
+	height: 4px;
+}
+
+span.percent {
+	border-radius: 2px 0 0 2px;
 }

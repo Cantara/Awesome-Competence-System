@@ -139,7 +139,8 @@ def download(request, format):
 		response['Content-Disposition'] = 'attachment; filename=%s %s Freecode CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"))
 		return response
 	else:
-		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename=p.name.encode('ascii', 'ignore'), format=format) # Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
+		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename='%s %s Freecode CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_")), format=format) 
+		# Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
 
 def odt(request, person_id=1):
 
