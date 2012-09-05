@@ -172,6 +172,13 @@ class TimedSkill(models.Model):
 	def to_monthname(self):
 		return MONTH_CHOICES[self.to_month][1]
 	
+	def save(self, *args, **kwargs):
+		s = self.title + self.title_en + self.description + self.description_en
+		if len(s) > 0:
+			super(TimedSkill, self).save(*args, **kwargs)
+		else:
+			pass
+	
 	class Meta:
 		ordering = ['-to_year','-from_year']
 		abstract = True

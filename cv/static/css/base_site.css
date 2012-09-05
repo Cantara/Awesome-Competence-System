@@ -62,6 +62,7 @@ a.section:link, a.section:visited { color: #666666; }
 .form-row {
 	border: 0 !important;
 	padding: .5em !important;
+	clear:both;
 	}
 	
 .add-row {background: transparent !important; border:none !important;}
