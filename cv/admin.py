@@ -1,4 +1,4 @@
-from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv
+from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
@@ -75,7 +75,8 @@ class PersonAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect("/cv/")
 	def response_delete(self, request, obj, post_url_continue=None):
 		return HttpResponseRedirect("/cv/")
-
+	
+	# Adding the list of popular techs
 	def render_change_form(self, request, context, *args, **kwargs):
 		
 		techlist = {}
@@ -122,6 +123,7 @@ class CvForm(ModelForm):
 		self.fields['other'].queryset = Other.objects.filter(person__exact = self.instance.person)
 
 class CvAdmin(admin.ModelAdmin):
+	save_on_top = True
 	form = CvForm
 	readonly_fields = ['person']
 	fields = ('person','tags', ('title', 'title_en'), ('profile', 'profile_en'), 'technology', 'experience', 'workplace', 'education', 'other')
@@ -135,3 +137,23 @@ class CvAdmin(admin.ModelAdmin):
 			return HttpResponseRedirect("/cv/%s" % obj.id)
 
 admin.site.register(Cv, CvAdmin)
+
+class StyleAdmin(admin.ModelAdmin):
+	
+	def render_change_form(self, request, context, *args, **kwargs):
+		style = Style.objects.get(id=1)
+		extra = {
+			'has_file_field': True, # Make your form render as multi-part.
+			'style': style,
+        }
+		context.update(extra)
+		superclass = super(StyleAdmin, self)
+		return superclass.render_change_form(request, context, *args, **kwargs)
+		
+	def response_change(self, request, obj, post_url_continue=None):
+		if request.POST.has_key("_continue"):
+			return HttpResponseRedirect("/admin/cv/style/%s" % obj.pk)
+		else:
+			return HttpResponseRedirect("/cv/")
+
+admin.site.register(Style, StyleAdmin)

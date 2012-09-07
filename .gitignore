@@ -4,6 +4,6 @@
 backup
 cv.db
 deps
-static
+static/media
 local_settings.py
 howtoupdate.txt

@@ -5,11 +5,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse, HttpResponseRedirect
 from django import http
-from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other
+from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style
 from webodt.shortcuts import _ifile, render_to_response as rtr
 from webodt.converters import converter
 import webodt
-from reportlab.pdfgen import canvas
 import simplejson as json
 import settings
 import ordereddict as odict
@@ -18,6 +17,7 @@ from django.contrib.auth import authenticate, login, logout
 from appy.pod.renderer import Renderer
 import requests #get it http://docs.python-requests.org/en/latest/index.html
 
+# Downloading a CV as ODT/DOC/PDF using the JSON submitted from the CVpreview
 def download(request, format):
 	
 	if(request.POST['cvjson']):
@@ -41,9 +41,13 @@ def download(request, format):
 			data = f.read()
 			f.close()
 		except:
-			imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
-			re = requests.get(imgUrl)
-			data = re.content
+			imgUrl = settings.PROJECT_ROOT + '/static/media/photos/blank.jpg'
+			f = open(imgUrl, 'r')
+			data = f.read()
+			f.close()
+			#imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
+			#re = requests.get(imgUrl)
+			#data = re.content
 		
 		t_set = []
 		e_set = []
@@ -123,8 +127,7 @@ def download(request, format):
 		}
 		
 	#else:
-		#get cvid from url and render the entire set of stuff from cv
-	
+		#get cvid from url and render the entire set of stuff from cv?
 	
 	doc=""
 	if format != "odt": doc = "doc"
@@ -139,59 +142,13 @@ def download(request, format):
 		response['Content-Disposition'] = 'attachment; filename=%s %s Freecode CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"))
 		return response
 	else:
-		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename='%s %s Freecode CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_")), format=format) 
+		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename='%s %s Freecode CV.%s' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
 		# Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
-
-def odt(request, person_id=1):
-
-	p = get_object_or_404(Person, pk=person_id)
-	
-	try:
-		imgUrl = p.image.url
-	except:
-		imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
-	re = requests.get(imgUrl)
-	data = re.content
-	
-	p.profile = p.profile.replace('\n','<br/>')
-	pro = p.profile.encode( "utf-8" )
-	p.profile = pro
-	t = p.technology_set.all()
-	e = p.experience_set.all()
-	w = p.workplace_set.all()
-	d = p.education_set.all()
-	dict = {
-		'l': {
-			'profile': 'Profil',
-			'experience': 'Erfaring',
-			'workplace': 'Arbeidsgivere',
-			'education': 'Utdanning'
-		}, 
-		'p': p, 
-		't': t, 
-		'e': e, 
-		'w': w, 
-		'd': d, 
-		'img': data,
-	}
-	srcFile = 'cvtest.odt'
-	rsltFile = 'resultatat.odt'
-	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
-	r.run()
-	
-	return HttpResponse("""
-		<html><body>
-			<h1>Fil skrevet</h1>
-		</body></html>
-		""")
-	
-	'''response = HttpResponse(open(rsltFile, 'rb').read(),mimetype='application/vnd.oasis.opendocument.text')
-	response['Content-Disposition'] = 'attachment; filename=lol.odt'
-	return response'''
 
 def cvlist(request):
 	all_persons = Person.objects.all()
-	return render_to_response('cv/cvlist.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
+	style = Style.objects.get(id=1)
+	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': style}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
@@ -275,8 +232,10 @@ def detail(request, cv_id, lang = ''):
 			'workplace': 'Arbeidsgivere',
 			'education': 'Utdanning',
 		}
+		
+	style = Style.objects.get(id=1)
 	
-	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l}, context_instance=RequestContext(request))
+	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': style}, context_instance=RequestContext(request))
 
 def mylogin(request):
 	if request.method == 'POST':

@@ -3,7 +3,7 @@ import datetime
 import django.contrib.auth.models
 from django.utils import timezone
 
-YEAR_CHOICES = [(None,'Year')]
+YEAR_CHOICES = [(0,'Year')]
 for r in range(1969, (datetime.datetime.now().year+1)):
 	YEAR_CHOICES.append((r,r))
 	
@@ -38,16 +38,19 @@ class Person(models.Model):
 		return self.name
 	
 	def age(self):
-		born = self.birthdate
-		today = datetime.date.today()
-		try:
-			birthday = born.replace(year=today.year)
-		except ValueError:
-			birthday = born.replace(year=today.year, day=born.day-1)
-		if birthday > today:
-			return today.year - born.year - 1
+		if self.birthdate:
+			born = self.birthdate
+			today = datetime.date.today()
+			try:
+				birthday = born.replace(year=today.year)
+			except ValueError:
+				birthday = born.replace(year=today.year, day=born.day-1)
+			if birthday > today:
+				return today.year - born.year - 1
+			else:
+				return today.year - born.year
 		else:
-			return today.year - born.year
+			return 0
 	
 	def test(self):
 		return self.experience_set.count()
@@ -174,7 +177,7 @@ class TimedSkill(models.Model):
 	
 	def save(self, *args, **kwargs):
 		s = self.title + self.title_en + self.description + self.description_en
-		if len(s) > 0:
+		if len(s) > 0 or self.from_year != 0:
 			super(TimedSkill, self).save(*args, **kwargs)
 		else:
 			pass
@@ -327,3 +330,15 @@ class Cv(models.Model):
 		
 	def __unicode__(self):
 		return self.person.name + ", " + self.tags
+		
+
+STYLE_CHOICES = (
+	('sky', 'Sky'),
+	('flat', 'Flat'),
+	('sharp', 'Sharp'),
+	('win8', 'Windows 8'),
+)		
+		
+class Style(models.Model):
+	logo = models.ImageField(upload_to="photos", null=True, blank=True)
+	stylesheet = models.CharField(max_length=10, choices=STYLE_CHOICES, default='sky')

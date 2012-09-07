@@ -1,0 +1,176 @@
+@import url('custom.css');
+
+body {
+	margin: 1em auto 1em auto;
+	text-align: center;
+	}
+
+#content { display: inline-block !important; text-align:left;}
+
+#header {
+	margin-bottom: 1em;
+	color: #333;
+	background-color: #fff; 
+	border-radius: 5px;
+	display:none !important;
+	}
+
+.breadcrumbs {display:none;}
+
+#content {
+	}
+
+h1 { 
+	color: #555; 
+	width: auto; 
+	border: none;
+	padding: 0.5em; 
+	font-size: 1.8em; 
+	font-weight: normal;
+	margin-bottom: 0.5em;
+	}
+	
+.object-tools a, li { background: none !important;}
+
+.module h2, .module caption, .inline-group h2 { background: transparent; color: #777; font-size: 1.7em; font-weight: normal; padding: 0.5em;}
+
+.inline-group h2 {cursor: pointer;}
+.inline-group h2:before {
+	content: "- ";
+	font-weight: 800;
+	font-family: fixedsys, courier new, sans-serif;
+}
+.inline-group h2.closed:before {
+	content: "+ ";
+}
+
+a { color: #39e !important;}
+
+a.section:link, a.section:visited { color: #666666; }
+
+.module, .inline-group, .submit-row {
+	border: none !important;
+	background: white !important;
+	padding: 1em;
+	}
+	
+/* The inlines that are contained within something else */
+.inline-related .module {
+	box-shadow: 		none;
+	-moz-box-shadow: 	none;
+	-webkit-box-shadow: none;
+}
+
+.submit-row { margin-bottom: 10px !important;}
+	
+.form-row {
+	border: 0 !important;
+	padding: .5em !important;
+	clear:both;
+	}
+	
+.add-row {background: transparent !important; border:none !important;}
+.add-row a {background-color: #ddd !important; color: #444 !important;}
+
+h3 {border-top: 1px solid #ddd;}
+
+
+input[name="_addanother"] {display:none;}
+input[name="_save"], input[name="_continue"] { font-size: 1.1em !important; background-color: #ddd !important; color: #444 !important; border:0 !important; float: right;}
+
+.ui-autocomplete { list-style: none !important; display:inline-block; text-align: left;}
+.ui-autocomplete li { list-style: none !important; display:inline-block;}
+.ui-autocomplete a { color: #444 !important;}
+.ui-autocomplete a:hover { color: #fff !important;}
+
+a.add-link {color: white !important;}
+
+select[multiple] {height: 150px; width: 70%;}
+
+.errorlist li {color: red !important;}
+
+body li {text-align: left;}
+
+#DragDiv {
+	z-index: 200; 
+	background-color: white; 
+	padding: 20px; 
+	padding-right: 40px; 
+	max-height: 90%; 
+	width: 200px;
+	max-height: 80%; 
+	overflow: hidden; 
+	overflow-y: auto;
+	position: fixed; 
+	top:5px; 
+	left:5px;
+}
+
+#DragDiv h4 {
+	position: absolute;
+	top:0;
+	right:0;
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin:    100% 100%;
+    -ms-transform-origin:     100% 100%;
+    -o-transform-origin:      100% 100%;
+    
+    -webkit-transform: rotate(-90deg); 
+    -moz-transform:    rotate(-90deg); 
+    -ms-transform:     rotate(-90deg); 
+    -o-transform:      rotate(-90deg); 	
+	z-index: 250;
+}
+
+#DragWordList {-moz-user-select: none;-webkit-user-select: none; cursor: move; list-style: none !important; padding: 0;}
+
+.ui-draggable {list-style: none !important; max-width: 200px; background: rgba(0,0,0,0.1) !important; margin: 2px; padding:2px; border-radius: 3px;}
+.ui-draggable:hover {color: #fff; background-color: #39e !important;}
+
+#MakeDrag {color: #333 !important;}
+
+#delete {float:right;}
+
+.dropHover {background-color: #ddd !important;}
+
+#popTechs {border: 1px solid #ddd; border-radius: 5px; margin: 5px; padding: 5px; max-width: 850px;}
+#popTechs span {cursor: move; display: inline-block; font-size: 0.9em;}
+
+
+/* TOOLTIP */
+#workplace_set-group .form-row {overflow: visible !important;}
+.tooltip {position: relative;}
+
+#workplace_set-group textarea:hover ~ .tooltip:after,
+#workplace_set-group textarea:focus ~ .tooltip:after {
+	background: white; 
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	position: absolute; 
+	top:0px; 
+	left:0px;
+	width: 200px;
+	padding: 5px;
+	margin-left: 5px;
+	border-radius: 5px;
+	color: #333;
+	content: "Remember to write about your: Responsibility, added value, technologies"; 
+	}
+
+
+@media (max-width: 1300px) {
+	body {
+		padding-left: 80px;
+	}
+
+	#DragDiv {
+		left:-180px; 
+				transition: left 500ms;
+			 -o-transition: left 500ms; /* Opera */
+		   -moz-transition: left 500ms; /* Firefox 4 */
+		-webkit-transition: left 500ms; /* Safari and Chrome */
+	}
+
+	#DragDiv:hover {
+		left: 5px;
+	}
+}

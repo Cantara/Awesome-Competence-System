@@ -1,9 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+{% load image_tags %}
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>FreeCode CV</title>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvlist.css"/>
+		<link rel="icon" type="image/png" href="http://www.freecode.no/wp-content/uploads/2012/03/favicon.ico" />
 	</head>
 	<body>
 		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
@@ -44,7 +46,45 @@
 			</div>
 			
 			<div id="content">
-			{% block content %}{% endblock %}
+				{% if all_persons %}
+					{% for p in all_persons|dictsort:"name" %}
+						<div class="person{% if forloop.last %} last{% endif %}">
+						
+							<div class="personhead">
+								<h4>{{ p.name }}</h4>
+								<h5>{% if p.title %}{{ p.title }}{% else %} ---{% endif %}</h5>
+								<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: left;">
+								{% if user.is_authenticated %}
+								<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
+								<div class="completeness"><div class="percent" style="width: {{ p.completeness.percent }}%; {% if p.completeness.percent < 100 %} background-color: red; {% endif %}"></div></div>
+								<p style="font-size: 0.8em"><acronym title="{{ p.completeness.comment }}">{{ p.completeness.percent }}% complete</acronym></p>
+								<p style="font-size: 0.6em; margin-top: 0.5em;">Updated: {{ p.last_edited|date:"SHORT_DATE_FORMAT" }}</p>
+								{% endif %}
+								<p class="techs">{{ p.name }} {% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}</p>
+							</div>
+							
+							<div class="cvset">
+								<table>
+								{% for cv in p.cv_set.all|dictsortreversed:"cvsort" %}
+									<tr>
+										<td><a href="/cv/{{ cv.id }}/" class="button wide{% if not cv.is_recent or not cv.status.complete and cv.tags != "Empty CV" %} red{% endif %}{% if cv.tags = "Empty CV" %} empty{% endif %}" title="{{ cv.status.comment }}">{{ cv.tags }}<br/>
+										<span class="dato">{% if cv.tags != "Empty CV" %}{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }} <span class="completeness"><span class="percent" style="width: {{ cv.status.percent }}%; {% if cv.status.percent < 100 %} background-color: red; {% endif %}"></span></span> {{ cv.status.percent }}%{% else %}&nbsp;{% endif %}</span></a></td>
+										{% if user.is_authenticated %}
+											<td><a href="/admin/cv/cv/{{ cv.id }}" class="button{% if not cv.is_recent %} red{% endif %}">Edit<br/>
+											<span class="dato"> &nbsp;</span></a></td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+								</table>
+							</div>
+							
+						</div>
+					{% endfor %}
+				{% else %}
+					<div class="person">
+						<p>Her er det ingen CVer, dessverre!</p>
+					</div>
+				{% endif %}
 			</div>
 			
 		
