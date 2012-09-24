@@ -1,0 +1,52 @@
+{% extends "cv/mbase.html" %}
+{% load image_tags %}
+
+
+{% block menu %}
+	{% if user.is_authenticated %}
+		<a href="/logout/?m=True" class="button topb">Log out</a>
+		<a href="/admin/cv/person/add/" class="button topb">Add new person</a>
+		{% if user.is_superuser %}
+		<a href="/admin/cv/style/1/" class="button topb">Change style</a>
+		{% endif %}
+	{% else %}
+		<form action="/login/" method="post" accept-charset="utf-8">
+			{% csrf_token %}
+			<span class="topb"><label for="username">User: </label><input type="text" name="username" value="" id="username" placeholder="Username" size="7"/> <label for="password">Pass: </label><input type="password" name="password" value="" id="password" size="7"/>
+			<input type="hidden" value="/m/" name="url" id="url"/>
+			<input type="submit" value="Log in" class="button"></span>
+		</form>
+	{% endif %}
+{% endblock %}
+			
+{% block content %}
+	{% if all_persons %}
+		{% for p in all_persons|dictsort:"name" %}
+			<article class="person">
+				{% if user.is_authenticated %}
+					<a href="/admin/cv/person/{{ p.id }}/" class="button edit">Edit<br/>person</a>
+				{% endif %}
+				<img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="photo" style="float: right;">
+				<h4><a href="person/{{ p.id }}/">{{ p.name }}</a></h4>
+				<h5>{% if p.title %}{{ p.title }}{% else %} ---{% endif %}</h5>
+				{% if user.is_authenticated %}
+					<p style="font-size: 0.8em"><acronym title="{{ p.completeness.comment }}"><span class="completeness"><span class="percent{% if p.completeness.percent < 100 %} redpercent{% endif %}" style="width: {{ p.completeness.percent }}%;"></span></span>{{ p.completeness.percent }}% </acronym> Updated: {{ p.last_edited|date:"SHORT_DATE_FORMAT" }}</p>
+				{% else %}
+					<p style="font-size: 0.7em">{{ p.phone }} - {{ p.mail }}</p>
+				{% endif %}
+			</article>
+		{% endfor %}
+	{% else %}
+		<div class="person">
+			<p>Her er det ingen CVer, dessverre!</p>
+		</div>
+	{% endif %}
+		
+	<div class="person step-links">
+		{% if all_persons.has_previous %}
+			<a href="?page={{ all_persons.previous_page_number }}" class="button" style="float: left;">&nbsp;&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+		{% endif %} {{ all_persons.number }} / {{ all_persons.paginator.num_pages }} {% if all_persons.has_next %}
+			<a href="?page={{ all_persons.next_page_number }}" class="button" style="float: right;">&nbsp;&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+		{% endif %}
+	</div>
+{% endblock %}

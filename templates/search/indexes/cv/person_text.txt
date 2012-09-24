@@ -1,0 +1,40 @@
+{{ object.name }}
+{{ object.title }}
+{% for t in object.technology_set.all %}}
+	{{ t.data }}
+{% endfor %}
+{% for e in object.experience_set.all %}}
+	{{ e.title }}
+	{{ e.title_en }}
+	{{ e.description }}
+	{{ e.description_en }}
+	{{ e.company }}
+	{{ e.company_en }}
+	{{ e.techs }}
+{% endfor %}
+{% for w in object.workplace_set.all %}}
+	{{ w.title }}
+	{{ w.title_en }}
+	{{ w.description }}
+	{{ w.description_en }}
+	{{ w.company }}
+	{{ w.company_en }}
+{% endfor %}
+{% for d in object.education_set.all %}}
+	{{ d.title }}
+	{{ d.title_en }}
+	{{ d.description }}
+	{{ d.description_en }}
+	{{ d.school }}
+	{{ d.school_en }}
+{% endfor %}
+{% for o in object.other_set.all %}}
+	{{ o.data }}
+{% endfor %}
+{% for c in object.cv_set.all %}}
+	{{ c.title }}
+	{{ c.title_en }}
+	{{ c.profile }}
+	{{ c.profile_en }}
+{% endfor %}
+{{ object.mail }}

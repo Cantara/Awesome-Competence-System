@@ -1,0 +1,27 @@
+{% load image_tags %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width">
+		<!--<meta name="viewport" content = "initial-scale = 1.0, user-scalable = no">-->
+		<title>FreeCode CV</title>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/mpersonlist.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/{{ style.stylesheet }}.css"/>
+		<link rel="icon" type="image/png" href="http://www.freecode.no/wp-content/uploads/2012/03/favicon.ico" />
+	</head>
+	<body>
+			
+			<nav>				
+				<h1><img id="printlogo" src="{{ style.logo|scale:'110x110' }}">CV</h1>
+				{% block menu %}
+				{% endblock %}
+			</nav>
+			
+			<section id="content">
+				{% block content %}
+				{% endblock %}
+			</section>
+			
+	</body>
+</html>

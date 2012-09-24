@@ -1,0 +1,88 @@
+* {margin:0; padding:0;}
+
+body {font-size: 12pt;}
+
+#content {}
+
+nav, .person {
+	position: relative;
+	background: white;
+	margin: 0 auto 0.5em auto;
+	padding: .5em;
+	border-radius:0 !important; 
+	max-width: 50em;
+	overflow:auto;
+	}
+
+#printlogo {
+	width: 50px;
+	margin: .5em;
+	vertical-align: middle;
+}
+
+h1 {
+	font-weight: normal;
+	font-size: 1.2em;
+	float: left;
+	}
+	
+.photo {
+	max-width: 50px;
+	max-height: 50px;
+	margin-right: 10px; 
+	}
+
+ul {list-style: none;}
+
+.personhead {
+}
+
+
+.edit {
+	float: right;
+}
+
+.dato {font-size: 0.7em;}
+
+.hidden {
+	max-width: 0px;
+	min-width: 0px;
+	opacity: 0;
+	padding:0;
+	margin:0;
+	overflow: hidden;
+}
+
+.techs {display:none;}
+
+h4 {
+	font-weight: normal;
+	font-size: 1em;
+	}
+h3 {
+	font-weight: normal;
+	font-size: 0.8em;
+}
+
+label {
+	font-size: 0.7em;
+}
+
+h5 {font-weight: normal; color: #999;}
+
+acronym {
+	cursor: help;
+	border-bottom: 1px dotted #999;
+}
+
+a {
+	color: #39e;
+}
+
+.topb {
+float: right;
+}
+
+.step-links {
+	text-align: center;
+}
