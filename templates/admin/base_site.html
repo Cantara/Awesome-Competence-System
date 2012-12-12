@@ -1,13 +1,13 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block title %}{{ title }} | {% trans 'Freecode CV' %}{% endblock %}
+{% block title %}{{ title }} | {% trans 'Altran CV' %}{% endblock %}
 
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base_site.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/{{ style.stylesheet }}.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
 
 {% endblock %}
 
@@ -153,7 +153,7 @@ $.fn.insertAtCaret = function (myValue) {
 	<h4>Copy-Paste-Helper</h4>
 	<p><img src="{{ STATIC_URL }}img/trash.png" id="delete">You can paste text into the textarea, click "Make draggable text", and then drag the text to the form to paste the text. To remove a bit of unwanted text, drop it in the bin!</p>
     <ul id="DragWordList">
-      <li>FreeCode AS</li>
+      <li>Altran AS</li>
     </ul>
 	<textarea id="DragText" rows="5"></textarea><br/>
 	<a class="button" id="MakeDrag">Make draggable text</a>

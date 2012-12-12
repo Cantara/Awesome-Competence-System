@@ -4,9 +4,9 @@
   <head>
     <meta charset="utf-8" />
 	<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-    <title>{{ person.name }} CV - FreeCode AS</title>
+    <title>{{ person.name }} CV - Altran AS</title>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/{{ style.stylesheet }}.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvpre.css" media="screen, print"/>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvprint.css" media="print"/>
 	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cvprint.css" media="screen" id="printview"/>
@@ -47,7 +47,7 @@
 	</div>
 	
 	<div class="body">
-	<img id="printlogo" src="{{ STATIC_URL }}img/freecodesentrert.png">
+	<img id="printlogo" src="{{ STATIC_URL }}img/altranlogo.png">
 
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
@@ -90,6 +90,7 @@
 		{% endfor %}
 		</div>
 		
+
 		<div class="part">
 			<h3 class="left">{{ l.experience }}</h3>
 			<div class="bigbox sortwithin">

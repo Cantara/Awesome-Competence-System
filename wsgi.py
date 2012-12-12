@@ -16,8 +16,8 @@ framework.
 import os
 import sys
 
-sys.path.append('/srv/vhosts/cv.dev.freecode.no')
-sys.path.append('/srv/vhosts/cv.dev.freecode.no/cvapp')
+sys.path.append('/var/www')
+sys.path.append('/var/www/cvapp')
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cvapp.settings")
 

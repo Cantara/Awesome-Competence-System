@@ -9,9 +9,10 @@ from cv.models import Cv, Person, Technology, Experience, Workplace, Education, 
 from webodt.shortcuts import _ifile, render_to_response as rtr
 from webodt.converters import converter
 import webodt
-import simplejson as json
+# import simplejson as json
+import json
 import settings
-import ordereddict as odict
+from collections import OrderedDict
 from django.contrib.auth import authenticate, login, logout
 
 from appy.pod.renderer import Renderer
@@ -22,7 +23,7 @@ def download(request, format):
 	
 	if(request.POST['cvjson']):
 	
-		a = json.loads(request.POST['cvjson'], object_pairs_hook = odict.OrderedDict, strict=False)
+		a = json.loads(request.POST['cvjson'], object_pairs_hook = OrderedDict, strict=False)
 			
 		p = Person(
 			name = a['name'],
@@ -139,7 +140,7 @@ def download(request, format):
 	r.run()
 	if format == "odt":
 		response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-		response['Content-Disposition'] = 'attachment; filename=%s %s Freecode CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"))
+		response['Content-Disposition'] = 'attachment; filename=%s %s Altran CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"))
 		return response
 	else:
 		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename='%s %s Freecode CV.%s' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
@@ -147,8 +148,8 @@ def download(request, format):
 
 def cvlist(request):
 	all_persons = Person.objects.all()
-	style = Style.objects.get(id=1)
-	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': style}, context_instance=RequestContext(request))
+	# style = Style.objects.get(id=1)
+	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': ''}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
@@ -233,9 +234,9 @@ def detail(request, cv_id, lang = ''):
 			'education': 'Utdanning',
 		}
 		
-	style = Style.objects.get(id=1)
+	# style = Style.objects.get(id=1)
 	
-	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': style}, context_instance=RequestContext(request))
+	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': ''}, context_instance=RequestContext(request))
 
 def mylogin(request):
 	if request.method == 'POST':
