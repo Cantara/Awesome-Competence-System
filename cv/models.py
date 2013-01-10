@@ -27,6 +27,7 @@ MONTH_CHOICES = (
 class Person(models.Model):
 	name = models.CharField("Name*", max_length=50)
 	title = models.CharField("Job title", max_length=60, null=True, blank=True)
+	linkedin = models.URLField("Linked-in URL", null=True, blank=True)
 	phone = models.CharField(max_length=20, null=True, blank=True)
 	mail = models.EmailField("E-mail*")
 	photo = models.URLField("Photo-URL", null=True, blank=True)
@@ -342,3 +343,30 @@ STYLE_CHOICES = (
 class Style(models.Model):
 	logo = models.ImageField(upload_to="photos", null=True, blank=True)
 	stylesheet = models.CharField(max_length=10, choices=STYLE_CHOICES, default='sky')
+
+# COMPETENCEMATRIX MODEL
+
+class CompetenceField(models.Model):
+	label = models.CharField("Label", max_length=60)
+	description = models.TextField(null=True, blank=True)
+
+class CompetenceMatrix(models.Model):
+	name = models.CharField("Name", max_length=60)
+	description = models.TextField(null=True, blank=True)
+	last_edited = models.DateTimeField(auto_now=True)
+	created = models.DateTimeField(auto_now_add=True)
+	competencefield = models.ManyToManyField(CompetenceField, null=True, blank=True)
+	def rating(self):
+		return self.created
+		# Calculate the mean of the individual ratings from each entry
+
+class CompetenceMatrixEntry(models.Model):
+	person = models.ForeignKey(Person)
+	rating = models.IntegerField()
+
+class CompetenceFieldEntry(models.Model):
+	competencematrixentry = models.ForeignKey(CompetenceMatrixEntry)
+	competencefield = models.ForeignKey(CompetenceField)
+	competencerating = models.IntegerField()
+	relevant_experience = models.ManyToManyField(Experience, blank=True, null=True)
+
