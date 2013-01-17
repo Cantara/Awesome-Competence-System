@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Altran Competence Matrices List</title>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/personlist.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
+		<link rel="icon" type="image/png" href="http://www.freecode.no/wp-content/uploads/2012/03/favicon.ico" />
+	</head>
+	<body>
+			<div id="menu">
+				<img id="printlogo" src="">
+				<h1>CV</h1>
+				Search:
+				<input type="text" name="filter" id="filter" size="10"/>
+				<br/>
+				<br/>
+					{% if user.is_authenticated %}
+						<a href="/admin/cv/person/add/" class="button">Add new person</a>
+						{% if user.is_superuser %}
+							<br/>
+							<br/>
+							<a href="/admin/cv/style/1/" class="button">Change style</a>
+						{% endif %}
+						<br/>
+						<br/>
+						<a href="/logout/" class="button">Log out</a>
+					{% else %}
+						<h3>Log in</h3>
+						<form action="/login/" method="post" accept-charset="utf-8">
+							{% csrf_token %}
+							<label for="username">Username</label><input type="text" name="username" value="" id="username" size="10"/>
+							<label for="password">Password</label><input type="password" name="password" value="" id="password" size="10"/>
+							<p><input type="submit" value="Log in" class="button" style="margin-top: 1em !important;"></p>
+						</form>
+					{% endif %}
+			</div>
+			
+			<div id="content">
+				{% if all_matrices %}
+					{% for m in all_matrices|dictsort:"name" %}
+						<div class="person{% if forloop.last %} last{% endif %}">
+						
+							<div class="personhead">
+								<h4>{{ m.name }}</h4>
+								<p><a href="/admin/cv/competencematrix/{{m.id}}">Rediger</a></p>
+								<p><a href="/matrix/{{m.id}}">Bruk denne matrisen</a></p>
+							</div>
+							
+						</div>
+					{% endfor %}
+				{% else %}
+					<div class="person">
+						<p>Her er det ingen kompetansematriser, dessverre!</p>
+					</div>
+				{% endif %}
+			</div>
+	</body>
+</html>

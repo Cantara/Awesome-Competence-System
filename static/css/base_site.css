@@ -1,13 +1,14 @@
-@import url('custom.css');
-
 body {
 	margin: 1em auto 1em auto;
 	text-align: center;
+	background: #eee url(../img/sky.jpg) fixed;
+	background-size: cover;
+	font-family: arial !important;
 	}
 
 #content { display: inline-block !important; text-align:left;}
 
-#header {
+#header{
 	margin-bottom: 1em;
 	color: #333;
 	background-color: #fff; 
@@ -20,10 +21,11 @@ body {
 #content {
 	}
 
-h1 { 
-	color: #555; 
+h1 { color: #555; 
 	width: auto; 
+	border-radius: 5px; 
 	border: none;
+	background: white; 
 	padding: 0.5em; 
 	font-size: 1.8em; 
 	font-weight: normal;
@@ -49,17 +51,11 @@ a { color: #39e !important;}
 a.section:link, a.section:visited { color: #666666; }
 
 .module, .inline-group, .submit-row {
+	border-radius: 5px; 
 	border: none !important;
 	background: white !important;
 	padding: 1em;
 	}
-	
-/* The inlines that are contained within something else */
-.inline-related .module {
-	box-shadow: 		none;
-	-moz-box-shadow: 	none;
-	-webkit-box-shadow: none;
-}
 
 .submit-row { margin-bottom: 10px !important;}
 	
@@ -74,6 +70,7 @@ a.section:link, a.section:visited { color: #666666; }
 
 h3 {border-top: 1px solid #ddd;}
 
+input, textarea { border-radius: 4px;}
 
 input[name="_addanother"] {display:none;}
 input[name="_save"], input[name="_continue"] { font-size: 1.1em !important; background-color: #ddd !important; color: #444 !important; border:0 !important; float: right;}
@@ -89,88 +86,8 @@ select[multiple] {height: 150px; width: 70%;}
 
 .errorlist li {color: red !important;}
 
-body li {text-align: left;}
-
-#DragDiv {
-	z-index: 200; 
-	background-color: white; 
-	padding: 20px; 
-	padding-right: 40px; 
-	max-height: 90%; 
-	width: 200px;
-	max-height: 80%; 
-	overflow: hidden; 
-	overflow-y: auto;
-	position: fixed; 
-	top:5px; 
-	left:5px;
-}
-
-#DragDiv h4 {
-	position: absolute;
-	top:0;
-	right:0;
-    -webkit-transform-origin: 100% 100%;
-    -moz-transform-origin:    100% 100%;
-    -ms-transform-origin:     100% 100%;
-    -o-transform-origin:      100% 100%;
-    
-    -webkit-transform: rotate(-90deg); 
-    -moz-transform:    rotate(-90deg); 
-    -ms-transform:     rotate(-90deg); 
-    -o-transform:      rotate(-90deg); 	
-	z-index: 250;
-}
-
-#DragWordList {-moz-user-select: none;-webkit-user-select: none; cursor: move; list-style: none !important; padding: 0;}
-
-.ui-draggable {list-style: none !important; max-width: 200px; background: rgba(0,0,0,0.1) !important; margin: 2px; padding:2px; border-radius: 3px;}
-.ui-draggable:hover {color: #fff; background-color: #39e !important;}
-
-#MakeDrag {color: #333 !important;}
-
-#delete {float:right;}
-
-.dropHover {background-color: #ddd !important;}
-
-#popTechs {border: 1px solid #ddd; border-radius: 5px; margin: 5px; padding: 5px; max-width: 850px;}
-#popTechs span {cursor: move; display: inline-block; font-size: 0.9em;}
-
-
-/* TOOLTIP */
-#workplace_set-group .form-row {overflow: visible !important;}
-.tooltip {position: relative;}
-
-#workplace_set-group textarea:hover ~ .tooltip:after,
-#workplace_set-group textarea:focus ~ .tooltip:after {
-	background: white; 
-	box-shadow: 0 0 10px rgba(0,0,0,0.3);
-	position: absolute; 
-	top:0px; 
-	left:0px;
-	width: 200px;
-	padding: 5px;
-	margin-left: 5px;
-	border-radius: 5px;
-	color: #333;
-	content: "Remember to write about your: Responsibility, added value, technologies"; 
-	}
-
-
-@media (max-width: 1300px) {
+@media (max-width: 1366px) {
 	body {
 		padding-left: 80px;
-	}
-
-	#DragDiv {
-		left:-180px; 
-				transition: left 500ms;
-			 -o-transition: left 500ms; /* Opera */
-		   -moz-transition: left 500ms; /* Firefox 4 */
-		-webkit-transition: left 500ms; /* Safari and Chrome */
-	}
-
-	#DragDiv:hover {
-		left: 5px;
 	}
 }

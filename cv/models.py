@@ -346,23 +346,29 @@ class Style(models.Model):
 
 # COMPETENCEMATRIX MODEL
 
-class CompetenceField(models.Model):
-	label = models.CharField("Label", max_length=60)
-	description = models.TextField(null=True, blank=True)
-
 class CompetenceMatrix(models.Model):
 	name = models.CharField("Name", max_length=60)
 	description = models.TextField(null=True, blank=True)
 	last_edited = models.DateTimeField(auto_now=True)
 	created = models.DateTimeField(auto_now_add=True)
-	competencefield = models.ManyToManyField(CompetenceField, null=True, blank=True)
+	def __unicode__(self):
+		return self.name
 	def rating(self):
 		return self.created
 		# Calculate the mean of the individual ratings from each entry
 
+class CompetenceField(models.Model):
+	competencematrix = models.ForeignKey(CompetenceMatrix)
+	label = models.CharField("Label", max_length=60)
+	#category = models.CharField("Category", max_length=40)
+	description = models.TextField(null=True, blank=True)
+	def __unicode__(self):
+		return self.label
+
 class CompetenceMatrixEntry(models.Model):
 	person = models.ForeignKey(Person)
-	rating = models.IntegerField()
+	matrix = models.ForeignKey(CompetenceMatrix)
+	rating = models.IntegerField(null=True, blank=True)
 
 class CompetenceFieldEntry(models.Model):
 	competencematrixentry = models.ForeignKey(CompetenceMatrixEntry)

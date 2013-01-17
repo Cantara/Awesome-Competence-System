@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ matrix.name }}</title>
+		<style type="text/css">
+			body {font-family: Arial, sans-serif; color: #555; max-width: 1000px;}
+			ul {list-style: none; padding:0;}
+			li {background: #eee; border-bottom: 1px solid #aaa; padding: 0.4em;}
+			li:hover {background: #ddd;}
+			li .description {position: absolute; background: white; width: 30em; max-height:0; font-size: 80%; -webkit-transition: all 0.1s; overflow: hidden;}
+			li:hover .description {max-height: 20em; padding: 1em; }
+			form span {float: right;}
+			
+			input:focus {border:1px dotted orange;}
+			label:focus {border:1px dotted orange;}
+
+			#foo:checked::before,
+			form input[type="radio"] { width:0; cursor: pointer; margin-right: 1em;}
+			form input[type="radio"]::before { content:''; display: inline-block; width:1.3em;height:1.3em; background: orange;}
+			form input[type="radio"]:checked::before {
+			    background-image: -webkit-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
+			    background-image:    -moz-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
+			    background-image:     -ms-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
+			    background-image:      -o-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
+			    background-image:         linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
+			}
+			form span:first-child:checked::before {background: orange;}
+
+		</style>
+	</head>
+	<body>
+		<h1>{{ matrix.name }}</h1>
+		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+			{% if matrix %}
+				{% csrf_token %}
+				<form action="competenceentrysubmit/" id="entry">
+				<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
+				<select name="person_id" onChange="loadentry();">
+					{% if all_persons %}
+						{% for p in all_persons %}
+						<option value="{{ p.id }}">{{ p.name }}</option>
+						{% endfor %}
+					{% endif %}
+				</select>
+				<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
+				<ul>
+				{% for f in matrix.competencefield_set.all %}
+					<li>
+						{{ f.label }}
+						<span>
+						<input type="radio" value="0" name="field[{{ f.id }}]" checked>
+						<input type="radio" value="1" name="field[{{ f.id }}]">
+						<input type="radio" value="2" name="field[{{ f.id }}]">
+						<input type="radio" value="3" name="field[{{ f.id }}]">
+						</span>
+						<div class="description">
+							{{ f.description }}
+						</div>
+					</li>
+				{% endfor %}
+				</ul>
+			<input type="button" value="SAVE ENTRY" onClick="addentry();" style="float:right;">
+				</form>
+			{% else %}
+				<p>Matrix not found</p>
+			{% endif %}
+
+		<script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
+		<script type="text/javascript">
+
+			function getCookie(name) {
+			    var cookieValue = null;
+			    if (document.cookie && document.cookie != '') {
+			        var cookies = document.cookie.split(';');
+			        for (var i = 0; i < cookies.length; i++) {
+			            var cookie = jQuery.trim(cookies[i]);
+			            // Does this cookie string begin with the name we want?
+			            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+			                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+			                break;
+			            }
+			        }
+			    }
+			    return cookieValue;
+			}
+			var csrftoken = getCookie('csrftoken');
+
+			function csrfSafeMethod(method) {
+			    // these HTTP methods do not require CSRF protection
+			    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+			}
+			function sameOrigin(url) {
+			    // test that a given url is a same-origin URL
+			    // url could be relative or scheme relative or absolute
+			    var host = document.location.host; // host + port
+			    var protocol = document.location.protocol;
+			    var sr_origin = '//' + host;
+			    var origin = protocol + sr_origin;
+			    // Allow absolute or scheme relative URLs to same origin
+			    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+			        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+			        // or any other URL that isn't scheme relative or absolute i.e relative.
+			        !(/^(\/\/|http:|https:).*/.test(url));
+			}
+			$.ajaxSetup({
+			    beforeSend: function(xhr, settings) {
+			        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+			            // Send the token to same-origin, relative URLs only.
+			            // Send the token only if the method warrants CSRF protection
+			            // Using the CSRFToken value acquired earlier
+			            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			        }
+			    }
+			});
+
+			function addentry() { 
+				var formdata = FormatJSON( $('#entry').serializeObject() );
+				console.log(formdata);
+				$.ajax({
+				  type: "POST",
+				  url: "../addentry/",
+				  data: formdata
+				}).done(function( msg ) {
+				  alert( msg );
+				});
+			}
+
+			function loadentry() { 
+				var formdata = FormatJSON( $('#entry').serializeObject() );
+				$.ajax({
+				  type: "POST",
+				  url: "../loadentry/",
+				  data: formdata
+				}).done(function( msg ) {
+				  var j = jQuery.parseJSON( msg );
+				  populatefields(j.field);
+				  // alert( FormatJSON(j) );
+				});
+			}
+
+			function populatefields(f) {
+				for (var key in f) {
+				  if (f.hasOwnProperty(key)) {
+				    $("input[name='field["+key+"]'][value="+f[key]+"]").prop( 'checked', true );
+				  }
+				}
+			}
+
+			loadentry();
+
+		</script>
+	</body>
+</html>

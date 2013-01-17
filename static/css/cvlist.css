@@ -1,10 +1,17 @@
-@import url('custom.css');
-
 * {margin:0; padding:0;}
+
+body {
+	font-family: arial; 
+	color: #777; 
+	background: #ddd url(../img/sky.jpg) fixed; 
+	background-size: cover;
+	}
 
 #content {position: absolute; top: 20px; left: 160px;}
 
-#menu {
+#menu { 
+	background: #fff; 
+	border-radius:5px; 
 	width: 100px; 
 	padding: 10px; 
 	position:fixed; 
@@ -15,28 +22,24 @@
 
 h1 {
 	margin-bottom: 10px; 
-	font-size: 1.3em; 
+	font-size: 1.9em; 
 	font-weight: normal; 
-	display: block;
+	color: #000;
 	}
 
 .person {
+	border-radius: 5px;
 	margin: 0 20px 20px 0;
 	padding: 20px; 
-	max-width: 260px;
-	min-width: 260px;
+	width: 260px;
 	height: 110px;
 	float: left; 
 	text-align: left;
 	position: relative;
-			transition-property: min-width, max-width, opacity, top, left, right, bottom;
-		 -o-transition-property: min-width, max-width, opacity, top, left, right, bottom; /* Opera */
-	   -moz-transition-property: min-width, max-width, opacity, top, left, right, bottom; /* Firefox 4 */
-	-webkit-transition-property: min-width, max-width, opacity, top, left, right, bottom; /* Safari and Chrome */
-			transition-duration: 0.5s;
-		 -o-transition-duration: 0.5s; /* Opera */
-	   -moz-transition-duration: 0.5s; /* Firefox 4 */
-	-webkit-transition-duration: 0.5s; /* Safari and Chrome */
+			transition: max-width 0.5s, opacity 0.5s;
+		 -o-transition: max-width 0.5s, opacity 0.5s; /* Opera */
+	   -moz-transition: max-width 0.5s, opacity 0.5s; /* Firefox 4 */
+	-webkit-transition: max-width 0.5s, opacity 0.5s; /* Safari and Chrome */
 	}
 
 .last {
@@ -44,15 +47,12 @@ h1 {
 }	
 	
 .cvset {
-	display: inline-block;
 	background: white;
 	border-radius: 0 0 5px 5px;
 	max-height: 0px;
 	max-width: 0px;
 	overflow: hidden;
-	position: absolute;
-	top:150px;
-	left:20px;
+	position: relative;
 	z-index: 500;
 	/* onMouseOut: Width waits until height is done before shrinking */
 			transition: max-height 0.3s, max-width 0 ease 0.3s;
@@ -62,7 +62,7 @@ h1 {
 }
 
 .person:hover .cvset {
-	max-height: 220px;
+	max-height: 200px;
 	max-width: 260px;
 	/* onMouseOver: Width expands immediately before height transitions */
 			transition: max-height 0.3s, max-width 0 ease 0;
@@ -75,9 +75,17 @@ h1 {
 	max-width: 50px;
 	max-height: 50px;
 	margin-right: 10px; 
+	border-radius: 3px;
 	}
 
 ul {list-style: none;}
+
+.person, #menu, .cvset {
+	background: white;
+	-moz-box-shadow: 	0px 2px 2px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.5);
+	box-shadow: 		0px 2px 2px rgba(0,0,0,0.5);
+	}
 
 .personhead {
 	height: 130px;
@@ -92,7 +100,6 @@ ul {list-style: none;}
 
 .hidden {
 	max-width: 0px;
-	min-width: 0px;
 	opacity: 0;
 	padding:0;
 	margin:0;
@@ -101,23 +108,47 @@ ul {list-style: none;}
 
 .techs {display:none;}
 
-h4 {
-	font-weight: normal;
-	font-size: 1.1em; 
-	margin-bottom: 5px;
-	}
-h3 {
-	font-weight: normal;
-	font-size: 0.8em;
-}
-
-label {
-	font-size: 0.7em;
-}
+h4 {font-weight: normal; color: #39e; font-size: 1.1em; margin-bottom: 5px;}
 
 h5 {color: #777; font-weight: normal; margin-bottom: 15px;}
 
 acronym {
 	cursor: help;
 	border-bottom: 1px dotted #999;
+}
+
+.completeness {
+	display: inline-block;
+	width: 90px;
+	height: 10px;
+	background: #ddd;
+	margin-bottom: 5px;
+	padding: 0px;
+	border-radius: 3px; 
+/*	box-shadow: 
+	inset 0 5px 10px rgba(0,0,0,0.2);*/
+	overflow: hidden;
+}
+
+.percent {
+	height: 100%;
+	display: inline-block;
+	border-radius: 3px 0 0 3px;
+	background-color: #39e;
+	/*box-shadow: 
+	 This is the top gradient for the color bar
+	inset 0 4px 0 rgba(255,255,255,0.2),
+	inset 0 1px 2px rgba(0,0,0,0.125); */
+	border-right: 1px solid rgba(0,0,0,0.2);
+}
+
+span.completeness {
+	background: #fff;
+	border-radius: 2px;
+	width: 50px;
+	height: 4px;
+}
+
+span.percent {
+	border-radius: 2px 0 0 2px;
 }

@@ -1,4 +1,4 @@
-from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style
+from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style, CompetenceMatrix, CompetenceField, CompetenceMatrixEntry, CompetenceFieldEntry
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
@@ -63,7 +63,7 @@ class PersonAdmin(admin.ModelAdmin):
 	
 	save_on_top = True
 	
-	fields = ('name', 'title', 'phone', 'mail', 'image', 'birthdate')
+	fields = ('name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	def response_change(self, request, obj, post_url_continue=None):
@@ -157,3 +157,17 @@ class StyleAdmin(admin.ModelAdmin):
 			return HttpResponseRedirect("/cv/")
 
 admin.site.register(Style, StyleAdmin)
+
+class CompetenceFieldInline(admin.TabularInline):
+	model = CompetenceField
+	formfield_overrides = small
+	extra = 1
+
+class CompetenceMatrixAdmin(admin.ModelAdmin):
+	model = CompetenceMatrix
+	verbose_name_plural = "Competencematrices"
+	inlines = [CompetenceFieldInline]
+
+admin.site.register(CompetenceMatrix, CompetenceMatrixAdmin)
+
+admin.site.register(CompetenceMatrixEntry)

@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse, HttpResponseRedirect
 from django import http
-from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style
+from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style, CompetenceMatrix, CompetenceField, CompetenceMatrixEntry, CompetenceFieldEntry
 from webodt.shortcuts import _ifile, render_to_response as rtr
 from webodt.converters import converter
 import webodt
@@ -256,3 +256,77 @@ def mylogin(request):
 def mylogout(request):
 	logout(request)
 	return HttpResponseRedirect('/')
+
+def competencematrices(request):
+	all_matrices = CompetenceMatrix.objects.all()
+	return render_to_response('competence/matrices_list.html', {'all_matrices': all_matrices}, context_instance=RequestContext(request))
+	#return HttpResponse("Hello, world. MANY MANTRICEX.")
+
+def competencematrixentry(request, m_id):
+	matrix = get_object_or_404(CompetenceMatrix, pk=m_id)
+	all_persons = Person.objects.all()
+	return render_to_response('competence/matrix.html', {'matrix': matrix, 'all_persons': all_persons}, context_instance=RequestContext(request))
+	#return HttpResponse("Hello, world. competencematrixentry: " + matrix.name + lol)
+
+def addentry(request):
+	
+	a = json.loads(request.body)
+	p_id = a['person_id']
+	m_id = a['matrix_id']
+	e_id = ""
+
+	# Check if there's already an existing entry with person_id and matrix_id
+	try:
+		entry = CompetenceMatrixEntry.objects.get(person=p_id, matrix = m_id)
+		# get the id
+		e_id = entry.id
+	except CompetenceMatrixEntry.DoesNotExist:
+	# ELSE Create new entry with person_id and matrix_id
+		p = Person.objects.get(pk=p_id)
+		m = CompetenceMatrix.objects.get(pk=m_id)
+		entry = CompetenceMatrixEntry(person=p, matrix=m)
+		entry.save()
+		# get the entry_id
+		e_id = entry.id
+	
+	# create fieldentries with field_id + entry_id
+	for f_id in a['field'].keys():
+		try:
+			fieldentry = CompetenceFieldEntry.objects.get(competencematrixentry=e_id, competencefield=f_id)
+			fieldentry.competencerating = int(a['field'][f_id])
+			fieldentry.save()
+		except CompetenceFieldEntry.DoesNotExist:
+			f_id_int=int(f_id)
+			cfield = CompetenceField.objects.get(pk=f_id_int)
+			fieldentry = CompetenceFieldEntry(competencematrixentry=entry, competencefield=cfield, competencerating=int(a['field'][f_id]))
+			fieldentry.save()
+
+	return HttpResponse(e_id)
+
+def loadentry(request):
+
+	a = json.loads(request.body)
+	p_id = a['person_id']
+	m_id = a['matrix_id']
+
+	# Check if there's already an existing entry with person_id and matrix_id
+	try:
+		entry = CompetenceMatrixEntry.objects.get(person=p_id, matrix = m_id)
+		# get the id
+		e_id = entry.id
+
+		for f_id in a['field'].keys():
+			try:
+				fieldentry = CompetenceFieldEntry.objects.get(competencematrixentry=e_id, competencefield=f_id)
+				a['field'][f_id] = fieldentry.competencerating
+			except CompetenceFieldEntry.DoesNotExist:
+				pass
+
+		return HttpResponse( json.dumps(a) )
+
+	except CompetenceMatrixEntry.DoesNotExist:
+		return HttpResponse("No entry found")
+	# entry = CompetenceMatrixEntry.get(person=person_id)
+	# Get person_id and matrix_id from json data
+	# Get cmatrixentry from m_id and p_id
+	# return cmatrixentrydata with cfieldentries OR return empty (no entries)
