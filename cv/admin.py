@@ -1,4 +1,4 @@
-from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style, CompetenceMatrix, CompetenceField, CompetenceMatrixEntry, CompetenceFieldEntry
+from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style, Matrix, Competence, MatrixEntry, CompetenceEntry
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
@@ -158,16 +158,16 @@ class StyleAdmin(admin.ModelAdmin):
 
 admin.site.register(Style, StyleAdmin)
 
-class CompetenceFieldInline(admin.TabularInline):
-	model = CompetenceField
+class CompetenceInline(admin.TabularInline):
+	model = Competence
 	formfield_overrides = small
 	extra = 1
 
-class CompetenceMatrixAdmin(admin.ModelAdmin):
-	model = CompetenceMatrix
+class MatrixAdmin(admin.ModelAdmin):
+	model = Matrix
 	verbose_name_plural = "Competencematrices"
-	inlines = [CompetenceFieldInline]
+	#inlines = [CompetenceFieldInline]
 
-admin.site.register(CompetenceMatrix, CompetenceMatrixAdmin)
+admin.site.register(Matrix, MatrixAdmin)
 
-admin.site.register(CompetenceMatrixEntry)
+admin.site.register(MatrixEntry)

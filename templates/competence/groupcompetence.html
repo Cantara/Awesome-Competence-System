@@ -1,0 +1,10 @@
+<fieldset id="{{ fieldtype }}{{ num }}" class="{{ fieldtype }}">
+	<label>{{ fieldtype|capfirst }} title: <input type="text" class="title" name="{{ fieldtype }}[{{ num }}][title]" placeholder="{{ fieldtype|capfirst }} title"></label>
+	<label>Description: <textarea name="{{ fieldtype }}[{{ num }}][description]"></textarea></label>
+	{% if fieldtype = "competence" %}<input type="hidden" name="existing_id">{% endif %}
+	{% if nestedfields %}{# Any group should have nestedfields #}
+		{% autoescape off %}{{ nestedfields.fields }}{% endautoescape %}
+		
+	{% endif %}
+	{% if fieldtype = "group" %}<a class="butt" onclick="addCompetence({{ num }})">Add <strong>Competence</strong> to Group</a><input type="text" name="competencecounter{{ num }}" id="competencecounter{{ num }}" value="{{ nestedfields.count }}">{% endif %}
+</fieldset>

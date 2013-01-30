@@ -23,7 +23,6 @@ MONTH_CHOICES = (
 	(12, 'Des'),
 )
 
-# Create your models here.
 class Person(models.Model):
 	name = models.CharField("Name*", max_length=50)
 	title = models.CharField("Job title", max_length=60, null=True, blank=True)
@@ -332,7 +331,6 @@ class Cv(models.Model):
 	def __unicode__(self):
 		return self.person.name + ", " + self.tags
 		
-
 STYLE_CHOICES = (
 	('sky', 'Sky'),
 	('flat', 'Flat'),
@@ -344,35 +342,42 @@ class Style(models.Model):
 	logo = models.ImageField(upload_to="photos", null=True, blank=True)
 	stylesheet = models.CharField(max_length=10, choices=STYLE_CHOICES, default='sky')
 
+
 # COMPETENCEMATRIX MODEL
 
-class CompetenceMatrix(models.Model):
-	name = models.CharField("Name", max_length=60)
+class Matrix(models.Model):
+	title = models.CharField("Title", max_length=128)
 	description = models.TextField(null=True, blank=True)
+	legend = models.TextField(null=True, blank=True)
 	last_edited = models.DateTimeField(auto_now=True)
 	created = models.DateTimeField(auto_now_add=True)
 	def __unicode__(self):
-		return self.name
+		return self.title
 	def rating(self):
 		return self.created
 		# Calculate the mean of the individual ratings from each entry
 
-class CompetenceField(models.Model):
-	competencematrix = models.ForeignKey(CompetenceMatrix)
-	label = models.CharField("Label", max_length=60)
-	#category = models.CharField("Category", max_length=40)
+class Skillgroup(models.Model):
+	matrix = models.ForeignKey(Matrix)
+	title = models.CharField("Title", max_length=128)
+	description = models.TextField(null=True, blank=True)
+
+class Competence(models.Model):
+	skillgroup = models.ManyToManyField(Skillgroup)
+	label = models.CharField("Label", max_length=128)
 	description = models.TextField(null=True, blank=True)
 	def __unicode__(self):
 		return self.label
 
-class CompetenceMatrixEntry(models.Model):
+class MatrixEntry(models.Model):
 	person = models.ForeignKey(Person)
-	matrix = models.ForeignKey(CompetenceMatrix)
+	matrix = models.ForeignKey(Matrix)
+	last_edited = models.DateTimeField(auto_now=True)
 	rating = models.IntegerField(null=True, blank=True)
+	comment = models.TextField(null=True, blank=True)
 
-class CompetenceFieldEntry(models.Model):
-	competencematrixentry = models.ForeignKey(CompetenceMatrixEntry)
-	competencefield = models.ForeignKey(CompetenceField)
-	competencerating = models.IntegerField()
-	relevant_experience = models.ManyToManyField(Experience, blank=True, null=True)
-
+class CompetenceEntry(models.Model):
+	person = models.ForeignKey(Person)
+	competence = models.ForeignKey(Competence)
+	rating = models.IntegerField()
+	relevant_experience = models.ManyToManyField(Experience)

@@ -5,7 +5,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse, HttpResponseRedirect
 from django import http
-from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style, CompetenceMatrix, CompetenceField, CompetenceMatrixEntry, CompetenceFieldEntry
+from django.template.loader import render_to_string
+from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style, Matrix, Competence, MatrixEntry, CompetenceEntry
 from webodt.shortcuts import _ifile, render_to_response as rtr
 from webodt.converters import converter
 import webodt
@@ -257,13 +258,42 @@ def mylogout(request):
 	logout(request)
 	return HttpResponseRedirect('/')
 
-def competencematrices(request):
-	all_matrices = CompetenceMatrix.objects.all()
+def matrices(request):
+	all_matrices = Matrix.objects.all()
 	return render_to_response('competence/matrices_list.html', {'all_matrices': all_matrices}, context_instance=RequestContext(request))
 	#return HttpResponse("Hello, world. MANY MANTRICEX.")
 
-def competencematrixentry(request, m_id):
-	matrix = get_object_or_404(CompetenceMatrix, pk=m_id)
+def addmatrix(request):
+	all_competences = Competence.objects.all()
+	groupcount = 1
+	comp = addfield('competence',1)
+	fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
+	groupcounter = '<input type="text" id="groupcounter" value="%d">' % groupcount
+	return render_to_response('competence/addmatrix.html', {'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
+
+def addfield(fieldtype, num, title="", description="", nestedfields=False):
+    template = 'competence/groupcompetence.html'
+    dictionary = {
+    	'fieldtype': fieldtype,
+        'num': num,
+        'title': title,
+        'description': description,
+        'nestedfields': nestedfields
+    }
+    return render_to_string(template, dictionary)
+
+def addcompetence(request):
+	num = request.GET[u'num']
+	return HttpResponse(addfield('competence',num))
+
+def addgroup(request):
+	num = request.GET[u'num']
+	comp = addfield('competence',1)
+	fields = addfield('group',num,nestedfields={'fields':comp,'count':1})
+	return HttpResponse(fields)
+
+def matrixentry(request, m_id):
+	matrix = get_object_or_404(Matrix, pk=m_id)
 	all_persons = Person.objects.all()
 	return render_to_response('competence/matrix.html', {'matrix': matrix, 'all_persons': all_persons}, context_instance=RequestContext(request))
 	#return HttpResponse("Hello, world. competencematrixentry: " + matrix.name + lol)
@@ -311,22 +341,23 @@ def loadentry(request):
 
 	# Check if there's already an existing entry with person_id and matrix_id
 	try:
-		entry = CompetenceMatrixEntry.objects.get(person=p_id, matrix = m_id)
+		entry = MatrixEntry.objects.get(person=p_id, matrix = m_id)
 		# get the id
 		e_id = entry.id
 
-		for f_id in a['field'].keys():
+		for c_id in a['field'].keys():
 			try:
-				fieldentry = CompetenceFieldEntry.objects.get(competencematrixentry=e_id, competencefield=f_id)
+				fieldentry = CompetenceEntry.objects.get(matrixentry=e_id, competence=c_id)
 				a['field'][f_id] = fieldentry.competencerating
-			except CompetenceFieldEntry.DoesNotExist:
+			except CompetenceEntry.DoesNotExist:
 				pass
 
 		return HttpResponse( json.dumps(a) )
 
-	except CompetenceMatrixEntry.DoesNotExist:
+	except MatrixEntry.DoesNotExist:
 		return HttpResponse("No entry found")
 	# entry = CompetenceMatrixEntry.get(person=person_id)
 	# Get person_id and matrix_id from json data
 	# Get cmatrixentry from m_id and p_id
 	# return cmatrixentrydata with cfieldentries OR return empty (no entries)
+

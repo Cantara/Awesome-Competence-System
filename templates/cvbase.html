@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{% block title %}Altran CV System{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttonsxx.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ca"/>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+		<link rel="icon" type="image/png" href="" />
+	</head>
+	<body>
+
+    <nav>
+        {% block nav %}
+        <ul class="wide">
+            <li><a href="/" class="butt red">CV</a></li>
+            <li><a href="/matrix/" class="butt red">Kompetansematriser</a></li>
+		{% if user.is_authenticated %}
+			<li><a href="/logout/" class="butt red">Log out</a></li>
+		{% else %}
+			<li>Log in
+				<form action="/login/" method="post" accept-charset="utf-8">
+					{% csrf_token %}
+					<label for="username">Username</label><input type="text" name="username" value="" id="username" size="10"/>
+					<label for="password">Password</label><input type="password" name="password" value="" id="password" size="10"/>
+					<input type="submit" value="Log in" class="butt red">
+				</form>
+			</li>
+			{% endif %}
+        </ul>
+        {% endblock %}
+    </nav>
+
+    <div id="actions" class="wide">
+        {% block actions %}{% endblock %}
+    </div>
+
+    <div id="content" class="wide">
+        {% block content %}{% endblock %}
+    </div>
+
+	</body>
+</html>

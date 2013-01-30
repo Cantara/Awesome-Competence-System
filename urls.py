@@ -5,18 +5,26 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('cv.views',
+
     url(r'^$', 'cvlist'),
 	url(r'^cv/$', 'cvlist'),
 	url(r'^cv/(?P<cv_id>\d+)/$', 'detail'),
 	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail'),
 	url(r'^cv/\d+/download/$', 'download'),
 	url(r'^cv/\d+/download/(?P<format>pdf|doc|odt)/$', 'download'),
+
 	url(r'^login/$', 'mylogin'),
 	url(r'^logout/$', 'mylogout'),
-    url(r'^matrices/$', 'competencematrices'),
-    url(r'^matrix/(?P<m_id>\d+)/$', 'competencematrixentry'),
+
+    url(r'^matrix/$', 'matrices'),
+    url(r'^matrix/add/$', 'addmatrix'),
+    url(r'^matrix/addcompetence/$', 'addcompetence'),
+    url(r'^matrix/addgroup/$', 'addgroup'),
+
+    url(r'^matrix/(?P<m_id>\d+)/$', 'matrixentry'),
     url(r'^matrix/addentry/$', 'addentry'),
     url(r'^matrix/loadentry/$', 'loadentry'),
+
     # Examples:
     # url(r'^$', 'cvapp.views.home', name='home'),
     # url(r'^cvapp/', include('cvapp.foo.urls')),
