@@ -7,7 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('cv.views',
 
     url(r'^$', 'cvlist'),
-	url(r'^cv/$', 'cvlist'),
+	url(r'^cv/$', 'cvlisted'),
 	url(r'^cv/(?P<cv_id>\d+)/$', 'detail'),
 	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail'),
 	url(r'^cv/\d+/download/$', 'download'),
@@ -17,7 +17,9 @@ urlpatterns = patterns('cv.views',
 	url(r'^logout/$', 'mylogout'),
 
     url(r'^matrix/$', 'matrices'),
-    url(r'^matrix/add/$', 'addmatrix'),
+    url(r'^matrix/edit/$', 'editmatrix'),
+    url(r'^matrix/edit/(?P<m_id>\d+)/$', 'editmatrix'),
+    url(r'^matrix/save/$', 'savematrix'),
     url(r'^matrix/addcompetence/$', 'addcompetence'),
     url(r'^matrix/addgroup/$', 'addgroup'),
 

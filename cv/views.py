@@ -6,7 +6,7 @@ from django.template import RequestContext, Context
 from django.http import HttpResponse, HttpResponseRedirect
 from django import http
 from django.template.loader import render_to_string
-from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style, Matrix, Competence, MatrixEntry, CompetenceEntry
+from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
 from webodt.shortcuts import _ifile, render_to_response as rtr
 from webodt.converters import converter
 import webodt
@@ -151,6 +151,11 @@ def cvlist(request):
 	all_persons = Person.objects.all()
 	# style = Style.objects.get(id=1)
 	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': ''}, context_instance=RequestContext(request))
+
+def cvlisted(request):
+	all_persons = Person.objects.all()
+	# style = Style.objects.get(id=1)
+	return render_to_response('cv/cvlisted.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
@@ -263,19 +268,27 @@ def matrices(request):
 	return render_to_response('competence/matrices_list.html', {'all_matrices': all_matrices}, context_instance=RequestContext(request))
 	#return HttpResponse("Hello, world. MANY MANTRICEX.")
 
-def addmatrix(request):
-	all_competences = Competence.objects.all()
-	groupcount = 1
-	comp = addfield('competence',1)
-	fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
-	groupcounter = '<input type="text" id="groupcounter" value="%d">' % groupcount
-	return render_to_response('competence/addmatrix.html', {'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
+def editmatrix(request, m_id=False):
+	m = {'title':"", 'description':"", 'legend':""}
+	if not m_id:
+		groupcount = 1
+		comp = addfield('competence',1,groupnum=1)
+		fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
+		groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
+	else:
+		groupcount = 1
+		comp = addfield('competence',1,groupnum=1)
+		fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
+		groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
+		groupcounter += '<input type="hidden" id="m_id" value="%s">' % m_id
+	return render_to_response('competence/editmatrix.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
 
-def addfield(fieldtype, num, title="", description="", nestedfields=False):
+def addfield(fieldtype, num, groupnum="", title="", description="", nestedfields=False):
     template = 'competence/groupcompetence.html'
     dictionary = {
     	'fieldtype': fieldtype,
         'num': num,
+        'groupnum': groupnum,
         'title': title,
         'description': description,
         'nestedfields': nestedfields
@@ -284,13 +297,56 @@ def addfield(fieldtype, num, title="", description="", nestedfields=False):
 
 def addcompetence(request):
 	num = request.GET[u'num']
-	return HttpResponse(addfield('competence',num))
+	groupnum = request.GET[u'groupnum']
+	return HttpResponse(addfield('competence',num,groupnum=groupnum))
 
 def addgroup(request):
 	num = request.GET[u'num']
-	comp = addfield('competence',1)
+	comp = addfield('competence',1,groupnum=num)
 	fields = addfield('group',num,nestedfields={'fields':comp,'count':1})
 	return HttpResponse(fields)
+
+def savematrix(request):
+	data = json.loads(request.raw_post_data)
+	if 'm_id' in data:
+		message = "Overwrite existing not implemented"
+	else:
+		m = Matrix(
+			title = data['title'],
+			description = data['description'],
+			legend = data['legend']
+			)
+		m.save()
+		message = m.id
+		if 'group' in data:
+			for x, group in data['group'].items():
+				s = Skillgroup( 
+					matrix = m,
+					title = data['group'][x]['title'], 
+					description = data['group'][x]['description']
+					)
+				s.save()
+				if 'competence' in data['group'][x]:
+					for y, comp in data['group'][x]['competence'].items():
+						if data['group'][x]['competence'][y]['existing_id']:
+							# check if it has existing id
+							try:
+								e_id = int( data['group'][x]['competence'][y]['existing_id'] )
+								# Should try to see if the ID returns a valid entry
+								c = Competence.objects.get( id = e_id )
+								c.skillgroup.add(s)
+								c.save()
+							except ValueError:
+								pass
+						else:
+							c = Competence(
+								label = data['group'][x]['competence'][y]['label'],
+								description = data['group'][x]['competence'][y]['description'],
+								)
+							c.save()
+							c.skillgroup.add(s)
+							c.save()
+	return HttpResponse(m.id)
 
 def matrixentry(request, m_id):
 	matrix = get_object_or_404(Matrix, pk=m_id)
@@ -360,4 +416,3 @@ def loadentry(request):
 	# Get person_id and matrix_id from json data
 	# Get cmatrixentry from m_id and p_id
 	# return cmatrixentrydata with cfieldentries OR return empty (no entries)
-

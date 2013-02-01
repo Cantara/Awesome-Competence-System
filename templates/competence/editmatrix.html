@@ -1,0 +1,81 @@
+{% extends "./cvbase.html" %}
+
+{% block title %}Edit Matrix{% endblock %}
+
+{% block actions %}
+	{% if user.is_authenticated %}
+		<h1>New Matrix</h1>
+		<a href="#" class="butt" onClick="saveMatrix()"><strong>Save</strong> matrix</a>
+		<a href="#" class="butt" onClick="getMatrixAsJson()">Get JSON</a>
+		<br>
+		<span id="msg"></span>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+<form id="matrix">
+	{% autoescape off %}{{ groupcounter }}{% endautoescape %}
+	<div class="block">
+		<label><span>Matrix title:</span> <input type="text" name="title" data-validation="required" placeholder="Matrix title" value="{{ m.title }}"></label>
+		<label><span>Description:</span> <textarea type="text" name="description">{{ m.description }}</textarea></label>
+		<label><span>Legends:</span> <textarea type="text" name="legend" placeholder="Optional: Write about what each of step">{{ m.legend }}</textarea></label>
+		{{ fields }}
+		<a class="butt" id="addgroupbtn" onClick="addGroup()">Add <strong>Group</strong> to Matrix</a>
+	</div>
+</form>
+<script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formvalidator.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
+<script>
+
+	function addCompetence(group) {
+		var c = $('#competencecounter'+group);
+		c.val( Number(c.val()) + 1 );
+		$.get('../addcompetence/', {'num':c.val(), 'groupnum':group}, function(data){
+			console.log(data);
+			$('#group'+group+' a:last').before(data);
+		});
+	}
+
+	function removeCompetence(t) {
+		$(t).parent().remove();
+	}
+
+	function addGroup() {
+		var g = $('#groupcounter');
+		g.val( Number(g.val()) + 1 );
+		$.get('../addgroup/',{'num':g.val()},function(data){
+			$('#addgroupbtn').before(data);
+		});
+	}
+
+	function getMatrixAsJson() {
+		var formdata = FormatJSON( $('#matrix').serializeObject() );
+		console.log(formdata);
+		return formdata;
+	}
+
+	function msg(msgtxt) {
+		$('#msg').html(msgtxt);
+	}
+
+	function saveMatrix() {
+		msg('Saving...');
+
+		if( $('#matrix').validate() ) {
+			console.log('Form valid - Saving');
+		
+			var formdata = getMatrixAsJson();
+		
+			$.post('../save/', formdata, function(data){
+				
+				msg("Saved!");
+			}).fail(function() { msg('Error saving!'); });
+		} else {
+			console.log('ERROR: Form invalid!');
+		}
+
+	}
+
+</script>
+{% endblock %}

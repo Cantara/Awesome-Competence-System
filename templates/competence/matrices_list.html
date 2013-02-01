@@ -5,20 +5,20 @@
 {% block actions %}
 	{% if user.is_authenticated %}
 		<h1>Kompetansematriser</h1>
-		<a href="/matrix/add/" class="butt">Legg til ny kompetansematrise</a>
+		<a href="/matrix/edit/" class="butt">Legg til ny kompetansematrise</a>
 	{% endif %}
 {% endblock %}
 
 {% block content %}
 	{% if all_matrices %}
-		{% for m in all_matrices|dictsort:"name" %}
+		{% for m in all_matrices|dictsort:"title" %}
 			<div class="block tiled">
-				<h4>{{ m.name }}</h4>
+				<h4>{{ m.title }}</h4>
 				<ul>
 					<li>Antall utfylt: X</li>
 					<li>Antall felter: X</li>
 				</ul>
-				<a href="/admin/cv/matrix/{{m.id}}" class="butt">Rediger</a>
+				<a href="/matrix/edit/{{m.id}}" class="butt">Rediger</a>
 				<a href="/matrix/{{m.id}}" class="butt">Bruk denne matrisen</a>
 			</div>
 		{% endfor %}
