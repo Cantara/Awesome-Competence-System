@@ -16,7 +16,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/var/www/cvapp/db/cv.db',                  # Or path to database file if using sqlite3.
+        'NAME': '/home/cvapp/db/cv.db',                  # Or path to database file if using sqlite3.
     }
 }
 
@@ -59,7 +59,7 @@ MEDIA_URL = '/static/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = PROJECT_ROOT + '/../static/'
+STATIC_ROOT = '/var/www/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'cv',
-	#'webodt',
+	'webodt',
 	'appy.pod',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',

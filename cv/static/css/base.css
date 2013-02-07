@@ -1,0 +1,177 @@
+/* START CSS Reset */
+/* html5doctor.com Reset v1.6.1 (http://html5doctor.com/html-5-reset-stylesheet/) - http://cssreset.com */
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}
+body{line-height:1}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}
+nav ul{list-style:none}
+blockquote,q{quotes:none}
+blockquote:before,blockquote:after,q:before,q:after{content:none}
+a{margin:0;padding:0;font-size:100%;vertical-align:baseline;background:transparent}
+ins{background-color:#ff9;color:#000;text-decoration:none}
+mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}
+del{text-decoration:line-through}
+abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}
+table{border-collapse:collapse;border-spacing:0}
+hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}
+input,select{vertical-align:middle}
+/* END CSS Reset */
+
+body {
+	background-color: #ddd;
+	background-image: url(../img/shattered.png);
+	font-family: segoe ui, arial, sans serif !important;
+	color: #555;
+	text-align: center;
+}
+
+.wide {
+	max-width: 1337px;
+	margin: auto;
+	box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5 {color: #555;}
+
+/* START NAVIGATION */
+
+nav {
+	background: #555;
+	border-bottom: 2px solid #555;
+	padding: 0.5em;
+	color: #fff;
+}
+
+nav li {display:inline-block; }
+
+/* END NAVIGATION */
+
+/* START Content */
+#actions {
+	margin-top: 1em;
+	padding: 0.5em;
+}
+h1 {
+	font-size: 200%;
+	margin:0.5em;
+	font-weight: normal;
+}
+/* END Content */
+
+/* START Content */
+#content {
+	margin-top: 1em;
+	padding-bottom:1em;
+}
+/* END Content */
+
+/* START block-element */
+.block {
+	background: #fff; 
+	padding: 1em;
+	margin-bottom: 1em;
+	display: inline-block;
+	box-sizing: border-box;
+	text-align: left;
+	width: 100%;
+}
+
+.block h3 {
+	height: 4em;
+	line-height: 1.3em;
+	font-weight: normal;
+	font-size: 120%;
+}
+
+.block ul {
+	list-style: none;
+	margin-bottom:0.5em;
+}
+
+.tiled {
+	margin: 1em .5em 0 .5em;
+	width: 300px;
+}
+
+/* END block-element */
+
+/* INPUT ELEMENTS */
+input, textarea {
+	font: inherit;
+	border: 1px solid rgba(127,127,127,0.3);
+}
+
+
+/* FORM */
+
+
+
+#matrix input[type="text"], #matrix textarea {
+	display: block;
+	margin: 0 0 1em 0;
+	font-size: 1.5em;
+	font-weight: normal;
+	padding: 0.3em;
+	padding-top: 0.8em !important;
+}
+fieldset {
+	background-color: #eee;
+	padding: 1em;
+	margin-bottom:1em;
+}
+
+fieldset.competence {
+	padding:0 0 0 1em;
+	margin: 0 0 .5em 0;
+	border:none;
+	background: #ddd;
+}
+
+#matrix label { display: inline-block; font-size: .6em; font-weight: bold; position: relative; }
+
+#matrix label span {
+	position: absolute;
+	background: rgba(255,255,255,0.5);
+	top: 2px;
+	left: 4px;
+}
+
+.competence textarea {margin:0 !important;}
+
+.error { border: 1px solid red;}
+
+/* FORM END*/
+
+
+
+
+
+/* BUTTON */
+input.butt {
+	border:none;
+}
+
+.butt {
+	cursor: pointer;
+	background: #00A8C6;
+	text-transform: uppercase;
+	color: #fff;
+	text-decoration: none;
+	padding: 0.5em;
+	display: inline-block;
+	font-size: 80%;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+
+  /* No support for these yet, use at own risk */
+  -o-user-select: none;
+  user-select: none;      
+	}
+
+.butt:hover {
+	background: #40C0CB;
+	}
+.remove { position: aboslute; right:0; top:0;}
+.red { background-color: #C21A01;}
+.red:hover { background-color: #F03C02;}
+/* BUTTON */

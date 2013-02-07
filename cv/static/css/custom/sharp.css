@@ -1,0 +1,103 @@
+/* #-------------------------------------------------# */
+/* #  CUSTOMIZABLE PARTS OF THE CSS - FOR BRANDING?  # */
+/* #-------------------------------------------------# */
+
+body {
+	background: #eee url(../../img/blur.png) fixed;
+	/*background: #eee url(../img/sky.jpg) fixed;*/
+	background-size: cover;
+	font-family: georgia, times new roman, arial, segoe ui, sans serif !important;
+	color: #555;
+}
+
+/* Element styling */
+#header,
+.body,
+.person, 
+#menu, 
+#topmenu,
+.colM h1,
+.module,
+.inline-group, 
+.submit-row,
+.cvset {
+	background: #fff !important;
+	border-radius: 2px;
+	box-shadow: 		0px 2px 5px rgba(0,0,0,0.3);
+	-moz-box-shadow: 	0px 2px 5px rgba(0,0,0,0.3);
+	-webkit-box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Element styling
+#header,
+.body,
+.person, 
+#menu, 
+#topmenu,
+.colM h1,
+.module,
+.inline-group, 
+.submit-row,
+.cvset {
+	background: white;
+	border-radius: 5px;
+	box-shadow: 		0px 2px 2px rgba(0,0,0,0.5);
+	-moz-box-shadow: 	0px 2px 2px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.5);
+} */
+
+
+input, textarea, select { 
+	border-radius: 2px;
+	border: 1px solid #bbb;
+}
+
+.add-row a,
+.button, 
+input[name="_save"], 
+input[name="_continue"] {
+    border-radius: 2px;
+}
+
+
+.completeness {
+	display: inline-block;
+	width: 90px;
+	height: 2px;
+	background: #ccc;
+	margin-bottom: 2px;
+	padding: 0px;
+	border-radius: 3px; 
+/*	box-shadow: 
+	inset 0 5px 10px rgba(0,0,0,0.2);*/
+	overflow: hidden;
+}
+
+.percent {
+	height: 100%;
+	border-radius: 3px 0 0 3px;
+	background-color: #39e;
+	/*box-shadow: 
+	 This is the top gradient for the color bar
+	inset 0 4px 0 rgba(255,255,255,0.2),
+	inset 0 1px 2px rgba(0,0,0,0.125); */
+	border-right: 1px solid rgba(0,0,0,0.2);
+}
+
+.redpercent {
+	background: darkred;
+}
+
+span.completeness {
+	display: inline-block;
+	vertical-align: middle;
+	background: #fff;
+	border-radius: 2px;
+	width: 50px;
+	height: 2px;
+}
+
+span.percent {
+	display: block;
+	border-radius: 2px 0 0 2px;
+}

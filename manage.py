@@ -2,7 +2,7 @@
 import os
 import sys
 
-sys.path.append('/var/www/cvapp')
+sys.path.append('/home/cvapp')
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")

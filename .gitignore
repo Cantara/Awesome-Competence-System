@@ -1,9 +1,5 @@
 *.pyc
 *.json
 *~
-backup
-cv.db
-deps
+db/
 static/media
-local_settings.py
-howtoupdate.txt
