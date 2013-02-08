@@ -174,6 +174,22 @@ class TimedSkill(models.Model):
 		return MONTH_CHOICES[self.from_month][1] # Problem with languages :( Sigh, I guess we'll use Norwegian first?
 	def to_monthname(self):
 		return MONTH_CHOICES[self.to_month][1]
+
+	def title_en_no(self):
+		if self.title_en:
+			return self.title_en
+		elif self.title:
+			return self.title
+		else: 
+			return 'No title. '
+
+	def description_en_no(self):
+		if self.description_en:
+			return
+		elif self.description:
+			return self.description
+		else:
+			return 'No description available. '
 	
 	def save(self, *args, **kwargs):
 		s = self.title + self.title_en + self.description + self.description_en
@@ -353,21 +369,30 @@ class Matrix(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	def __unicode__(self):
 		return self.title
+	def competence_count(self):
+		count = 0
+		for g in self.skillgroup_set.all():
+			count += g.competence_set.count()
+		return count
 	def rating(self):
-		return self.created
-		# Calculate the mean of the individual ratings from each entry
+		return self.matrixentry_set.all().aggregate(Avg('rating')).values()[0]
+		# Get all entries, get average (returns a dict), get first value of dict containing avg rating
 
 class Skillgroup(models.Model):
 	matrix = models.ForeignKey(Matrix)
 	title = models.CharField("Title", max_length=128)
 	description = models.TextField(null=True, blank=True)
+	last_edited = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return self.title
 
 class Competence(models.Model):
 	skillgroup = models.ManyToManyField(Skillgroup)
-	label = models.CharField("Label", max_length=128)
+	title = models.CharField("Title", max_length=128)
 	description = models.TextField(null=True, blank=True)
+	last_edited = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return self.label
+		return self.title
 
 class MatrixEntry(models.Model):
 	person = models.ForeignKey(Person)
@@ -381,3 +406,4 @@ class CompetenceEntry(models.Model):
 	competence = models.ForeignKey(Competence)
 	rating = models.IntegerField()
 	relevant_experience = models.ManyToManyField(Experience)
+	last_edited = models.DateTimeField(auto_now=True)

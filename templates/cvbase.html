@@ -4,7 +4,7 @@
 		<title>{% block title %}Altran CV System{% endblock %}</title>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttonsxx.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css"/>
-		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ca"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css"/>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 		<link rel="icon" type="image/png" href="" />
 	</head>
@@ -18,11 +18,11 @@
 		{% if user.is_authenticated %}
 			<li><a href="/logout/" class="butt red">Log out</a></li>
 		{% else %}
-			<li>Log in
+			<li>
 				<form action="/login/" method="post" accept-charset="utf-8">
 					{% csrf_token %}
-					<label for="username">Username</label><input type="text" name="username" value="" id="username" size="10"/>
-					<label for="password">Password</label><input type="password" name="password" value="" id="password" size="10"/>
+					<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
+					<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
 					<input type="submit" value="Log in" class="butt red">
 				</form>
 			</li>

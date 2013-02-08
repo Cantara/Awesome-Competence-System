@@ -1,4 +1,4 @@
-from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style, Matrix, Competence, MatrixEntry, CompetenceEntry
+from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
@@ -171,3 +171,5 @@ class MatrixAdmin(admin.ModelAdmin):
 admin.site.register(Matrix, MatrixAdmin)
 
 admin.site.register(MatrixEntry)
+admin.site.register(Competence)
+admin.site.register(Skillgroup)

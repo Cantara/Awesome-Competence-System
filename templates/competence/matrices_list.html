@@ -1,11 +1,11 @@
 {% extends "./cvbase.html" %}
 
-{% block title %}Kompetansematriser - Altran CV{% endblock %}
+{% block title %}Competence Matrices - Altran CV{% endblock %}
 
 {% block actions %}
 	{% if user.is_authenticated %}
-		<h1>Kompetansematriser</h1>
-		<a href="/matrix/edit/" class="butt">Legg til ny kompetansematrise</a>
+		<h1>Competence Matrices</h1>
+		<a href="/matrix/edit/" class="butt">Add new Competence Matrix</a>
 	{% endif %}
 {% endblock %}
 
@@ -13,18 +13,18 @@
 	{% if all_matrices %}
 		{% for m in all_matrices|dictsort:"title" %}
 			<div class="block tiled">
-				<h4>{{ m.title }}</h4>
+				<h3>{{ m.title }}</h3>
 				<ul>
-					<li>Antall utfylt: X</li>
-					<li>Antall felter: X</li>
+					<li>Entries: {{ m.matrixentry_set.count }}</li>
+					<li>Fields: {{ m.competence_count }}</li>
 				</ul>
-				<a href="/matrix/edit/{{m.id}}" class="butt">Rediger</a>
-				<a href="/matrix/{{m.id}}" class="butt">Bruk denne matrisen</a>
+				<a href="/matrix/edit/{{m.id}}" class="butt">Edit</a>
+				<a href="/matrix/{{m.id}}" class="butt">Fill out</a>
 			</div>
 		{% endfor %}
 	{% else %}
 		<div class="block">
-			<p>Her er det ingen kompetansematriser, dessverre!</p>
+			<p>There are no available matrices right now, why don't you start by creating one!</p>
 		</div>
 	{% endif %}
 {% endblock %}

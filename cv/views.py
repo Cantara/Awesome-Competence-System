@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, Context
 from django.http import HttpResponse, HttpResponseRedirect
 from django import http
+from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from cv.models import Cv, Person, Technology, Experience, Workplace, Education, Other, Style, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
 from webodt.shortcuts import _ifile, render_to_response as rtr
@@ -246,18 +247,19 @@ def detail(request, cv_id, lang = ''):
 
 def mylogin(request):
 	if request.method == 'POST':
+		redirect_url = request.POST['redirect_url']
 		user = authenticate(username=request.POST['username'], password=request.POST['password'])
 		if user is not None:
 			if user.is_active:
 				login(request, user)
 				# You are now logged in, dog!
-				return HttpResponseRedirect('/')
+				return HttpResponseRedirect(redirect_url)
 			else:
 				# This account is stupid!
-				return HttpResponseRedirect('/')
+				return HttpResponseRedirect(redirect_url)
 		else:
 			# This didn't work lol
-			return HttpResponseRedirect('/')
+			return HttpResponseRedirect(redirect_url)
 			
 def mylogout(request):
 	logout(request)
@@ -270,20 +272,28 @@ def matrices(request):
 
 def editmatrix(request, m_id=False):
 	m = {'title':"", 'description':"", 'legend':""}
-	if not m_id:
-		groupcount = 1
-		comp = addfield('competence',1,groupnum=1)
-		fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
-		groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
-	else:
-		groupcount = 1
-		comp = addfield('competence',1,groupnum=1)
-		fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
-		groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
-		groupcounter += '<input type="hidden" id="m_id" value="%s">' % m_id
+	groupcount = 1
+	comp = addfield('competence',1,groupnum=1)
+	fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
+	groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
 	return render_to_response('competence/editmatrix.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
 
-def addfield(fieldtype, num, groupnum="", title="", description="", nestedfields=False):
+def loadmatrix(request, m_id):
+	m = get_object_or_404(Matrix, pk=m_id)
+	groupcount = m.skillgroup_set.count()
+	# For each group
+	fields = ''
+	for x, g in enumerate( m.skillgroup_set.all().order_by('title') ):
+		comps = ''
+		compcount = g.competence_set.count()
+		for y, c in enumerate( g.competence_set.all().order_by('title') ):
+			comps += addfield('competence', y, groupnum=x, title=c.title, description=c.description, existing_id=c.id)
+		fields += addfield('group', x, nestedfields={'fields':comps,'count': compcount}, title=g.title, description=g.description, existing_id=g.id)
+	groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
+	groupcounter += '<input type="hidden" id="m_id" value="%s">' % m_id
+	return render_to_response('competence/editmatrix.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
+
+def addfield(fieldtype, num, groupnum="", title="", description="", existing_id = "", nestedfields=False):
     template = 'competence/groupcompetence.html'
     dictionary = {
     	'fieldtype': fieldtype,
@@ -291,6 +301,7 @@ def addfield(fieldtype, num, groupnum="", title="", description="", nestedfields
         'groupnum': groupnum,
         'title': title,
         'description': description,
+        'existing_id': existing_id,
         'nestedfields': nestedfields
     }
     return render_to_string(template, dictionary)
@@ -308,45 +319,54 @@ def addgroup(request):
 
 def savematrix(request):
 	data = json.loads(request.raw_post_data)
-	if 'm_id' in data:
-		message = "Overwrite existing not implemented"
+	response_data = {}
+	
+	m_id = data['m_id']
+
+	if m_id:
+		response_data['action'] = 'saveOld'
+		response_data['message'] = 'Old matrix saved'
 	else:
-		m = Matrix(
-			title = data['title'],
-			description = data['description'],
-			legend = data['legend']
-			)
-		m.save()
-		message = m.id
-		if 'group' in data:
-			for x, group in data['group'].items():
-				s = Skillgroup( 
-					matrix = m,
-					title = data['group'][x]['title'], 
-					description = data['group'][x]['description']
-					)
-				s.save()
-				if 'competence' in data['group'][x]:
-					for y, comp in data['group'][x]['competence'].items():
-						if data['group'][x]['competence'][y]['existing_id']:
-							# check if it has existing id
-							try:
-								e_id = int( data['group'][x]['competence'][y]['existing_id'] )
-								# Should try to see if the ID returns a valid entry
-								c = Competence.objects.get( id = e_id )
-								c.skillgroup.add(s)
-								c.save()
-							except ValueError:
-								pass
-						else:
-							c = Competence(
-								label = data['group'][x]['competence'][y]['label'],
-								description = data['group'][x]['competence'][y]['description'],
-								)
-							c.save()
-							c.skillgroup.add(s)
-							c.save()
-	return HttpResponse(m.id)
+		response_data['action'] = 'saveNew'
+		response_data['message'] = 'New Matrix saved'
+		m_id = 0
+
+	try:
+		m = Matrix.objects.get(pk=m_id)
+	except (ObjectDoesNotExist, ValueError) as e:
+		m = Matrix( title='M' )
+	m.title = data['title']
+	m.description = data['description']
+	m.legend = data['legend']
+	m.save()
+
+	response_data['m_id'] = m.id
+
+	if 'group' in data:
+		for x, group in data['group'].iteritems():
+			s_id = data['group'][x].get('existing_id')
+			try:
+				s = Skillgroup.objects.get(pk=int(s_id))
+			except (ObjectDoesNotExist, ValueError) as e:
+				s = Skillgroup( matrix=m, title='S' )
+			s.title = data['group'][x].get('title')
+			s.description = data['group'][x].get('description')
+			s.save()
+
+			if 'competence' in data['group'][x]:
+				for y, comp in data['group'][x]['competence'].iteritems():
+					c_id = data['group'][x]['competence'][y]['existing_id']
+					try:
+						c = Competence.objects.get( pk= int(c_id) )
+					except (ObjectDoesNotExist, ValueError) as e:
+						c = Competence( title='C' )
+						c.save()
+					c.title = data['group'][x]['competence'][y].get('title')
+					c.description = data['group'][x]['competence'][y].get('description')
+					c.skillgroup.add(s)
+					c.save()
+
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 def matrixentry(request, m_id):
 	matrix = get_object_or_404(Matrix, pk=m_id)
@@ -354,40 +374,58 @@ def matrixentry(request, m_id):
 	return render_to_response('competence/matrix.html', {'matrix': matrix, 'all_persons': all_persons}, context_instance=RequestContext(request))
 	#return HttpResponse("Hello, world. competencematrixentry: " + matrix.name + lol)
 
-def addentry(request):
+def saveentry(request):
 	
 	a = json.loads(request.body)
 	p_id = a['person_id']
 	m_id = a['matrix_id']
-	e_id = ""
+	me_id = ""
+
+	p = Person.objects.get(pk=p_id)
+	m = Matrix.objects.get(pk=m_id)
 
 	# Check if there's already an existing entry with person_id and matrix_id
 	try:
-		entry = CompetenceMatrixEntry.objects.get(person=p_id, matrix = m_id)
+		entry = MatrixEntry.objects.get(person=p_id, matrix = m_id)
 		# get the id
-		e_id = entry.id
-	except CompetenceMatrixEntry.DoesNotExist:
+		me_id = entry.id
+	except MatrixEntry.DoesNotExist:
 	# ELSE Create new entry with person_id and matrix_id
-		p = Person.objects.get(pk=p_id)
-		m = CompetenceMatrix.objects.get(pk=m_id)
-		entry = CompetenceMatrixEntry(person=p, matrix=m)
+		entry = MatrixEntry(person=p, matrix=m)
 		entry.save()
 		# get the entry_id
-		e_id = entry.id
-	
-	# create fieldentries with field_id + entry_id
-	for f_id in a['field'].keys():
-		try:
-			fieldentry = CompetenceFieldEntry.objects.get(competencematrixentry=e_id, competencefield=f_id)
-			fieldentry.competencerating = int(a['field'][f_id])
-			fieldentry.save()
-		except CompetenceFieldEntry.DoesNotExist:
-			f_id_int=int(f_id)
-			cfield = CompetenceField.objects.get(pk=f_id_int)
-			fieldentry = CompetenceFieldEntry(competencematrixentry=entry, competencefield=cfield, competencerating=int(a['field'][f_id]))
-			fieldentry.save()
+		me_id = entry.id
 
-	return HttpResponse(e_id)
+	# create fieldentries with field_id + entry_id
+	for c_id in a['competence'].keys():
+		try:
+			competenceentry = CompetenceEntry.objects.get( person=p_id, competence=c_id )
+			competenceentry.competencerating = int( a['competence'][c_id] )
+			competenceentry.save()
+		except CompetenceEntry.DoesNotExist:
+			c_id_int = int(c_id)
+			competence = Competence.objects.get( pk = c_id_int )
+			competenceentry = CompetenceEntry( person=p, competence=competence, rating=int( a['competence'][c_id]) )
+			competenceentry.save()
+
+	message = ""
+	for c_id in a['compexp'].keys():
+		# 1. get a list of all exp
+		# 2. get a list of all checked exp
+		# 3. get the current competence ID
+		# 4. For all exp
+		#    - Check if a link exists between the comp and exp
+		#    - If it exists, and is not in 'checked'
+		#      - Delete
+		#    - Elif it doesn't exist and is in "checked"
+		#    - Create it
+
+		for checked_exp in a['compexp'][c_id]:
+			message += "HEI" + checked_exp
+		for e_id in p.experience_set.all():
+			pass
+
+	return HttpResponse( message )
 
 def loadentry(request):
 
@@ -399,20 +437,41 @@ def loadentry(request):
 	try:
 		entry = MatrixEntry.objects.get(person=p_id, matrix = m_id)
 		# get the id
-		e_id = entry.id
-
-		for c_id in a['field'].keys():
-			try:
-				fieldentry = CompetenceEntry.objects.get(matrixentry=e_id, competence=c_id)
-				a['field'][f_id] = fieldentry.competencerating
-			except CompetenceEntry.DoesNotExist:
-				pass
-
-		return HttpResponse( json.dumps(a) )
-
+		me_id = entry.id
 	except MatrixEntry.DoesNotExist:
-		return HttpResponse("No entry found")
-	# entry = CompetenceMatrixEntry.get(person=person_id)
-	# Get person_id and matrix_id from json data
-	# Get cmatrixentry from m_id and p_id
-	# return cmatrixentrydata with cfieldentries OR return empty (no entries)
+		pass
+
+	# Need to add some rating of the matrix and comment
+
+	for c_id in a['competence'].keys():
+		try:
+			centry = CompetenceEntry.objects.get(person=p_id, competence=c_id)
+			a['competence'][c_id] = centry.rating
+		except CompetenceEntry.DoesNotExist:
+			a['competence'][c_id] = 0
+
+	return HttpResponse( json.dumps(a) )
+
+def addexppicker(request):
+	if request.method == 'POST':
+		j = json.loads( request.raw_post_data )
+		p = get_object_or_404( Person, pk=j.get('p_id') )
+	return render_to_response('competence/exppicker.html', {'p': p, 'hidden': j.get('hidden'), 'c_id': j.get('c_id')})
+
+def ajaxcompetencelist(request):
+	q = request.GET['term']
+	try:
+		result = Competence.objects.filter(title__icontains=q)
+		c_set = []
+		for c in result:
+			c_set.append({
+				'value': c.title,
+				'data': {
+					'description': c.description,
+					'id': c.id
+				}
+				})
+		result = c_set
+	except ObjectDoesNotExist:
+		result = {}
+	return HttpResponse( json.dumps(result), mimetype="application/json" )

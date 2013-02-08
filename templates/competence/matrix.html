@@ -1,119 +1,239 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>{{ matrix.name }}</title>
-		<style type="text/css">
-			body {font-family: Arial, sans-serif; color: #555; max-width: 1000px;}
-			table {border-collapse: collapse; border-spacing: 0;}
+{% extends "./cvbase.html" %}
 
-			tr, td, th, table {border-spacing: 0;}
-			tr {background: #eee; border-bottom: 1px solid #aaa; }
-			td, th {;padding: 0.4em; }
-			tr:hover {background: #ddd;}
-			tr .description {position: absolute; background: white; width: 20em; max-height:0; font-size: 80%; -webkit-transition: all 0.1s; overflow: hidden; z-index: 900; }
-			tr:hover .description {max-height: 20em; padding: 1em; border-spacing: 0;box-shadow: 1px 1px 5px 1px #777;}
+{% block title %}{{ matrix.title }} - Altran CV{% endblock %}
 
-			input:focus {border:1px dotted orange;}
-			label:focus {border:1px dotted orange;}
+{% block actions %}
+		<h1>{{ matrix.title }}</h1>
+	{% if user.is_authenticated %}
+		<input class="butt save" type="button" value="SAVE ENTRY">	
+	{% endif %}
+{% endblock %}
 
-			#foo:checked::before,
-			form input[type="radio"] { width:0; cursor: pointer; margin-right: 1em;}
-			form input[type="radio"]::before { content:''; display: inline-block; width:1.3em;height:1.3em; background: orange;}
-			form input[type="radio"]:checked::before {
-			    background-image: -webkit-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
-			    background-image:    -moz-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
-			    background-image:     -ms-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
-			    background-image:      -o-linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
-			    background-image:         linear-gradient(hsla(0,0%,0%,.6), hsla(0,0%,0%,.4));
-			}
+{% block content %}
+	<style type="text/css">
+		form { text-align: center; }
+		table { border-collapse: collapse; border-spacing: 0; margin: auto; width: 50%; min-width: 600px; }
+		@media screen and (max-width: 600px) {
+			table {min-width: 100%;}
+		}
+		tr, td, th, table { border-spacing: 0; }
+		td:first-child, th:first-child { width: 100%; text-align: left; }
+		tr { border-top: 1px solid #eee; }
+		.description {
+			max-height: 500px; 
+			-webkit-transition: max-height 2s ease; 
+			   -moz-transition: max-height 2s ease; 
+			     -o-transition: max-height 2s ease; 
+			        transition: max-height 2s ease; 
+			font-size: 0.8em; 
+			overflow: hidden; 
+			color: #aaa;
+		}
+		.hidden {max-height: 0px !important; overflow-y: hidden !important; margin:0 !important; }
+		td, th {;padding: 0.4em; }
+		tr:hover {background: #eee;}
 
-		</style>
-	</head>
-	<body>
-		<h1>{{ matrix.name }}</h1>
-		<p><a href="/matrices/">Tilbake til liste over kompetansematriser</a></p>
-		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-			{% if matrix %}
-				{% csrf_token %}
-				<form action="competenceentrysubmit/" id="entry">
-				<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
-				<select name="person_id" onChange="loadentry();">
-					{% if all_persons %}
-						{% for p in all_persons %}
-						<option value="{{ p.id }}">{{ p.name }}</option>
-						{% endfor %}
-					{% endif %}
-				</select>
-				<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
-				<table>
-					<tr>
-						<th>Kompetanse</th>
-						<th>0</th>
-						<th>1</th>
-						<th>2</th>
-						<th>3</th>
-					</tr>
-				{% for f in matrix.competencefield_set.all %}
-					<tr>
-						<td>{{ f.label }}<div class="description">{{ f.description }}</div></td>
-						<td><input type="radio" value="0" name="field[{{ f.id }}]" checked></td>
-						<td><input type="radio" value="1" name="field[{{ f.id }}]"></td>
-						<td><input type="radio" value="2" name="field[{{ f.id }}]"></td>
-						<td><input type="radio" value="3" name="field[{{ f.id }}]"></td>
-					</tr>
+		ul.exppicker {
+			max-height: 400px;
+			overflow-y: auto;
+			background-color: rgba(255,255,255,0.5);
+			margin-top: .5em;
+		}	
+		.exppicker li {
+			list-style-type: none;
+			position: relative;
+			border-bottom: 1px solid #ddd;
+			padding: 0.3em;
+		}
+		.exppicker li input[type=checkbox]{
+			display: none;
+		}
+		.exppicker li span {
+			cursor: pointer;
+			padding: 0.5em 0 0.5em 0.5em;
+			display: block;
+		}
+		.exppicker li span:hover {
+			background: #fff;
+		}
+		.exppicker li span:before {
+			content: '';
+			display: inline-block;
+			width: .8em;
+			height: .8em;
+			background: white;
+			border: 1px solid #aaa;
+			margin-right: 0.5em;
+		}
+		input:checked + span {
+			background: white;
+		}
+		input:checked + span:before {
+			background: #888;
+		}
+
+	</style>
+
+	{% if matrix %}
+		{% csrf_token %}
+		<div class="block">
+			<form action="competenceentrysubmit/" id="entry">
+			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
+			<select name="person_id">
+				{% if all_persons %}
+					{% for p in all_persons %}
+					<option value="{{ p.id }}">{{ p.name }}</option>
+					{% endfor %}
+				{% endif %}
+			</select>
+			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
+			<table>
+				{% for g in matrix.skillgroup_set.all %}
+					<tr> <th>{{ g.title }}</th> <th>-</th> <th>1</th> <th>2</th> <th>3</th> </tr>
+					{% for c in g.competence_set.all %}
+						<tr>
+							<td class="title">
+								{{ c.title }}
+								{% if c.description %}
+									<div class="description hidden">{% autoescape off %}{{ c.description }}{% endautoescape %}</div>
+								{% endif %}
+							</td>
+							<td><input type="radio" value="0" name="competence[{{ c.id }}]" checked></td>
+							<td><input type="radio" value="1" name="competence[{{ c.id }}]"></td>
+							<td><input type="radio" value="2" name="competence[{{ c.id }}]"></td>
+							<td><input type="radio" value="3" name="competence[{{ c.id }}]"></td>
+						</tr>
+					{% endfor %}
 				{% endfor %}
-					<tr>
-						<td></td>
-						<td colspan="4">
-							<input type="button" value="SAVE ENTRY" onClick="addentry();">
-						</td>
-					</tr>
-				</table>
-			
-				</form>
-			{% else %}
-				<p>Matrix not found</p>
-			{% endif %}
+				<tr>
+					<td></td>
+					<td colspan="4">
+						<input type="button" value="SAVE ENTRY" class="butt save">
+					</td>
+				</tr>
+			</table>
+		
+			</form>
+		</div>
+	{% else %}
+		<p>Matrix not found</p>
+	{% endif %}
 
-		<script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
-		<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
-		<script type="text/javascript">
+<script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
+<script type="text/javascript">
+	
+	$(function() {
+		
+		$('tr').focusin( function() {
+			unhide(this);
+			console.log(this);
+		}).mouseenter( function() {
+			unhide(this);
+		});
+		
+		$('tr').focusout( function() {
+			hide(this);
+		}).mouseleave( function() {
+			hide(this);
+		});
 
-			function addentry() { 
-				var formdata = FormatJSON( $('#entry').serializeObject() );
-				console.log(formdata);
-				$.ajax({
-				  type: "POST",
-				  url: "../addentry/",
-				  data: formdata
-				}).done(function( msg ) {
-				  alert( msg );
-				});
-			}
-
-			function loadentry() { 
-				var formdata = FormatJSON( $('#entry').serializeObject() );
-				$.ajax({
-				  type: "POST",
-				  url: "../loadentry/",
-				  data: formdata
-				}).done(function( msg ) {
-				  var j = jQuery.parseJSON( msg );
-				  populatefields(j.field);
-				  // alert( FormatJSON(j) );
-				});
-			}
-
-			function populatefields(f) {
-				for (var key in f) {
-				  if (f.hasOwnProperty(key)) {
-				    $("input[name='field["+key+"]'][value="+f[key]+"]").prop( 'checked', true );
-				  }
-				}
-			}
-
+		$('select[name=person_id]').change( function() {
 			loadentry();
+		});
 
-		</script>
-	</body>
-</html>
+		$('.save').click( function() {
+			saveentry();
+		});
+
+		var maxRating = 3;
+
+		$('input[type=radio]').change( function() {
+			if( $(this).val() == maxRating ) {
+				console.log('POWER TO THE MAX!');
+				showExpPicker(this);
+			} else {
+				hideExpPicker(this);
+			}
+		})
+
+		function showExpPicker(t, hidden) {
+			thisradio = $(t);
+			c_id = thisradio.attr('name').replace(/competence\[|\]/g, "");
+			console.log(t);
+			p_id = $('select[name=person_id]').val();
+			hidden = hidden || '';
+			data = {
+				p_id: p_id,
+				c_id: c_id,
+				hidden: hidden
+			}
+			$.ajax({
+			  type: "POST",
+			  url: "../addexppicker/",
+			  data: FormatJSON( data )
+			}).done(function( data ) {
+			  thisradio.parent().siblings('.title').append(data);
+			});
+		}
+
+		function hideExpPicker(t) {
+			console.log('hide');
+			thisradio = $(t);
+			thisradio.parent().siblings('.title').children('ul').remove();
+		}
+
+		function unhide(t) {
+			$(t).find('.description').removeClass('hidden');
+		}
+
+		function hide(t) {
+			$(t).find('.description').addClass('hidden');
+
+		}
+
+		function saveentry() { 
+			var formdata = FormatJSON( $('#entry').serializeObject() );
+			console.log(formdata);
+			$.ajax({
+			  type: "POST",
+			  url: "../saveentry/",
+			  data: formdata
+			}).done(function( msg ) {
+			  alert( msg );
+			});
+		}
+
+		function loadentry() { 
+			var formdata = FormatJSON( $('#entry').serializeObject() );
+			$.ajax({
+			  type: "POST",
+			  url: "../loadentry/",
+			  data: formdata
+			}).done(function( msg ) {
+			  var j = jQuery.parseJSON( msg );
+			  populatefields(j.competence);
+			  // alert( FormatJSON(j) );
+			});
+		}
+
+		function populatefields(comps) {
+			console.log(comps);
+			for (var key in comps) {
+			  if (comps.hasOwnProperty(key)) {
+			  	checkedBtn = $("input[name='competence["+key+"]'][value="+comps[key]+"]");
+			    checkedBtn.prop( 'checked', true );
+			    if( comps[key]==maxRating ) showExpPicker(checkedBtn, 'hidden');
+			    hideExpPicker ( checkedBtn );
+			    hide( checkedBtn.closest('tr') );
+			  }
+			}
+		}
+
+		loadentry();
+
+	});
+
+</script>
+
+{% endblock %}
