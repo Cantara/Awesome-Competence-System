@@ -129,6 +129,10 @@ class Person(models.Model):
 			for a in range(1, 5-self.cv_set.count()):
 				c = Cv(tags = 'Empty CV', person = self)
 				c.save()
+
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_person'
 				
 class Technology(models.Model):
 	person = models.ForeignKey(Person)
@@ -145,6 +149,10 @@ class Technology(models.Model):
 			return self.title
 		else:
 			return self.title_en
+
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_technology'
 
 class TimedSkill(models.Model):
 	
@@ -220,6 +228,10 @@ class Experience(TimedSkill):
 			t = "No title"
 		return "%s, %s, %s - %s" % (t, self.company, self.from_year, self.to_year)
 
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_experience'
+
 class Workplace(TimedSkill):
 
 	person = models.ForeignKey(Person)
@@ -229,6 +241,10 @@ class Workplace(TimedSkill):
 	
 	def __unicode__(self):
 		return "%s, %s, %s - %s" % (self.title, self.company, self.from_year, self.to_year)
+
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_workplace'
 	
 class Education(TimedSkill):
 
@@ -239,6 +255,10 @@ class Education(TimedSkill):
 	
 	def __unicode__(self):
 		return "%s, %s, %s - %s" % (self.title, self.school, self.from_year, self.to_year)
+	
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_education'
 	
 class Other(models.Model):
 
@@ -255,6 +275,10 @@ class Other(models.Model):
 		
 	def __unicode__(self):
 		return self.title
+
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_other'
 
 class Cv(models.Model):
 
@@ -346,6 +370,10 @@ class Cv(models.Model):
 		
 	def __unicode__(self):
 		return self.person.name + ", " + self.tags
+	
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_cv'
 		
 STYLE_CHOICES = (
 	('sky', 'Sky'),
@@ -357,53 +385,3 @@ STYLE_CHOICES = (
 class Style(models.Model):
 	logo = models.ImageField(upload_to="photos", null=True, blank=True)
 	stylesheet = models.CharField(max_length=10, choices=STYLE_CHOICES, default='sky')
-
-
-# COMPETENCEMATRIX MODEL
-
-class Matrix(models.Model):
-	title = models.CharField("Title", max_length=128)
-	description = models.TextField(null=True, blank=True)
-	legend = models.TextField(null=True, blank=True)
-	last_edited = models.DateTimeField(auto_now=True)
-	created = models.DateTimeField(auto_now_add=True)
-	def __unicode__(self):
-		return self.title
-	def competence_count(self):
-		count = 0
-		for g in self.skillgroup_set.all():
-			count += g.competence_set.count()
-		return count
-	def rating(self):
-		return self.matrixentry_set.all().aggregate(Avg('rating')).values()[0]
-		# Get all entries, get average (returns a dict), get first value of dict containing avg rating
-
-class Skillgroup(models.Model):
-	matrix = models.ForeignKey(Matrix)
-	title = models.CharField("Title", max_length=128)
-	description = models.TextField(null=True, blank=True)
-	last_edited = models.DateTimeField(auto_now=True)
-	def __unicode__(self):
-		return self.title
-
-class Competence(models.Model):
-	skillgroup = models.ManyToManyField(Skillgroup)
-	title = models.CharField("Title", max_length=128)
-	description = models.TextField(null=True, blank=True)
-	last_edited = models.DateTimeField(auto_now=True)
-	def __unicode__(self):
-		return self.title
-
-class MatrixEntry(models.Model):
-	person = models.ForeignKey(Person)
-	matrix = models.ForeignKey(Matrix)
-	last_edited = models.DateTimeField(auto_now=True)
-	rating = models.IntegerField(null=True, blank=True)
-	comment = models.TextField(null=True, blank=True)
-
-class CompetenceEntry(models.Model):
-	person = models.ForeignKey(Person)
-	competence = models.ForeignKey(Competence)
-	rating = models.IntegerField()
-	relevant_experience = models.ManyToManyField(Experience)
-	last_edited = models.DateTimeField(auto_now=True)
