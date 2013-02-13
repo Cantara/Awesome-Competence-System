@@ -103,8 +103,6 @@ input, textarea {
 
 /* FORM */
 
-
-
 #matrix input[type="text"], #matrix textarea {
 	display: block;
 	margin: 0 0 1em 0;
@@ -137,7 +135,9 @@ fieldset.competence {
 
 .competence textarea {margin:0 !important;}
 
-.error { border: 1px solid red;}
+.error { border: 1px solid red; }
+
+.lock { padding: .5em; color: #fff;}
 
 /* FORM END*/
 
@@ -146,6 +146,7 @@ fieldset.competence {
 
 
 /* BUTTON */
+button {border:none;}
 input.butt {
 	border:none;
 }

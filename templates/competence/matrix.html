@@ -5,7 +5,7 @@
 {% block actions %}
 		<h1>{{ matrix.title }}</h1>
 	{% if user.is_authenticated %}
-		<input class="butt save" type="button" value="SAVE ENTRY">	
+		<button class="butt save"><i class="icon-save"></i> SAVE ENTRY</button>
 	{% endif %}
 {% endblock %}
 
@@ -108,7 +108,7 @@
 				<tr>
 					<td></td>
 					<td colspan="4">
-						<input type="button" value="SAVE ENTRY" class="butt save">
+						<a class="butt save"><i class="icon-edit"></i> Save entry</a>
 					</td>
 				</tr>
 			</table>

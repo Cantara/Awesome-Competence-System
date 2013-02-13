@@ -1,4 +1,4 @@
-from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Style, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
+from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
@@ -138,6 +138,24 @@ class CvAdmin(admin.ModelAdmin):
 
 admin.site.register(Cv, CvAdmin)
 
+class CompetenceInline(admin.TabularInline):
+	model = Competence
+	formfield_overrides = small
+	extra = 1
+
+class MatrixAdmin(admin.ModelAdmin):
+	model = Matrix
+	verbose_name_plural = "Competencematrices"
+	#inlines = [CompetenceFieldInline]
+
+admin.site.register(Matrix, MatrixAdmin)
+
+admin.site.register(MatrixEntry)
+admin.site.register(Competence)
+admin.site.register(Skillgroup)
+
+
+'''
 class StyleAdmin(admin.ModelAdmin):
 	
 	def render_change_form(self, request, context, *args, **kwargs):
@@ -157,19 +175,4 @@ class StyleAdmin(admin.ModelAdmin):
 			return HttpResponseRedirect("/cv/")
 
 admin.site.register(Style, StyleAdmin)
-
-class CompetenceInline(admin.TabularInline):
-	model = Competence
-	formfield_overrides = small
-	extra = 1
-
-class MatrixAdmin(admin.ModelAdmin):
-	model = Matrix
-	verbose_name_plural = "Competencematrices"
-	#inlines = [CompetenceFieldInline]
-
-admin.site.register(Matrix, MatrixAdmin)
-
-admin.site.register(MatrixEntry)
-admin.site.register(Competence)
-admin.site.register(Skillgroup)
+'''

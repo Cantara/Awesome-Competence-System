@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<title>{% block title %}Altran CV System{% endblock %}</title>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttonsxx.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/fontawesome.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css"/>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 		<link rel="icon" type="image/png" href="" />
@@ -13,20 +15,21 @@
     <nav>
         {% block nav %}
         <ul class="wide">
-            <li><a href="/" class="butt red">CV</a></li>
-            <li><a href="/matrix/" class="butt red">Kompetansematriser</a></li>
-		{% if user.is_authenticated %}
-			<li><a href="/logout/" class="butt red">Log out</a></li>
-		{% else %}
+            <li><a href="/" class="butt red">Employee CVs</a></li>
+            <li><a href="/matrix/" class="butt red">Competence Matrices</a></li>
 			<li>
-				<form action="/login/" method="post" accept-charset="utf-8">
+				<form method="post" action="/login/" id="loginform">
 					{% csrf_token %}
-					<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
-					<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
-					<input type="submit" value="Log in" class="butt red">
+					<input type="hidden" value="{{ request.path }}" name="path">
+					{% if user.is_authenticated %}
+						<input type="submit" value="Log out" class="butt red">
+					{% else %}
+						<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
+						<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
+						<input type="submit" value="Log in" class="butt red">
+					{% endif %}
 				</form>
 			</li>
-			{% endif %}
         </ul>
         {% endblock %}
     </nav>

@@ -3,6 +3,7 @@
 import os
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+WWW_ROOT = '/var/www/'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -48,7 +49,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = PROJECT_ROOT + '/static/media/'
+MEDIA_ROOT = WWW_ROOT + 'static/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -59,7 +60,7 @@ MEDIA_URL = '/static/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/var/www/static/'
+STATIC_ROOT = WWW_ROOT + 'static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -166,7 +167,9 @@ WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
 
 WEBODT_TEMPLATE_PATH = '/tmp/'
 
-try:
-    from local_settings import *
-except ImportError:
-    pass
+# Get request in templates
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
+)
