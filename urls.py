@@ -19,6 +19,7 @@ urlpatterns = patterns('cv.views',
     url(r'^matrix/$', 'matrices'),
     url(r'^matrix/edit/$', 'editmatrix'),
     url(r'^matrix/edit/(?P<m_id>\d+)/$', 'loadmatrix'),
+    url(r'^matrix/edit_bb/(?P<m_id>\d+)/$', 'loadmatrix_bb', name='loadmatrix_bb'),
     url(r'^matrix/save/$', 'savematrix'),
 
     url(r'^matrix/addcompetence/$', 'addcompetence'),

@@ -139,6 +139,10 @@ fieldset.competence {
 
 .lock { padding: .5em; color: #fff;}
 
+/* LOGINFORM */
+
+#loginform { background: #444; display: inline-block; position: absolute; padding:.5em; right:0; top:0;}
+
 /* FORM END*/
 
 

@@ -1,0 +1,35 @@
+{% extends "./cvbase.html" %}
+
+{% block title %}{{ matrix.title }} - Altran CV{% endblock %}
+
+{% block actions %}
+	<h1>Edit Matrix Backbone</h1>
+{% endblock %}
+
+{% block content %}
+<div id="#form">
+</div>
+<script src="{{ STATIC_URL }}js/underscore-min.js"></script>
+<script src="{{ STATIC_URL }}js/backbone-min.js"></script>
+<script>
+
+	var Matrix = Backbone.Model.extend({
+		initialize: function() {
+			alert('{{ test }}');
+		}
+	});
+
+	var Skillgroup = Backbone.Model.extend({
+
+	});
+
+	var Competence = Backbone.Model.extend({
+
+	});
+
+	var matrix = new Matrix;
+
+
+</script>
+	
+{% endblock %}

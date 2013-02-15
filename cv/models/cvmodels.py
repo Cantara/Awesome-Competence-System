@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 import django.contrib.auth.models
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 YEAR_CHOICES = [(0,'Year')]
@@ -24,6 +25,7 @@ MONTH_CHOICES = (
 )
 
 class Person(models.Model):
+	user = models.OneToOneField(User)
 	name = models.CharField("Name*", max_length=50)
 	title = models.CharField("Job title", max_length=60, null=True, blank=True)
 	linkedin = models.URLField("Linked-in URL", null=True, blank=True)

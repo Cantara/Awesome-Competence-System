@@ -63,7 +63,7 @@ class PersonAdmin(admin.ModelAdmin):
 	
 	save_on_top = True
 	
-	fields = ('name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
+	fields = ('user', 'name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	def response_change(self, request, obj, post_url_continue=None):

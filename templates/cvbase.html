@@ -1,3 +1,5 @@
+{% url loadmatrix_bb m.id as test%}
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -17,20 +19,19 @@
         <ul class="wide">
             <li><a href="/" class="butt red">Employee CVs</a></li>
             <li><a href="/matrix/" class="butt red">Competence Matrices</a></li>
-			<li>
-				<form method="post" action="/login/" id="loginform">
-					{% csrf_token %}
-					<input type="hidden" value="{{ request.path }}" name="path">
-					{% if user.is_authenticated %}
-						<input type="submit" value="Log out" class="butt red">
-					{% else %}
-						<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
-						<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
-						<input type="submit" value="Log in" class="butt red">
-					{% endif %}
-				</form>
-			</li>
         </ul>
+		<form method="post" action="/login/" id="loginform">
+			{% csrf_token %}
+			<input type="hidden" value="{{ request.path }}" name="path">
+			{% if user.is_authenticated %}
+				Welcome <strong>{{ user.username }}</strong>
+				<input type="submit" value="Log out" class="butt red">
+			{% else %}
+				<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
+				<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
+				<input type="submit" value="Log in" class="butt red">
+			{% endif %}
+		</form>
         {% endblock %}
     </nav>
 

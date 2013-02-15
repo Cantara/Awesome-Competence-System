@@ -79,13 +79,14 @@
 		<div class="block">
 			<form action="competenceentrysubmit/" id="entry">
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
-			<select name="person_id">
+			<input type="hidden" name="person_id" value="{{ user.id }}">
+			{# <!--select name="person_id">
 				{% if all_persons %}
 					{% for p in all_persons %}
 					<option value="{{ p.id }}">{{ p.name }}</option>
 					{% endfor %}
 				{% endif %}
-			</select>
+			</select--> #}
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<table>
 				{% for g in matrix.skillgroup_set.all %}
@@ -138,7 +139,7 @@
 			hide(this);
 		});
 
-		$('select[name=person_id]').change( function() {
+		$('input[name=person_id]').change( function() {
 			loadentry();
 		});
 
@@ -161,7 +162,7 @@
 			thisradio = $(t);
 			c_id = thisradio.attr('name').replace(/competence\[|\]/g, "");
 			console.log(t);
-			p_id = $('select[name=person_id]').val();
+			p_id = $('input[name=person_id]').val();
 			hidden = hidden || '';
 			data = {
 				p_id: p_id,

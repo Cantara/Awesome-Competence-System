@@ -41,6 +41,10 @@ def loadmatrix(request, m_id):
 	groupcounter += '<input type="hidden" id="m_id" value="%s">' % m_id
 	return render_to_response('competence/editmatrix.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
 
+def loadmatrix_bb(request, m_id):
+	m = get_object_or_404(Matrix, pk=m_id)
+	return render_to_response('competence/editmatrix_bb.html', {'m':m}, context_instance=RequestContext(request))	
+
 def addfield(fieldtype, num, readonly="", groupnum="", title="", description="", existing_id = "", nestedfields=False):
     template = 'competence/groupcompetence.html'
     if existing_id:
