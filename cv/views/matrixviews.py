@@ -14,19 +14,19 @@ import json
 import requests #get it http://docs.python-requests.org/en/latest/index.html
 
 
-def matrices(request):
+def matrix_list(request):
 	all_matrices = Matrix.objects.all()
-	return render_to_response('competence/matrices_list.html', {'all_matrices': all_matrices}, context_instance=RequestContext(request))
+	return render_to_response('competence/matrix_list.html', {'all_matrices': all_matrices}, context_instance=RequestContext(request))
 
-def editmatrix(request, m_id=False):
+def matrix_edit(request, m_id=False):
 	m = {'title':"", 'description':"", 'legend':""}
 	groupcount = 1
 	comp = addfield('competence',1,groupnum=1)
 	fields = addfield('group',1,nestedfields={'fields':comp,'count':1})
 	groupcounter = '<input type="hidden" id="groupcounter" value="%d">' % groupcount
-	return render_to_response('competence/editmatrix.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
+	return render_to_response('competence/matrix_edit.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
 
-def loadmatrix(request, m_id):
+def matrix_load(request, m_id):
 	m = get_object_or_404(Matrix, pk=m_id)
 	groupcount = m.skillgroup_set.count()
 	# For each group
@@ -41,7 +41,7 @@ def loadmatrix(request, m_id):
 	groupcounter += '<input type="hidden" id="m_id" value="%s">' % m_id
 	return render_to_response('competence/editmatrix.html', {'m': m, 'fields': fields,'groupcounter':groupcounter}, context_instance=RequestContext(request))
 
-def loadmatrix_bb(request, m_id):
+def matrix_load_bb(request, m_id):
 	m = get_object_or_404(Matrix, pk=m_id)
 	return render_to_response('competence/editmatrix_bb.html', {'m':m}, context_instance=RequestContext(request))	
 
@@ -73,7 +73,7 @@ def addgroup(request):
 	fields = addfield('group',num,nestedfields={'fields':comp,'count':1})
 	return HttpResponse(fields)
 
-def savematrix(request):
+def matrix_save(request):
 	data = json.loads(request.raw_post_data)
 	response_data = {}
 	

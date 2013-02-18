@@ -5,7 +5,7 @@
 {% block actions %}
 	{% if user.is_authenticated %}
 		<h1>Competence Matrices</h1>
-		<a href="/matrix/edit/" class="butt"><i class="icon-plus-sign"></i> Add new Competence Matrix</a>
+		<a href="{% url cv.views.matrix_edit %}" class="butt"><i class="icon-plus-sign"></i> Add new Competence Matrix</a>
 	{% endif %}
 {% endblock %}
 
@@ -18,8 +18,8 @@
 					<li>Entries: {{ m.matrixentry_set.count }}</li>
 					<li>Fields: {{ m.competence_count }}</li>
 				</ul>
-				<a href="/matrix/edit/{{m.id}}" class="butt">Edit</a>
-				<a href="/matrix/{{m.id}}" class="butt"><i class="icon-edit"></i> Fill out</a>
+				<a href="{% url cv.views.matrix_load m.id %}" class="butt">Edit</a>
+				<a href="{% url cv.views.matrix_entry_get m.id %}" class="butt"><i class="icon-edit"></i> Fill out</a>
 			</div>
 		{% endfor %}
 	{% else %}

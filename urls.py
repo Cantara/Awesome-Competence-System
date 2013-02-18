@@ -16,11 +16,11 @@ urlpatterns = patterns('cv.views',
 	url(r'^login/$', 'mylogin'),
 	url(r'^logout/$', 'mylogout'),
 
-    url(r'^matrix/$', 'matrices'),
-    url(r'^matrix/edit/$', 'editmatrix'),
-    url(r'^matrix/edit/(?P<m_id>\d+)/$', 'loadmatrix'),
-    url(r'^matrix/edit_bb/(?P<m_id>\d+)/$', 'loadmatrix_bb', name='loadmatrix_bb'),
-    url(r'^matrix/save/$', 'savematrix'),
+    url(r'^matrix/$', 'matrix_list'),
+    url(r'^matrix/edit/$', 'matrix_edit'),
+    url(r'^matrix/edit/(?P<m_id>\d+)/$', 'matrix_load'),
+    url(r'^matrix/edit_bb/(?P<m_id>\d+)/$', 'matrix_load_bb', name='loadmatrix_bb'),
+    url(r'^matrix/save/$', 'matrix_save'),
 
     url(r'^matrix/addcompetence/$', 'addcompetence'),
     url(r'^matrix/addgroup/$', 'addgroup'),
@@ -28,9 +28,9 @@ urlpatterns = patterns('cv.views',
 
     url(r'^matrix/ajax/competence/$', 'ajaxcompetencelist'),
 
-    url(r'^matrix/(?P<m_id>\d+)/$', 'matrixentry'),
-    url(r'^matrix/saveentry/$', 'saveentry'),
-    url(r'^matrix/loadentry/$', 'loadentry'),
+    url(r'^matrix/(?P<m_id>\d+)/$', 'matrix_entry_get'),
+    url(r'^matrix/saveentry/$', 'matrix_entry_save'),
+    url(r'^matrix/loadentry/$', 'matrix_entry_load'),
 
     # Examples:
     # url(r'^$', 'cvapp.views.home', name='home'),
