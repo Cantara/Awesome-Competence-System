@@ -80,13 +80,16 @@
 			<form action="competenceentrysubmit/" id="entry">
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<input type="hidden" name="person_id" value="{{ user.id }}">
-			{# <!--select name="person_id">
+			<h3>{{ current_person.name }}</h3>
+			{% comment %} 
+			<!--select name="person_id">
 				{% if all_persons %}
 					{% for p in all_persons %}
 					<option value="{{ p.id }}">{{ p.name }}</option>
 					{% endfor %}
 				{% endif %}
-			</select--> #}
+			</select--> 
+			{% endcomment %}
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<table>
 				{% for g in matrix.skillgroup_set.all %}
