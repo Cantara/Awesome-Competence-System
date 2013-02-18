@@ -1,4 +1,4 @@
-{% url loadmatrix_bb m.id as test%}
+{% url loadmatrix_bb m.id as test %}
 
 <!DOCTYPE html>
 <html>
@@ -17,10 +17,10 @@
     <nav>
         {% block nav %}
         <ul class="wide">
-            <li><a href="/" class="butt red">Employee CVs</a></li>
-            <li><a href="/matrix/" class="butt red">Competence Matrices</a></li>
+            <li><a href="{% url cv.views.cvlisted %}" class="butt red">Employee CVs</a></li>
+            <li><a href="{% url cv.views.matrices %}" class="butt red">Competence Matrices</a></li>
         </ul>
-		<form method="post" action="/login/" id="loginform">
+		<form method="post" action="{% url cv.views.mylogin %}" id="loginform">
 			{% csrf_token %}
 			<input type="hidden" value="{{ request.path }}" name="path">
 			{% if user.is_authenticated %}
