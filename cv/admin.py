@@ -152,6 +152,7 @@ admin.site.register(Matrix, MatrixAdmin)
 
 admin.site.register(MatrixEntry)
 admin.site.register(Competence)
+admin.site.register(CompetenceEntry)
 admin.site.register(Skillgroup)
 
 

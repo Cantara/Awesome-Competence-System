@@ -7,9 +7,9 @@ admin.autodiscover()
 urlpatterns = patterns('cv.views',
 
     url(r'^$', 'cvlist'),
-	url(r'^cv/$', 'cvlisted'),
-	url(r'^cv/(?P<cv_id>\d+)/$', 'detail'),
-	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail'),
+	url(r'^cv/$', 'cv_list'),
+	url(r'^cv/(?P<cv_id>\d+)/$', 'detail', name='cv_detail'),
+	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail', name='cv_detail_en'),
 	url(r'^cv/\d+/download/$', 'download'),
 	url(r'^cv/\d+/download/(?P<format>pdf|doc|odt)/$', 'download'),
 

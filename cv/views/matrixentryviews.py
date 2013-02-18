@@ -44,13 +44,13 @@ def matrix_entry_save(request):
 	# create fieldentries with field_id + entry_id
 	for c_id in a['competence'].keys():
 		try:
-			competenceentry = CompetenceEntry.objects.get( person=p_id, competence=c_id )
-			competenceentry.competencerating = int( a['competence'][c_id] )
+			c = Competence.objects.get( pk=int(c_id) )
+			competenceentry = CompetenceEntry.objects.get( person=p, competence=c )
+			competenceentry.rating = int( a['competence'][c_id] )
 			competenceentry.save()
 		except CompetenceEntry.DoesNotExist:
-			c_id_int = int(c_id)
-			competence = Competence.objects.get( pk = c_id_int )
-			competenceentry = CompetenceEntry( person=p, competence=competence, rating=int( a['competence'][c_id]) )
+			c = Competence.objects.get( pk = int(c_id) )
+			competenceentry = CompetenceEntry( person=p, competence=c, rating=int( a['competence'][c_id]) )
 			competenceentry.save()
 
 	message = ""
