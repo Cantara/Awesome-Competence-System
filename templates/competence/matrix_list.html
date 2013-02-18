@@ -1,6 +1,6 @@
 {% extends "./cvbase.html" %}
 
-{% block title %}Competence Matrices - Altran CV{% endblock %}
+{% block title %}Competence Matrices{% endblock %}
 
 {% block actions %}
 	{% if user.is_authenticated %}
@@ -13,13 +13,15 @@
 	{% if all_matrices %}
 		{% for m in all_matrices|dictsort:"title" %}
 			<div class="block tiled">
-				<h3>{{ m.title }}</h3>
-				<ul>
-					<li>Entries: {{ m.matrixentry_set.count }}</li>
-					<li>Fields: {{ m.competence_count }}</li>
-				</ul>
-				<a href="{% url cv.views.matrix_load m.id %}" class="butt">Edit</a>
-				<a href="{% url cv.views.matrix_entry_get m.id %}" class="butt"><i class="icon-edit"></i> Fill out</a>
+				<header><h3>{{ m.title }}</h3></header>
+				<section>
+					<ul>
+						<li>Entries: {{ m.matrixentry_set.count }}</li>
+						<li>Fields: {{ m.competence_count }}</li>
+					</ul>
+					<a href="{% url cv.views.matrix_load m.id %}" class="butt">Edit</a>
+					<a href="{% url cv.views.matrix_entry_get m.id %}" class="butt"><i class="icon-edit"></i> Fill out</a>
+				</section>
 			</div>
 		{% endfor %}
 	{% else %}

@@ -73,6 +73,7 @@ h1 {
 	display: inline-block;
 	box-sizing: border-box;
 	text-align: left;
+	vertical-align: top;
 	width: 100%;
 			transition: all 0.5s;
 		 -o-transition: all 0.5s; /* Opera */
@@ -81,10 +82,15 @@ h1 {
 }
 
 .block h3 {
-	height: 4em;
 	line-height: 1.3em;
 	font-weight: normal;
 	font-size: 120%;
+}
+.block h4 {
+	line-height: 1.3em;
+	font-weight: normal;
+	color: #aaa;
+	font-size: 90%;
 }
 
 .block ul {
@@ -95,6 +101,16 @@ h1 {
 .tiled {
 	margin: 1em .5em 0 .5em;
 	max-width: 300px;
+	height: 200px;
+}
+
+.tiled header {
+	margin-right: 48px;
+}
+
+.tiled section {
+	position: absolute;
+	bottom: 1em;
 }
 
 .hidden {
@@ -112,11 +128,10 @@ h1 {
 
 /* CV LIST */
 .tags {display:none;}
-	
+.photo {max-height: 48px; max-width: 48px; position: absolute; right: 1em; top: 1em;}	
 .cvset {
 	display: inline-block;
 	background: white;
-	border-radius: 0 0 5px 5px;
 	max-height: 0px;
 	max-width: 0px;
 	overflow: hidden;
@@ -142,41 +157,52 @@ h1 {
 	-webkit-transition: max-height 0.3s, max-width 0 ease 0; /* Safari and Chrome */
 }
 
+.cvset td {
+	padding: .5em 0 0 .5em;
+}
+.cvset table {
+	margin: 0 .5em .5em 0;
+}
+
+.majordetail, .minordetail {
+	font-size: .75em;
+	margin-bottom:.5em;
+}
 
 .completeness {
+	position: absolute;
+	top:0;
+	left:0;
 	display: inline-block;
-	width: 90px;
-	height: 10px;
-	background: #ddd;
-	margin-bottom: 5px;
+	width: 100%;
+	height: 8px;
+	background: #C21A01;
+	margin-bottom: 2px;
 	padding: 0px;
-	border-radius: 3px; 
-/*	box-shadow: 
-	inset 0 5px 10px rgba(0,0,0,0.2);*/
 	overflow: hidden;
 }
 
+/* color of complete progress bar */
 .percent {
 	height: 100%;
-	display: inline-block;
-	border-radius: 3px 0 0 3px;
-	background-color: #39e;
-	/*box-shadow: 
-	 This is the top gradient for the color bar
-	inset 0 4px 0 rgba(255,255,255,0.2),
-	inset 0 1px 2px rgba(0,0,0,0.125); */
-	border-right: 1px solid rgba(0,0,0,0.2);
+	background-color: #eee;
+}
+
+/* Color of incomplete progress bar */
+.redpercent {
+	background: #eee;
 }
 
 span.completeness {
-	background: #fff;
-	border-radius: 2px;
-	width: 50px;
-	height: 4px;
+	display: inline-block;
+	vertical-align: middle;
+	background: transparent;
+	height: 3px;
 }
 
 span.percent {
-	border-radius: 2px 0 0 2px;
+	background: rgba(255,255,255,0.3);
+	display: block;
 }
 
 /* END CV LIST*/
@@ -243,6 +269,7 @@ input.butt {
 }
 
 .butt {
+	position: relative;
 	cursor: pointer;
 	background: #00A8C6;
 	text-transform: uppercase;
@@ -259,6 +286,10 @@ input.butt {
   -o-user-select: none;
   user-select: none;      
 	}
+
+.bigbutt {
+	width: 200px;
+}
 
 .butt:hover {
 	background: #40C0CB;
