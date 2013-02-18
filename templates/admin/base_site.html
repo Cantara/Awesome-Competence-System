@@ -3,13 +3,13 @@
 
 {% block title %}{{ title }} | {% trans 'Altran CV' %}{% endblock %}
 
-{# block extrastyle %}
+{% block extrastyle %}
 <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>-->
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base_site.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_custom.css"/>
 
-{% endblock #}
+{% endblock %}
 
 {% block branding %}
 
@@ -148,8 +148,7 @@ $.fn.insertAtCaret = function (myValue) {
 
 {% block sidebar %}
 
-{% comment %}
-{% if not user.is_anonymous %}
+{% if 'person' in request.path %}
 
 <div id="DragDiv">
 	<h4>Copy-Paste-Helper</h4>
@@ -162,6 +161,5 @@ $.fn.insertAtCaret = function (myValue) {
 </div>
 
 {% endif %}
-{% endcomment %}
 
 {% endblock %}

@@ -1,0 +1,11 @@
+
+.ui-autocomplete { list-style: none !important; display:inline-block; text-align: left;}
+.ui-autocomplete li { list-style: none !important; display:inline-block;}
+.ui-autocomplete a { color: #444 !important;}
+.ui-autocomplete a:hover { color: #fff !important;}
+
+.dropHover { border-color: #dda !important; background-color: #ffd !important;}
+
+#DragDiv { position: fixed; right: 1em; top: 100px; width: 16%; background: #fff; overflow: hidden; border: 1px solid #ddd; padding: 1em;}
+
+#content-main {width: 80% !important;}
