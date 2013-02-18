@@ -12,7 +12,10 @@ import requests #get it http://docs.python-requests.org/en/latest/index.html
 def matrix_entry_get(request, m_id):
 	matrix = get_object_or_404(Matrix, pk=m_id)
 	all_persons = Person.objects.all()
-	current_person = get_object_or_404(Person, user=request.user)
+	if request.user.is_authenticated():
+		current_person = get_object_or_404(Person, user=request.user)
+	else:
+		current_person = {}
 	return render_to_response('competence/matrix_entry.html', {'matrix': matrix, 'all_persons': all_persons, 'current_person': current_person}, context_instance=RequestContext(request))
 	#return HttpResponse("Hello, world. competencematrixentry: " + matrix.name + lol)
 

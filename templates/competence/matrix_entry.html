@@ -80,7 +80,7 @@
 			<form action="competenceentrysubmit/" id="entry">
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<input type="hidden" name="person_id" value="{{ user.id }}">
-			<h3>{{ current_person.name }}</h3>
+			<h3>{% if user.is_authenticated %}{{ current_person.name }}{% else %}You are not logged in.{% endif %}</h3>
 			{% comment %} 
 			<!--select name="person_id">
 				{% if all_persons %}
@@ -93,7 +93,10 @@
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<table>
 				{% for g in matrix.skillgroup_set.all %}
-					<tr> <th>{{ g.title }}</th> <th>-</th> <th>1</th> <th>2</th> <th>3</th> </tr>
+					<tr> 
+						<th>{{ g.title }}</th> 
+						{% if user.is_authenticated %}<th>-</th> <th>1</th> <th>2</th> <th>3</th> {% endif %}
+					</tr>
 					{% for c in g.competence_set.all %}
 						<tr>
 							<td class="title">
@@ -102,19 +105,23 @@
 									<div class="description hidden">{% autoescape off %}{{ c.description }}{% endautoescape %}</div>
 								{% endif %}
 							</td>
-							<td><input type="radio" value="0" name="competence[{{ c.id }}]" checked></td>
-							<td><input type="radio" value="1" name="competence[{{ c.id }}]"></td>
-							<td><input type="radio" value="2" name="competence[{{ c.id }}]"></td>
-							<td><input type="radio" value="3" name="competence[{{ c.id }}]"></td>
+							{% if user.is_authenticated %}
+								<td><input type="radio" value="0" name="competence[{{ c.id }}]" checked></td>
+								<td><input type="radio" value="1" name="competence[{{ c.id }}]"></td>
+								<td><input type="radio" value="2" name="competence[{{ c.id }}]"></td>
+								<td><input type="radio" value="3" name="competence[{{ c.id }}]"></td>
+							{% endif %}
 						</tr>
 					{% endfor %}
 				{% endfor %}
-				<tr>
-					<td></td>
-					<td colspan="4">
-						<a class="butt save"><i class="icon-edit"></i> Save entry</a>
-					</td>
-				</tr>
+				{% if user.is_authenticated %}
+					<tr>
+						<td></td>
+						<td colspan="4">
+							<a class="butt save"><i class="icon-edit"></i> Save entry</a>
+						</td>
+					</tr>
+				{% endif %}
 			</table>
 		
 			</form>
