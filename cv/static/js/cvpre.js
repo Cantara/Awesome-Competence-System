@@ -1,4 +1,4 @@
-﻿//Binding functions and making things sortable/draggable - Some are here, some are in the buttons or whatever, I'm not that consistent
+//Binding functions and making things sortable/draggable - Some are here, some are in the buttons or whatever, I'm not that consistent
 $(function() {
 
 	$( "#technologies" ).sortable({

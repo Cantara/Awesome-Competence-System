@@ -127,7 +127,8 @@ h1 {
 
 
 /* CV LIST */
-input[type="text"] {padding: .5em; font-size: 80%;}
+
+#filter {padding: .5em; font-size: 80%;}
 .tags {display:none;}
 .photo {max-height: 48px; max-width: 48px; position: absolute; right: 1em; top: 1em;}	
 .cvset {

@@ -1,30 +1,12 @@
-* {margin:0;padding:0}
+#cvdetails {background-color: #fff; max-width: 750px; padding: 1em 4em 1em 4em; margin:auto;}
 
-body {
-	width:750px;
-	margin:auto;
-}
-
-#printlogo {width: 80px; margin: auto; display:inherit;}
-
-#topmenu {
-	margin: 20px;
-	padding: 15px;
-}
-
-.body {
-	overflow: auto;
-	padding: 8%;
-	margin: 20px;
-}
-
-p {font-size: 0.9em; line-height: 1.5em; margin-bottom: 0.75em; font-family: arial;}
-ul { margin-bottom: 1em;}
-li {font-size: 0.8em; line-height: 1.5em; font-style: italic; margin-left: 2em; font-family: arial;}
+#cvdetails p {font-size: 0.9em; line-height: 1.5em; margin-bottom: 0.75em; font-family: arial;}
+#cvdetails ul { margin-bottom: 1em;}
+#cvdetails li {font-size: 0.8em; line-height: 1.5em; font-style: italic; margin-left: 2em; font-family: arial;}
 
 .contact {float: right; margin-top: 1.5em;}
-h1, .h1 {font-size: 2.2em; margin-top: 0.2em; font-weight: bold; }
-h2, .h2 {font-weight: normal; font-size: 1.6em; margin-top: 0.5em; margin-bottom: 0.3em;}
+#cvdetails h1, .h1 {font-size: 2.2em; margin-top: 0.2em; font-weight: bold; }
+#cvdetails h2, .h2 {font-weight: normal; font-size: 1.6em; margin-top: 0.5em; margin-bottom: 0.3em;}
 
 .profile {font-size: 1.1em; line-height: 1.5em;}
 
@@ -48,17 +30,17 @@ h2, .h2 {font-weight: normal; font-size: 1.6em; margin-top: 0.5em; margin-bottom
 	padding: 2em 0 0 0;
 	border-top: 1px solid #ddd;
 	clear:both;
-	overflow: auto;
+	overflow: hidden;
 	page-break-inside: avoid;
 }
 
-h3, .h3 {font-size: 0.9em; line-height:1.5em;}
+#cvdetails h3, .h3 {font-size: 0.9em; line-height:1.5em;}
 
 /* Skills */
-h4, .h4 {font-size: 1.2em; line-height:1.4em; font-weight: normal;}
+#cvdetails h4, .h4 {font-size: 1.2em; line-height:1.4em; font-weight: normal;}
 
 /* Technical skills lists */
-h5, .h5 {font-size: 1em;}
+#cvdetails h5, .h5 {font-size: 1em;}
 
 /* Tekniske listerier */
 .techset, .other {margin-bottom:0.5em; overflow: hidden; position: relative;}
@@ -68,7 +50,7 @@ h5, .h5 {font-size: 1em;}
 .workplace {font-weight: bold;}
 .techs {font-style: italic; color: #999; font-size: 0.7em;}
 
-section {margin-bottom:2em; page-break-inside: avoid; position: relative; background: white;}
+#cvdetails section {margin-bottom:2em; page-break-inside: avoid; position: relative; background: white;}
 
 /* Toggle-button for hiding stuff */
 .toggle {width: 16px; height: 16px; background: red; position: absolute; top: 0; right: 0; cursor: pointer; text-align:center; border-radius: 3px; z-index: 2000;}
@@ -76,7 +58,7 @@ section {margin-bottom:2em; page-break-inside: avoid; position: relative; backgr
 .toggle:before {content: "\00D7"; font-size: 16px; line-height: 16px;color: white;}
 
 
-/* Draghandles for rearraning stuff */
+/* Draghandles for rearranging stuff */
 
 .draghandle {
 	position: absolute; 
@@ -101,10 +83,10 @@ section {margin-bottom:2em; page-break-inside: avoid; position: relative; backgr
 
 /* Flexible text-areas and whatnot! */
 
-input {border:none; width: 90%;}
+#cvdetails input {border:none; width: 100%;}
 
-textarea, 
-pre {
+#cvdetails textarea, 
+#cvdetails pre {
   margin: 0;
   padding: 0;
   outline: 0;
@@ -118,10 +100,12 @@ pre {
 .expandingArea > textarea,
 .expandingArea > pre {
   background: transparent;
-  font: 400 13px/16px helvetica, arial, sans-serif;
+  font: 400 13px/16px segoe ui, arial, sans-serif !important;
   /* Make the text soft-wrap */
   white-space: pre-wrap;
   word-wrap: break-word;
+  text-align: left;
+  width: 90%;
 }
 .expandingArea > textarea {
   /* The border-box box model is used to allow
@@ -132,7 +116,6 @@ pre {
 	 -moz-box-sizing: border-box;
 	  -ms-box-sizing: border-box;
 		  box-sizing: border-box;
-  width: 90%;
   /* This height is used when JS is disabled */
   height: 100px;
 }
@@ -154,4 +137,4 @@ pre {
   /* Hide the text; just using it for sizing */
   visibility: hidden;
 }
-input[type=text] {background: transparent;}
+#cvdetails input[type=text] {background: transparent;}
