@@ -291,6 +291,7 @@ input.butt {
 .bigbutt {
 	width: 200px;
 }
+.empty { background-color: #bbb; }
 
 .butt:hover {
 	background: #40C0CB;

@@ -12,6 +12,15 @@
 {% endblock %}
 
 {% block branding %}
+	<nav>
+        <ul class="wide">
+            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee CV list</a></li>
+            <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
+			{% if user.is_authenticated %}
+            <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
+			{% endif %}
+        </ul>
+    </nav>
 
 {% if not user.is_anonymous %}
 <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>

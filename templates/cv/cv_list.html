@@ -60,7 +60,12 @@
 					<p class="tags">
 						{{ p.name }}
 						{% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}
-						{% for e in p.experience_set.all %}{{e.techs}}{% endfor %}
+						{% for e in p.experience_set.all %}{{e.techs}}{{e.company}}{{e.company_en}}{% endfor %}
+						{% for w in p.workplace_set.all %}{{w.company}}{{w.company_en}}{% endfor %}
+						{% for s in p.education_set.all %}{{s.school}}{{s.school_en}}{% endfor %}
+						{% for c in p.cv_set.all %}{{c.title}}{{c.title_en}}{% endfor %}
+						{{ p.phone }}
+						{{ p.title }}
 					</p>
 				</section>
 
