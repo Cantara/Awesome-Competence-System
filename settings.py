@@ -165,7 +165,7 @@ WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
 
 WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
 
-WEBODT_TEMPLATE_PATH = '/tmp/'
+WEBODT_TEMPLATE_PATH = '/var/tmp/'
 
 # Get request in templates
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
