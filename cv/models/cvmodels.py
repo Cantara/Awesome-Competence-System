@@ -25,7 +25,7 @@ MONTH_CHOICES = (
 )
 
 class Person(models.Model):
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, null=True, blank=True)
 	name = models.CharField("Name*", max_length=50)
 	title = models.CharField("Job title", max_length=60, null=True, blank=True)
 	linkedin = models.URLField("Linked-in URL", null=True, blank=True)
