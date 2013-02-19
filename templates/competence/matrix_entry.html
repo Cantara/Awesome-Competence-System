@@ -79,17 +79,15 @@
 		<div class="block">
 			<form id="entry">
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
-			<input type="hidden" name="person_id" value="{{ user.id }}">
+			<!--input type="hidden" name="person_id" value="{{ user.id }}"-->
 			<h3>{% if user.is_authenticated %}{{ current_person.name }}{% else %}You are not logged in.{% endif %}</h3>
-			{% comment %} 
-			<!--select name="person_id">
+			<select name="person_id">
 				{% if all_persons %}
 					{% for p in all_persons %}
-					<option value="{{ p.id }}">{{ p.name }}</option>
+					<option value="{{ p.id }}" {% if p.user.id == user.id %} selected{% endif %}>{{ p.name }}</option>
 					{% endfor %}
 				{% endif %}
-			</select--> 
-			{% endcomment %}
+			</select>
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<table>
 				{% for g in matrix.skillgroup_set.all %}
