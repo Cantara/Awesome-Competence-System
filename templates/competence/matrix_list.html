@@ -15,10 +15,7 @@
 			<div class="block tiled">
 				<header><h3>{{ m.title }}</h3></header>
 				<section>
-					<ul>
-						<li>Entries: {{ m.matrixentry_set.count }}</li>
-						<li>Fields: {{ m.competence_count }}</li>
-					</ul>
+					<p class="rdetail">Entries: {{ m.matrixentry_set.count }}<br/>Fields: {{ m.competence_count }}</p>
 					<a href="{% url cv.views.matrix_load m.id %}" class="butt">Edit</a>
 					<a href="{% url cv.views.matrix_entry_get m.id %}" class="butt"><i class="icon-edit"></i> Fill out</a>
 				</section>
