@@ -3,7 +3,7 @@ from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Ed
 import json
 from collections import OrderedDict
 from appy.pod.renderer import Renderer
-from webodt.shortcuts import _ifile, render_to_response as rtr
+from webodt.shortcuts import _ifile, render_to, render_to_response as rtr
 from webodt.converters import converter
 import settings
 
@@ -115,7 +115,7 @@ def download(request, format):
 			'o': o_set,
 			'img': data,
 		}
-		
+
 	#else:
 		#get cvid from url and render the entire set of stuff from cv?
 	
@@ -123,14 +123,14 @@ def download(request, format):
 	if format != "odt": doc = "doc"
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest%s.odt' % doc
-	
-	rsltFile = '/tmp/%s.odt' % p.name.encode('ascii', 'ignore')
+	filename = p.name.encode('ascii', 'ignore')
+	rsltFile = '/tmp/%s.odt' % filename
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	if format == "odt":
 		response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
-		response['Content-Disposition'] = 'attachment; filename=%s %s Altran CV.odt' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"))
+		response['Content-Disposition'] = 'attachment; filename=%s %s Altran CV.odt' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"))
 		return response
 	else:
-		return rtr(p.name.encode('ascii', 'ignore')+'.odt', filename='%s %s Freecode CV.%s' % (p.name.encode('ascii', 'ignore'), c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
+		return rtr(rsltFile, filename='%s %s CV.%s' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
 		# Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
