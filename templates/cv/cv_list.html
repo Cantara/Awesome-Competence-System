@@ -4,12 +4,10 @@
 {% block title %}CV{% endblock %}
 
 {% block actions %}
+	<h1>Employee CV</h1>
+	<input type="text" name="filter" id="filter" size="10" style="margin:0;" placeholder="Search"/>
 	{% if user.is_authenticated %}
-		<h1>Employee CV</h1>
-		<input type="text" name="filter" id="filter" size="10" style="margin:0;" placeholder="Search"/>
-		{% if user.is_authenticated %}
-			<a href="{% url admin:cv_person_add %}" class="butt">Add new person</a>
-		{% endif %}
+		<a href="{% url admin:cv_person_add %}" class="butt">Add new person</a>
 	{% endif %}
 {% endblock %}
 
@@ -45,18 +43,8 @@
 					<div class="percent{% if p.completeness.percent < 100 %} redpercent{% endif %}" style="width: {{ p.completeness.percent }}%;"></div>
 				</div>
 				<section>
-					{% if user.is_authenticated %}
-						<p class="majordetail">
-							<acronym title="{{ p.completeness.comment }}">Profile {{ p.completeness.percent }}% complete</acronym>
-						</p>
-						<p class="minordetail">
-							Updated: {{ p.last_edited|date:"SHORT_DATE_FORMAT" }}
-						</p>
-					{% else %}
-						<p class="minordetail">{{ p.phone }}<br/>
-						{{ p.mail }}</p>
-					{% endif %}
-					<a href="{% url admin:cv_person_change p.id %}" class="butt">Edit person</a>
+					<p class="ldetail">{{ p.phone }}<br/>
+					{{ p.mail }}</p>
 					<p class="tags">
 						{{ p.name }}
 						{% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}
@@ -70,6 +58,12 @@
 				</section>
 
 				<div class="cvset">
+					{% if user.is_authenticated %}
+						<p class="ldetail">
+							<acronym title="{{ p.completeness.comment }}">Profile {{ p.completeness.percent }}% complete. Updated: {{ p.last_edited|date:"SHORT_DATE_FORMAT" }}</acronym><br>
+						</p>
+						<a href="{% url admin:cv_person_change p.id %}" class="butt">Edit person</a>
+					{% endif %}
 					<table>
 					{% for cv in p.cv_set.all|dictsortreversed:"cvsort" %}
 						{% if user.is_anonymous and cv.tags == "Empty CV" %}
@@ -79,7 +73,7 @@
 							<span class="dato">{% if cv.tags != "Empty CV" %}{{ cv.last_edited|date:"SHORT_DATE_FORMAT" }} <span class="completeness"><span class="percent{% if cv.status.percent < 100 %} redpercent{% endif %}" style="width: {{ cv.status.percent }}%;"></span></span> {{ cv.status.percent }}%{% else %}&nbsp;{% endif %}</span></a></td>
 							{% if user.is_authenticated %}
 								<td><a href="{% url admin:cv_cv_change cv.id %}" class="butt">Edit<br/>
-								<span class="dato"> &nbsp;</span></a></td>
+								<span class="dato">CV</span></a></td>
 							{% endif %}
 						</tr>
 						{% endif %}

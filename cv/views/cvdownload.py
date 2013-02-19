@@ -5,11 +5,11 @@ from collections import OrderedDict
 from appy.pod.renderer import Renderer
 from webodt.shortcuts import _ifile, render_to, render_to_response as rtr
 from webodt.converters import converter
+from webodt.helpers import get_mimetype
 import settings
 
 # Downloading a CV as ODT/DOC/PDF using the JSON submitted from the CVpreview
 def download(request, format):
-	
 	if(request.POST['cvjson']):
 	
 		a = json.loads(request.POST['cvjson'], object_pairs_hook = OrderedDict, strict=False)
@@ -119,12 +119,13 @@ def download(request, format):
 	#else:
 		#get cvid from url and render the entire set of stuff from cv?
 	
+
 	doc=""
 	if format != "odt": doc = "doc"
 	
 	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest%s.odt' % doc
-	filename = p.name.encode('ascii', 'ignore') + '.odt'
-	rsltFile = 'var/tmp/%s' % filename
+	filename = p.name.encode('ascii', 'ignore')
+	rsltFile = '/var/tmp/%s.odt' % filename
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
 	if format == "odt":
@@ -132,5 +133,5 @@ def download(request, format):
 		response['Content-Disposition'] = 'attachment; filename=%s %s Altran CV.odt' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"))
 		return response
 	else:
-		return rtr(filename, filename='%s %s CV.%s' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
+		return rtr(filename+'.odt', filename='%s %s CV.%s' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
 		# Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
