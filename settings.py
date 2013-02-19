@@ -160,12 +160,10 @@ LOGGING = {
 
 # Webodt-stuff
 WEBODT_CONVERTER = 'webodt.converters.googledocs.GoogleDocsODFConverter'
-
 WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
-
 WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
-
 WEBODT_TEMPLATE_PATH = '/var/tmp/'
+WEBODT_CACHE_DIR = WEBODT_TEMPLATE_PATH
 
 # Get request in templates
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
