@@ -58,7 +58,9 @@
 					{% endif %}
 					<a href="{% url admin:cv_person_change p.id %}" class="butt">Edit person</a>
 					<p class="tags">
-						{{ p.name }} {% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}
+						{{ p.name }}
+						{% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}
+						{% for e in p.experience_set.all %}{{e.techs}}{% endfor %}
 					</p>
 				</section>
 
