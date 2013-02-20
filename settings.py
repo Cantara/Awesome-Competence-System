@@ -162,7 +162,7 @@ LOGGING = {
 # Webodt-stuff
 WEBODT_CONVERTER = 'webodt.converters.googledocs.GoogleDocsODFConverter'
 WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
-WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
+from password import WEBODT_GOOGLEDOCS_PASSWORD
 WEBODT_TEMPLATE_PATH = '/var/tmp/'
 WEBODT_CACHE_DIR = WEBODT_TEMPLATE_PATH
 
