@@ -19,6 +19,12 @@ def matrix_entry_get(request, m_id):
 	return render_to_response('competence/matrix_entry.html', {'matrix': matrix, 'all_persons': all_persons, 'current_person': current_person}, context_instance=RequestContext(request))
 	#return HttpResponse("Hello, world. competencematrixentry: " + matrix.name + lol)
 
+def matrix_entry_get_all(request, m_id):
+	matrix = get_object_or_404(Matrix, pk=m_id)
+	all_persons = Person.objects.all()
+	return render_to_response('competence/matrix_entry_all.html', {'matrix': matrix, 'all_persons': all_persons}, context_instance=RequestContext(request))
+	#return HttpResponse("Hello, world. competencematrixentry: " + matrix.name + lol)
+
 def matrix_entry_save(request):
 	
 	a = json.loads(request.body)
