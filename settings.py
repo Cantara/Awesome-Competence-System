@@ -178,3 +178,4 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1/solr'
     },
 }
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
