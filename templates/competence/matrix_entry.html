@@ -77,19 +77,24 @@
 	{% if matrix %}
 		{% csrf_token %}
 		<div class="block">
-			<form action="competenceentrysubmit/" id="entry">
+			<form id="entry">
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
+			<!--input type="hidden" name="person_id" value="{{ user.id }}"-->
+			<h3>{% if user.is_authenticated %}{{ current_person.name }}{% else %}You are not logged in.{% endif %}</h3>
 			<select name="person_id">
 				{% if all_persons %}
 					{% for p in all_persons %}
-					<option value="{{ p.id }}">{{ p.name }}</option>
+					<option value="{{ p.id }}" {% if p.user.id == user.id %} selected{% endif %}>{{ p.name }}</option>
 					{% endfor %}
 				{% endif %}
 			</select>
 			<input type="hidden" name="matrix_id" value="{{ matrix.id }}">
 			<table>
 				{% for g in matrix.skillgroup_set.all %}
-					<tr> <th>{{ g.title }}</th> <th>-</th> <th>1</th> <th>2</th> <th>3</th> </tr>
+					<tr> 
+						<th>{{ g.title }}</th> 
+						{% if user.is_authenticated %}<th>-</th> <th>1</th> <th>2</th> <th>3</th> {% endif %}
+					</tr>
 					{% for c in g.competence_set.all %}
 						<tr>
 							<td class="title">
@@ -98,19 +103,23 @@
 									<div class="description hidden">{% autoescape off %}{{ c.description }}{% endautoescape %}</div>
 								{% endif %}
 							</td>
-							<td><input type="radio" value="0" name="competence[{{ c.id }}]" checked></td>
-							<td><input type="radio" value="1" name="competence[{{ c.id }}]"></td>
-							<td><input type="radio" value="2" name="competence[{{ c.id }}]"></td>
-							<td><input type="radio" value="3" name="competence[{{ c.id }}]"></td>
+							{% if user.is_authenticated %}
+								<td><input type="radio" value="0" name="competence[{{ c.id }}]" checked></td>
+								<td><input type="radio" value="1" name="competence[{{ c.id }}]"></td>
+								<td><input type="radio" value="2" name="competence[{{ c.id }}]"></td>
+								<td><input type="radio" value="3" name="competence[{{ c.id }}]"></td>
+							{% endif %}
 						</tr>
 					{% endfor %}
 				{% endfor %}
-				<tr>
-					<td></td>
-					<td colspan="4">
-						<a class="butt save"><i class="icon-edit"></i> Save entry</a>
-					</td>
-				</tr>
+				{% if user.is_authenticated %}
+					<tr>
+						<td></td>
+						<td colspan="4">
+							<a class="butt save"><i class="icon-edit"></i> Save entry</a>
+						</td>
+					</tr>
+				{% endif %}
 			</table>
 		
 			</form>
@@ -138,7 +147,7 @@
 			hide(this);
 		});
 
-		$('select[name=person_id]').change( function() {
+		$('input[name=person_id]').change( function() {
 			loadentry();
 		});
 
@@ -161,7 +170,7 @@
 			thisradio = $(t);
 			c_id = thisradio.attr('name').replace(/competence\[|\]/g, "");
 			console.log(t);
-			p_id = $('select[name=person_id]').val();
+			p_id = $('input[name=person_id]').val();
 			hidden = hidden || '';
 			data = {
 				p_id: p_id,
@@ -197,10 +206,10 @@
 			console.log(formdata);
 			$.ajax({
 			  type: "POST",
-			  url: "../saveentry/",
+			  url: "{% url cv.views.matrix_entry_save %}",
 			  data: formdata
 			}).done(function( msg ) {
-			  alert( msg );
+			  console.log( msg );
 			});
 		}
 
@@ -208,7 +217,7 @@
 			var formdata = FormatJSON( $('#entry').serializeObject() );
 			$.ajax({
 			  type: "POST",
-			  url: "../loadentry/",
+			  url: "{% url cv.views.matrix_entry_load %}",
 			  data: formdata
 			}).done(function( msg ) {
 			  var j = jQuery.parseJSON( msg );

@@ -1,13 +1,16 @@
+{% url loadmatrix_bb m.id as test %}
+
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>{% block title %}Altran CV System{% endblock %}</title>
-		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttonsxx.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/fontawesome.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css"/>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+		{% block extrastyles %}{% endblock %}
 		<link rel="icon" type="image/png" href="" />
 	</head>
 	<body>
@@ -15,22 +18,24 @@
     <nav>
         {% block nav %}
         <ul class="wide">
-            <li><a href="/" class="butt red">Employee CVs</a></li>
-            <li><a href="/matrix/" class="butt red">Competence Matrices</a></li>
-			<li>
-				<form method="post" action="/login/" id="loginform">
-					{% csrf_token %}
-					<input type="hidden" value="{{ request.path }}" name="path">
-					{% if user.is_authenticated %}
-						<input type="submit" value="Log out" class="butt red">
-					{% else %}
-						<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
-						<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
-						<input type="submit" value="Log in" class="butt red">
-					{% endif %}
-				</form>
-			</li>
+            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee CV list</a></li>
+            <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
+			{% if user.is_authenticated %}
+            <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
+			{% endif %}
         </ul>
+		<form method="post" action="{% url cv.views.mylogin %}" id="loginform">
+			{% csrf_token %}
+			<input type="hidden" value="{{ request.path }}" name="path">
+			{% if user.is_authenticated %}
+				Welcome <strong>{{ user.username }}</strong>
+				<input type="submit" value="Log out" class="butt red">
+			{% else %}
+				<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
+				<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
+				<input type="submit" value="Log in" class="butt red">
+			{% endif %}
+		</form>
         {% endblock %}
     </nav>
 

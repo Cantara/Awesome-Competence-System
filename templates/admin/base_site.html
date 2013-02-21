@@ -4,14 +4,23 @@
 {% block title %}{{ title }} | {% trans 'Altran CV' %}{% endblock %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+<!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base_site.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>-->
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_custom.css"/>
 
 {% endblock %}
 
 {% block branding %}
+	<nav>
+        <ul class="wide">
+            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee CV list</a></li>
+            <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
+			{% if user.is_authenticated %}
+            <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
+			{% endif %}
+        </ul>
+    </nav>
 
 {% if not user.is_anonymous %}
 <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
@@ -76,7 +85,7 @@ $(document).ready( function()
 	$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
 	
 	// Add back-button
-	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd; float: left;" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="../../../../">Exit without saving</a>');
+	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd; float: left;" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="' + document.referrer + '">Exit without saving</a>');
 	
 	// Add "SELECT_ALL"-button to CV-edit
 	var set = ['technology','experience','workplace','education','other'];
@@ -143,11 +152,12 @@ $.fn.insertAtCaret = function (myValue) {
 };
 </script>
 {% endif %}
-<h1 id="site-name">{% trans 'CV FreeCode' %}</h1>
+<h1 id="site-name">{% trans 'Altran CV' %}</h1>
 {% endblock %}
 
 {% block sidebar %}
-{% if not user.is_anonymous %}
+
+{% if 'person' in request.path %}
 
 <div id="DragDiv">
 	<h4>Copy-Paste-Helper</h4>
@@ -160,4 +170,5 @@ $.fn.insertAtCaret = function (myValue) {
 </div>
 
 {% endif %}
+
 {% endblock %}

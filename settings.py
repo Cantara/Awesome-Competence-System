@@ -49,12 +49,12 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = WWW_ROOT + 'static/media/'
+MEDIA_ROOT = WWW_ROOT + '/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/static/media/'
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -160,12 +160,10 @@ LOGGING = {
 
 # Webodt-stuff
 WEBODT_CONVERTER = 'webodt.converters.googledocs.GoogleDocsODFConverter'
-
 WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
-
 WEBODT_GOOGLEDOCS_PASSWORD = 'documentsinspace'
-
-WEBODT_TEMPLATE_PATH = '/tmp/'
+WEBODT_TEMPLATE_PATH = '/var/tmp/'
+WEBODT_CACHE_DIR = WEBODT_TEMPLATE_PATH
 
 # Get request in templates
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP

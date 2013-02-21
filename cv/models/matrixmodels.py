@@ -60,6 +60,8 @@ class CompetenceEntry(models.Model):
 	rating = models.IntegerField()
 	relevant_experience = models.ManyToManyField(Experience)
 	last_edited = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return self.person.name + " : " + self.competence.title
 	class Meta:
 		app_label = 'cv'
 		db_table = 'cv_competenceentry'

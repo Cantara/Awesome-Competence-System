@@ -7,10 +7,10 @@ def cvlist(request):
 	# style = Style.objects.get(id=1)
 	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': ''}, context_instance=RequestContext(request))
 
-def cvlisted(request):
+def cv_list(request):
 	all_persons = Person.objects.all()
 	# style = Style.objects.get(id=1)
-	return render_to_response('cv/cvlisted.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_list.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
@@ -97,4 +97,4 @@ def detail(request, cv_id, lang = ''):
 		
 	# style = Style.objects.get(id=1)
 	
-	return render_to_response('cv/cvpre.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': ''}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_detail.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': ''}, context_instance=RequestContext(request))

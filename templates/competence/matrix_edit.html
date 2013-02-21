@@ -36,7 +36,7 @@
 	function addCompetence(group) {
 		var c = $('#competencecounter'+group);
 		c.val( Number(c.val()) + 1 );
-		$.get('/matrix/addcompetence/', {'num':c.val(), 'groupnum':group}, function(data){
+		$.get('{% url cv.views.addcompetence %}', {'num':c.val(), 'groupnum':group}, function(data){
 			//console.log(data);
 			$('#group'+group+' fieldset:last').after(data);
 			autoCom();
@@ -52,7 +52,7 @@
 	function addGroup() {
 		var g = $('#groupcounter');
 		g.val( Number(g.val()) + 1 );
-		$.get('/matrix/addgroup/',{'num':g.val()},function(data){
+		$.get('{% url cv.views.addgroup %}',{'num':g.val()},function(data){
 			$('#addgroupbtn').before(data);
 			autoCom();
 		});
@@ -76,7 +76,7 @@
 			
 				Matrix.defaultJson = Matrix.getJson();
 			
-				$.post('/matrix/save/', Matrix.defaultJson, function(data){
+				$.post('{% url cv.views.matrix_save %}', Matrix.defaultJson, function(data){
 					Matrix[data.action](data.m_id);
 					msg(data.message);
 				}).fail(function() { msg('Error saving!'); });
@@ -107,7 +107,7 @@
 	function autoCom(){
 		console.log('Autocomplete activate.');
 		$( ".competence .title" ).autocomplete({
-			source: "/matrix/ajax/competence/",
+			source: "{% url cv.views.ajaxcompetencelist %}",
 			minLength: 1,
 			select: function( event, ui ) {
 				autocompleteSelected( event, ui, this );

@@ -63,9 +63,10 @@ class PersonAdmin(admin.ModelAdmin):
 	
 	save_on_top = True
 	
-	fields = ('name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
+	fields = ('user', 'name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
+	'''
 	def response_change(self, request, obj, post_url_continue=None):
 		if request.POST.has_key("_continue"):
 			return HttpResponseRedirect("/admin/cv/person/%s" % obj.pk)
@@ -75,6 +76,7 @@ class PersonAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect("/cv/")
 	def response_delete(self, request, obj, post_url_continue=None):
 		return HttpResponseRedirect("/cv/")
+	'''
 	
 	# Adding the list of popular techs
 	def render_change_form(self, request, context, *args, **kwargs):
@@ -130,11 +132,13 @@ class CvAdmin(admin.ModelAdmin):
 	formfield_overrides = large
 	list_display = ('person', 'tags', 'title', 'last_edited', 'is_recent')
 	#filter_horizontal = ['experience']
+	'''
 	def response_change(self, request, obj, post_url_continue=None):
 		if request.POST.has_key("_continue"):
 			return HttpResponseRedirect("/admin/cv/cv/%s" % obj.pk)
 		else:
 			return HttpResponseRedirect("/cv/%s" % obj.id)
+	'''
 
 admin.site.register(Cv, CvAdmin)
 
@@ -152,6 +156,7 @@ admin.site.register(Matrix, MatrixAdmin)
 
 admin.site.register(MatrixEntry)
 admin.site.register(Competence)
+admin.site.register(CompetenceEntry)
 admin.site.register(Skillgroup)
 
 
