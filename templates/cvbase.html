@@ -32,6 +32,7 @@
         <ul class="wide">
             <li><a href="{% url cv.views.cv_list %}" class="butt empty">Employee CV list</a></li>
             <li><a href="{% url cv.views.matrix_list %}" class="butt empty">Competence Matrix list</a></li>
+            <li><a href="{% url haystack_search %}" class="butt empty">Advanced Search</a></li>
 			{% if user.is_authenticated %}
             <li><a href="{% url admin:index %}" class="butt empty">Admin</a></li>
 			{% endif %}
