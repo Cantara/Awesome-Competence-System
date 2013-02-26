@@ -13,7 +13,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
     def prepare_technology(self, obj):
         result = []
-        for t in obj.technology_set.all():::
+        for t in obj.technology_set.all():
             for tdata in t.data_as_list():
                 result.append( tdata.encode('ascii', 'ignore') )
         return result
