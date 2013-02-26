@@ -17,25 +17,25 @@
 
     <nav>
         {% block nav %}
-        <ul class="wide">
-            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee CV list</a></li>
-            <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
-			{% if user.is_authenticated %}
-            <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
-			{% endif %}
-        </ul>
 		<form method="post" action="{% url cv.views.mylogin %}" id="loginform">
 			{% csrf_token %}
 			<input type="hidden" value="{{ request.path }}" name="path">
 			{% if user.is_authenticated %}
 				Welcome <strong>{{ user.username }}</strong>
-				<input type="submit" value="Log out" class="butt red">
+				<input type="submit" value="Log out" class="butt empty">
 			{% else %}
 				<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
 				<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
-				<input type="submit" value="Log in" class="butt red">
+				<input type="submit" value="Log in" class="butt empty">
 			{% endif %}
 		</form>
+        <ul class="wide">
+            <li><a href="{% url cv.views.cv_list %}" class="butt empty">Employee CV list</a></li>
+            <li><a href="{% url cv.views.matrix_list %}" class="butt empty">Competence Matrix list</a></li>
+			{% if user.is_authenticated %}
+            <li><a href="{% url admin:index %}" class="butt empty">Admin</a></li>
+			{% endif %}
+        </ul>
         {% endblock %}
     </nav>
 

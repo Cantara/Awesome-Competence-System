@@ -35,10 +35,9 @@ h1, h2, h3, h4, h5 {color: #555;}
 /* START NAVIGATION */
 
 nav {
-	background: #555;
-	border-bottom: 2px solid #555;
+	background: #fff;
+	border-bottom: 2px solid #eee;
 	padding: 0.5em;
-	color: #fff;
 }
 
 nav li {display:inline-block; }
@@ -152,7 +151,7 @@ h1 {
 }
 
 .block:hover .cvset {
-	max-height: 220px;
+	max-height: 250px;
 	max-width: 300px;
 	/* onMouseOver: Width expands immediately before height transitions */
 			transition: max-height 0.3s, max-width 0 ease 0;
@@ -265,7 +264,7 @@ fieldset.competence {
 
 /* LOGINFORM */
 
-#loginform { background: #444; display: inline-block; position: absolute; padding:.5em; right:0; top:0;}
+#loginform { display: inline-block; float: right;}
 
 /* FORM END*/
 
@@ -282,8 +281,8 @@ input.butt {
 .butt {
 	position: relative;
 	cursor: pointer;
-	background: #00A8C6;
-	text-transform: uppercase;
+	background-color: #00A8C6;
+	border-radius: 2px;
 	color: #fff;
 	text-decoration: none;
 	padding: 0.5em;
@@ -296,6 +295,11 @@ input.butt {
   /* No support for these yet, use at own risk */
   -o-user-select: none;
   user-select: none;      
+    background-image: -webkit-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
+    background-image:    -moz-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
+    background-image:     -ms-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
+    background-image:      -o-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
+    background-image:         linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
 	}
 
 .bigbutt {
@@ -304,7 +308,7 @@ input.butt {
 .empty { background-color: #bbb; }
 
 .butt:hover {
-	background: #40C0CB;
+	background-color: #40C0CB;
 	}
 .remove { position: aboslute; right:0; top:0;}
 .red { background-color: #C21A01;}

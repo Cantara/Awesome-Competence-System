@@ -3,32 +3,215 @@
 {% block title %}{{ matrix.title }} - Altran CV{% endblock %}
 
 {% block actions %}
-	<h1>Edit Matrix Backbone Hm</h1>
+	{% if user.is_authenticated %}
+		<h1>New Matrix (Backbone)</h1>
+		<a class="butt" onClick="Matrix.save()"><strong>Save</strong> matrix</a>
+		<a class="butt" onClick="Matrix.getJson()">Get JSON</a>
+		<br>
+		<span id="message"></span>
+	{% else %}
+		<h1>You do not have access to this page.</h1>
+	{% endif %}
 {% endblock %}
 
 {% block content %}
-<div id="#form">
+<div id="form" class="block">
 </div>
 <script src="{{ STATIC_URL }}js/underscore-min.js"></script>
 <script src="{{ STATIC_URL }}js/backbone-min.js"></script>
+<script src="{{ STATIC_URL }}js/backbone.viewmaster.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
+
+<script type="template" id="layout">
+	<form class="group-container" id="matrix"></form>
+	<div class="addgroup-container"></div>
+	<div>You have <%= count %> groups</div>
+</script>
+
+<script type="template" id="addgroup">
+	<button class="butt">Add Skillgroup</button>
+</script>
+
+<script type="template" id="groupitem">
+	<fieldset>
+		<label>
+			<span>Group title: </span>
+			<textarea class="title" data-validation="required" name="group[<%= groupnumber %>][title]">
+			</textarea>
+		</label><!--
+		--><label>
+			<span>Description: </span>
+			<textarea name="group[<%= groupnumber %>][description]"></textarea>
+		</label>
+		<button class="butt addcom"><i class="icon-plus-sign"></i> Add Competence to Group</button>
+		<button class="butt remove red"><i class="icon-trash"></i></button>
+	</fieldset>
+</script>
+
 <script>
 
-	var Matrix = Backbone.Model.extend({
-		initialize: function() {
-			alert('{{ test }}');
+$(function(){
+
+	var AddGroupItem = Backbone.ViewMaster.extend({
+		
+		template: function(context){
+			return _.template($('#addgroup').html(), context);
+		},
+
+		events: {
+			'click button': 'addGroup'
+		},
+
+		addGroup: function(e){
+			e.preventDefault();
+			this.collection.add( new Backbone.Model({
+				groupnumber: this.collection.size()
+			}) );
 		}
-	});
-
-	var Skillgroup = Backbone.Model.extend({
 
 	});
 
-	var Competence = Backbone.Model.extend({
+	var GroupItem = Backbone.ViewMaster.extend({
+
+		constructor: function(){
+			Backbone.ViewMaster.prototype.constructor.apply(this, arguments);
+			this.listenTo(this.model, 'change', this.render);
+		},
+
+		template: function(context){
+			return _.template($("#groupitem").html(), context);
+		},
+
+		events: {
+			'click .remove': 'removeitem',
+			'click .edit': 'edit'
+		},
+
+		removeitem: function() {
+			this.model.destroy();
+			this.remove();
+		},
+
+		edit: function() {
+			alert('edit');
+		}
 
 	});
 
-	var matrix = new Matrix;
+	var GroupItemList = Backbone.ViewMaster.extend({
 
+		constructor: function(){
+			Backbone.ViewMaster.prototype.constructor.apply(this, arguments);
+			this.setItems();
+			this.listenTo(this.collection, 'add', function(model) {
+				this.appendView('ul', new GroupItem({
+					model: model
+				}));
+				this.refreshViews();
+			})
+		},
+		
+		template: function() {
+			return '<ul></ul>';
+		},
+
+		setItems: function(){
+			items = items || this.collection;
+			this.setView('ul', items.map( function(model){
+				return new GroupItem({
+					model: model
+				})
+			}) );
+		}
+
+	});
+
+	var MatrixLayout = Backbone.ViewMaster.extend({
+
+		constructor: function() {
+			Backbone.ViewMaster.prototype.constructor.apply(this, arguments);
+			this.setView('.addgroup-container', new AddGroupItem({
+				collection: this.collection
+			}));
+			this.groupItemList = new GroupItemList({
+				collection: this.collection
+			});
+			this.setView('.group-container', this.groupItemList);
+
+			this.listenTo(this.collection, 'add remove', this.render);
+		},
+		
+		template: function(context){
+			return _.template($('#layout').html(), context)
+		},
+
+		context: function(){
+			return {
+				count: this.collection.size()
+			}
+		},
+
+		addGroup: function(model){
+			this.appendView('ul', new GroupItem({
+				model: model
+			}));
+			this.refreshViews();
+		}
+
+	});
+
+	var items = new Backbone.Collection();
+
+	var layout = new MatrixLayout({
+		collection: items
+	});
+
+	layout.render();
+
+	$('#form').append(layout.el);
+
+});
+
+	
+	var Matrix = {
+		
+		defaultJson: '',
+
+		save: function() {
+			msg('Saving...');
+
+			if( $('#matrix').validate() ) {
+				console.log('Form valid - Saving');
+			
+				Matrix.defaultJson = Matrix.getJson();
+			
+				$.post('{% url cv.views.matrix_save %}', Matrix.defaultJson, function(data){
+					Matrix[data.action](data.m_id);
+					msg(data.message);
+				}).fail(function() { msg('Error saving!'); });
+			} else {
+				console.log('ERROR: Form invalid!');
+			}
+		},
+
+		saveNew: function(m_id) {
+			console.log('save new : ' + m_id);
+			$('#m_id').val(m_id);
+			Matrix.defaultJson = Matrix.getJson();
+		},
+
+		saveOld: function() {
+		},
+
+		getJson: function() {
+			var formdata = FormatJSON( $('#matrix').serializeObject() );
+			console.log(formdata);
+			return formdata;
+		}
+
+	}
+	
+	Matrix.defaultJson = Matrix.getJson();
 
 </script>
 	
