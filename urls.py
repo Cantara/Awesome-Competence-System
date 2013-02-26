@@ -4,6 +4,13 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
+# Haystack
+from haystack.forms import FacetedSearchForm
+from haystack.query import SearchQuerySet
+from haystack.views import FacetedSearchView
+
+sqs = SearchQuerySet().facet('name')
+
 urlpatterns = patterns('cv.views',
 
     url(r'^$', 'cv_list'),
@@ -29,6 +36,7 @@ urlpatterns = patterns('cv.views',
     url(r'^matrix/ajax/competence/$', 'ajaxcompetencelist'),
 
     url(r'^matrix/(?P<m_id>\d+)/$', 'matrix_entry_get'),
+    url(r'^matrix/(?P<m_id>\d+)/all/$', 'matrix_entry_get_all'),
     url(r'^matrix/saveentry/$', 'matrix_entry_save'),
     url(r'^matrix/loadentry/$', 'matrix_entry_load'),
 
@@ -42,4 +50,6 @@ urlpatterns = patterns('cv.views',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', include('haystack.urls')),
+    url(r'^fsearch/', FacetedSearchView(form_class=FacetedSearchForm, searchqueryset=sqs), name='haystack_search'),
+
 )

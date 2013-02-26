@@ -18,17 +18,42 @@
 	</head>
 <body>
 
-	<div id="menu">
-    <h2>Search</h2>
-    <form method="get" action=".">
-<label for="id_q">Search:</label>
-<input type="text" name="q" value="{{ query }}" id="id_q" autofocus="autofocus" />
+	<div id="menu" style="width: 250px">
+	    <h2>Search</h2>
 
-        <br/>
-		<input type="submit" value="Search" class="button">
-    </form>
+	    <form method="get" action=".">
+			<label for="id_q">Search:</label>
+			<input type="text" name="q" value="{{ query }}" id="id_q" autofocus="autofocus" />
+	        <br/>
+			<input type="submit" value="Search" class="button">
+	    </form>
+
+	    {% if facets.fields.name %}
+	    <div style="text-align: left; font-size: 70%;">
+	        <dt>Name</dt>
+	        {# Provide only the top 5 authors #}
+	        {% for n in facets.fields.name %}
+	            <dd><a href="{{ request.get_full_path }}&amp;selected_facets=name_exact:{{ n.0|urlencode }}">{{ n.0 }}</a> ({{ n.1 }})</dd>
+	        {% endfor %}
+		</div>
+	    {% else %}
+	        <p>No name facets.</p>
+	    {% endif %}
+	    
+	    {% if facets.fields.technologies %}
+	    <div style="text-align: left; font-size: 70%;">
+	        <dt>Technologies</dt>
+	        {% for n in facets.fields.technologies %}
+	            <dd><a href="{{ request.get_full_path }}&amp;selected_facets=technologies_exact:{{ n.0|urlencode }}">{{ n.0 }}</a> ({{ n.1 }})</dd>
+	        {% endfor %}
+		</div>
+	    {% else %}
+	        <p>No tech facets.</p>
+	    {% endif %}
+
 	</div>
-<div id="content">
+
+<div id="content" style="left: 310px">
         {% if query %}
 
             {% for result in page.object_list %}
