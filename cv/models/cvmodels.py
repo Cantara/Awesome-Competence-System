@@ -144,7 +144,7 @@ class Technology(models.Model):
 	data_en = models.TextField(null=True, blank=True)
 	
 	def data_as_list(self):
-		return self.data.split(',')
+		return self.data.split(', . ;')
 		
 	def __unicode__(self):
 		if self.title != "":
