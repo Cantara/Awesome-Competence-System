@@ -160,10 +160,13 @@ LOGGING = {
 }
 
 # Webodt-stuff
-WEBODT_CONVERTER = 'webodt.converters.googledocs.GoogleDocsODFConverter'
-WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
-import password 
-WEBODT_GOOGLEDOCS_PASSWORD = password.WEBODT_GOOGLEDOCS_PASSWORD
+#WEBODT_CONVERTER = 'webodt.converters.googledocs.GoogleDocsODFConverter'
+#WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
+#import password 
+#WEBODT_GOOGLEDOCS_PASSWORD = password.WEBODT_GOOGLEDOCS_PASSWORD
+
+WEBODT_CONVERTER = 'webodt.converters.openoffice.OpenOfficeODFConverter'
+OOFFICE_SERVER = ('127.0.0.1', 2002)
 WEBODT_TEMPLATE_PATH = '/var/tmp/'
 WEBODT_CACHE_DIR = WEBODT_TEMPLATE_PATH
 
@@ -173,6 +176,8 @@ from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
 )
+
+# HAYSTACK / SOLR STUFF
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',

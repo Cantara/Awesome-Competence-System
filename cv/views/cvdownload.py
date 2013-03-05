@@ -123,15 +123,16 @@ def download(request, format):
 	doc=""
 	if format != "odt": doc = "doc"
 	
-	srcFile = settings.PROJECT_ROOT + '/cv/cvjsontest%s.odt' % doc
+	srcFile = settings.PROJECT_ROOT + '/cv/altrancvmal.odt'
 	filename = p.name.encode('ascii', 'ignore')
-	rsltFile = '/var/tmp/%s.odt' % filename
+	rsltFile = '/var/tmp/tempcv.odt'
 	r = Renderer(srcFile, dict, rsltFile, overwriteExisting=True)
 	r.run()
+
 	if format == "odt":
 		response = HttpResponse(open(rsltFile, 'rb').read(), mimetype='application/vnd.oasis.opendocument.text')
 		response['Content-Disposition'] = 'attachment; filename=%s %s Altran CV.odt' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"))
 		return response
 	else:
-		return rtr(filename+'.odt', filename='%s %s CV.%s' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
+		return rtr('tempcv.odt', filename='%s %s CV.%s' % (filename, c.title.encode('ascii', 'ignore').replace(" ", "_"), format), format=format) 
 		# Works with GoogleDocs backend, but not pretty. Try OpenOffice backend instead.
