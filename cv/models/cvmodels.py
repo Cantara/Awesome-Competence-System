@@ -3,6 +3,7 @@ import datetime
 import django.contrib.auth.models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from utils import multidelim
 
 YEAR_CHOICES = [(0,'Year')]
 for r in range(1969, (datetime.datetime.now().year+1)):
@@ -144,13 +145,20 @@ class Technology(models.Model):
 	data_en = models.TextField(null=True, blank=True)
 	
 	def data_as_list(self):
-		return self.data.split(', . ;')
+		splitted_list = []
+		splitted_list = self.data.split(',')
+		splitted_list = multidelim.splitlist(splitted_list, ';')
+		splitted_list = multidelim.splitlist(splitted_list, '.')
+		striped_list = multidelim.striplist(splitted_list)
+		return striped_list
 		
 	def __unicode__(self):
 		if self.title != "":
 			return self.title
 		else:
 			return self.title_en
+
+
 
 	class Meta:
 		app_label = 'cv'

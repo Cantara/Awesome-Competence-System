@@ -33,10 +33,23 @@ class TestSequenceFunctions(unittest.TestCase):
 		print("3 delims", splitted_list)
 		self.assertEqual(['a',' b',' c',' d'], splitted_list)
 		
+	def test_split_multiple_delim_words(self):
+		splitted_list = multidelim.splitlist(['adobe, java; sun. C#'], ',')
+		splitted_list = multidelim.splitlist(splitted_list, ';')
+		splitted_list = multidelim.splitlist(splitted_list, '.')
+		print("3 delims", splitted_list)
+		self.assertEqual(['adobe',' java',' sun',' C#'], splitted_list)
+		
 	def test_strip_list(self):
 		striped_list = multidelim.striplist(['a',' b',' c',' d'])
 		print("Stripped " , striped_list)
 		self.assertEqual(['a','b','c','d'],striped_list)
+		
+	def test_strip_list_words(self):
+		striped_list = multidelim.striplist(['adobe',' java',' sun',' C# '])
+		print("Stripped words" , striped_list)
+		self.assertEqual(['adobe','java','sun','C#'],striped_list)
+		
 		
 if __name__ == '__main__':
     unittest.main()
