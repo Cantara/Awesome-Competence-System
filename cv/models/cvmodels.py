@@ -6,7 +6,7 @@ from django.utils import timezone
 from utils import multidelim
 
 YEAR_CHOICES = [(0,'Year')]
-for r in range(1969, (datetime.datetime.now().year+1)):
+for r in reversed( range(1969, (datetime.datetime.now().year+1)) ):
 	YEAR_CHOICES.append((r,r))
 	
 MONTH_CHOICES = (
@@ -15,14 +15,14 @@ MONTH_CHOICES = (
 	(2, 'Feb'),
 	(3, 'Mar'),
 	(4, 'Apr'),
-	(5, 'Mai'),
+	(5, 'May'),
 	(6, 'Jun'),
 	(7, 'Jul'),
 	(8, 'Aug'),
 	(9, 'Sep'),
-	(10, 'Okt'),
+	(10, 'Oct'),
 	(11, 'Nov'),
-	(12, 'Des'),
+	(12, 'Dec'),
 )
 
 class Person(models.Model):

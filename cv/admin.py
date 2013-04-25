@@ -13,8 +13,9 @@ medium = {
 		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
 	}
 large = {
-		models.TextField: { 'widget': Textarea( attrs = {'rows':7, 'cols':36 } ) },
-		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
+		models.TextField: { 'widget': Textarea( attrs = {'rows':8, 'cols':43 } ) },
+		models.CharField: { 'widget': TextInput( attrs = {'size':60} ) },
+		models.ManyToManyField: { 'widget': forms.SelectMultiple( attrs = {'size':16, 'style':'min-width: 200px;'} ) },
 	}
 wide = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':5, 'cols':80 } ) },
@@ -28,21 +29,21 @@ class TechnologyInline(admin.StackedInline):
 	model = Technology
 	verbose_name_plural = "Technologies"
 	extra = 0
-	formfield_overrides = medium
+	formfield_overrides = large
 	fields = (('title', 'title_en'), ('data', 'data_en'))
 
 class WorkplaceInline(admin.StackedInline):
 	model = Workplace
 	extra = 0
 	ordering = order
-	formfield_overrides = medium
+	formfield_overrides = large
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'))
 
 class ExperienceInline(admin.StackedInline):
 	model = Experience
 	extra = 0
 	ordering = order
-	formfield_overrides = medium
+	formfield_overrides = large
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), ('techs',))
 
 class EducationInline(admin.StackedInline):
@@ -50,7 +51,7 @@ class EducationInline(admin.StackedInline):
 	verbose_name_plural = "Education"
 	extra = 0
 	ordering = order
-	formfield_overrides = medium
+	formfield_overrides = large
 	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('school', 'school_en'), ('description', 'description_en'))
 
 class OtherInline(admin.StackedInline):
