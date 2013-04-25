@@ -5,9 +5,9 @@
 
 {% block actions %}
 	<h1>Employee CV</h1>
-	<input type="text" name="filter" id="filter" size="10" style="margin:0;" placeholder="Search"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="text" name="filter" id="filter" size="20" style="margin:0;" placeholder="Search"/>
 	{% if user.is_authenticated %}
-		<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a>
 	{% endif %}
 {% endblock %}
 
