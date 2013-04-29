@@ -20,7 +20,7 @@
 				filterTxt = $(this).val();
 				$.ajax({
 					type:"get",
-					url: "/ajaxsearch/",
+					url: "{% url ajax_search %}",
 					data: {'q':filterTxt},
 					cache: false
 				}).done(function( html ) {
