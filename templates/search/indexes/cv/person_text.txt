@@ -1,9 +1,11 @@
 {{ object.name }}
 {{ object.title }}
-{% for t in object.technology_set.all %}}
+{{ object.phone }}
+{{ object.mail }}
+{% for t in object.technology_set.all %}
 	{{ t.data }}
 {% endfor %}
-{% for e in object.experience_set.all %}}
+{% for e in object.experience_set.all %}
 	{{ e.title }}
 	{{ e.title_en }}
 	{{ e.description }}
@@ -12,7 +14,7 @@
 	{{ e.company_en }}
 	{{ e.techs }}
 {% endfor %}
-{% for w in object.workplace_set.all %}}
+{% for w in object.workplace_set.all %}
 	{{ w.title }}
 	{{ w.title_en }}
 	{{ w.description }}
@@ -20,7 +22,7 @@
 	{{ w.company }}
 	{{ w.company_en }}
 {% endfor %}
-{% for d in object.education_set.all %}}
+{% for d in object.education_set.all %}
 	{{ d.title }}
 	{{ d.title_en }}
 	{{ d.description }}
@@ -28,10 +30,10 @@
 	{{ d.school }}
 	{{ d.school_en }}
 {% endfor %}
-{% for o in object.other_set.all %}}
+{% for o in object.other_set.all %}
 	{{ o.data }}
 {% endfor %}
-{% for c in object.cv_set.all %}}
+{% for c in object.cv_set.all %}
 	{{ c.title }}
 	{{ c.title_en }}
 	{{ c.profile }}
