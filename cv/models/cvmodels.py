@@ -101,13 +101,14 @@ class Person(models.Model):
 			comment.append("Has not filled in at least one valid CV")
 		
 		if len(comment) < 1:
-			comment.append("Your profile is complete! Give yourself a pat on the back!")
+			pass
+			# comment.append("")
 		
 		completeness = {
 			'maxscore': maxscore, 
 			'myscore': myscore, 
 			'percent': int(100 * float(myscore) / float (maxscore)),
-			'comment': ", ".join(comment),
+			'comment': comment,
 			}
 		
 		return completeness

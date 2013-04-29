@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
 from django.db import models
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django import forms
 
 small = {
@@ -67,17 +68,22 @@ class PersonAdmin(admin.ModelAdmin):
 	fields = ('user', 'name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
-	'''
+	
 	def response_change(self, request, obj, post_url_continue=None):
+		response = super(PersonAdmin, self).response_change(request, obj)
 		if request.POST.has_key("_continue"):
-			return HttpResponseRedirect("/admin/cv/person/%s" % obj.pk)
+			return response
 		else:
-			return HttpResponseRedirect("/cv/")
+			return redirect("cv_list")
 	def response_add(self, request, obj, post_url_continue=None):
-		return HttpResponseRedirect("/cv/")
+		response = super(PersonAdmin, self).response_add(request, obj, post_url_continue)
+		if request.POST.has_key("_continue"):
+			return response
+		else:
+			return redirect("cv_list")
 	def response_delete(self, request, obj, post_url_continue=None):
-		return HttpResponseRedirect("/cv/")
-	'''
+		return redirect("cv_list")
+	
 	
 	# Adding the list of popular techs
 	def render_change_form(self, request, context, *args, **kwargs):

@@ -24,7 +24,7 @@
 
 {% if not user.is_anonymous %}
 <script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.22.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
 	
 <script language="JavaScript" type="text/javascript">
@@ -86,6 +86,9 @@ $(document).ready( function()
 	
 	// Add back-button
 	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd; float: left;" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="' + document.referrer + '">Exit without saving</a>');
+
+	// Remove Save and add another
+	$('input[name=_addanother]').remove();
 	
 	// Add "SELECT_ALL"-button to CV-edit
 	var set = ['technology','experience','workplace','education','other'];
