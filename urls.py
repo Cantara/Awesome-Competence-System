@@ -8,20 +8,21 @@ admin.autodiscover()
 from haystack.forms import FacetedSearchForm
 from haystack.query import SearchQuerySet
 from haystack.views import FacetedSearchView
+from haystack.views import SearchView, search_view_factory
 
 sqs = SearchQuerySet().facet('name')
 
 urlpatterns = patterns('cv.views',
 
     url(r'^$', 'cv_list'),
-	url(r'^cv/$', 'cv_list', name='cv_list'),
-	url(r'^cv/(?P<cv_id>\d+)/$', 'detail', name='cv_detail'),
-	url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail', name='cv_detail_en'),
-	url(r'^cv/download/$', 'download', name='cv_download'),
-	url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),
+    url(r'^cv/$', 'cv_list', name='cv_list'),
+    url(r'^cv/(?P<cv_id>\d+)/$', 'detail', name='cv_detail'),
+    url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail', name='cv_detail_en'),
+    url(r'^cv/download/$', 'download', name='cv_download'),
+    url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),
 
-	url(r'^login/$', 'mylogin'),
-	url(r'^logout/$', 'mylogout'),
+    url(r'^login/$', 'mylogin'),
+    url(r'^logout/$', 'mylogout'),
 
     url(r'^matrix/$', 'matrix_list'),
     url(r'^matrix/edit/$', 'matrix_edit'),
@@ -49,7 +50,9 @@ urlpatterns = patterns('cv.views',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+
     url(r'^search/', include('haystack.urls')),
     url(r'^fsearch/', FacetedSearchView(form_class=FacetedSearchForm, searchqueryset=sqs), name='haystack_search'),
+    url(r'^ajaxsearch/', search_view_factory(view_class=SearchView, template='search/ajaxsearch.html', searchqueryset=sqs), name='ajax_search'),
 
 )

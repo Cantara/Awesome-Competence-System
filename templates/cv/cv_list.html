@@ -18,16 +18,26 @@
 			var filterTxt;
 			$('#filter').keyup( function(event) {
 				filterTxt = $(this).val();
-				$('.block').addClass('hidden');
+				$.ajax({
+					type:"get",
+					url: "/ajaxsearch/",
+					data: {'q':filterTxt},
+					cache: false
+				}).done(function( html ) {
+					$("#results").html(html);
+				});
+
+				/*$('.block').addClass('hidden');
 				$('.tags')
 					.filter( function(index) {
 						return $(this).text().toLowerCase().indexOf(filterTxt.toLowerCase()) >= 0;
 					})
 					.parent().parent().removeClass('hidden');
+				*/
 			});
 		});
 	</script>
-
+	<div id="results">
 	{% if all_persons %}
 		{% for p in all_persons|dictsort:"name" %}
 			<div class="block tiled">
@@ -45,16 +55,6 @@
 				<section>
 					<p class="ldetail">{{ p.phone }}<br/>
 					{{ p.mail }}</p>
-					<p class="tags">
-						{{ p.name }}
-						{% for t in p.technology_set.all %}{{t.data}}{{t.data_en}}{% endfor %}
-						{% for e in p.experience_set.all %}{{e.techs}}{{e.company}}{{e.company_en}}{% endfor %}
-						{% for w in p.workplace_set.all %}{{w.company}}{{w.company_en}}{% endfor %}
-						{% for s in p.education_set.all %}{{s.school}}{{s.school_en}}{% endfor %}
-						{% for c in p.cv_set.all %}{{c.title}}{{c.title_en}}{% endfor %}
-						{{ p.phone }}
-						{{ p.title }}
-					</p>
 				</section>
 
 				<div class="cvset">
@@ -85,71 +85,13 @@
 			</div>
 		{% endfor %}
 
-{% comment %}
-	{% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-	<div class="block tiled"><h3>Dummy {{ forloop.counter0 }}</h3><div><p class="tags">Leon Ho test Objekt-orientering. Metodearbeid. Cloud Computing. Distribuerte systemer. Planleggingssystemer. Automatisering av EDB baserte arbeidsrutiner for brukere. Datasikkerhet. Lede team i Objekt-orientert softwareutvikling. Prosjektleder, mentor, software arkitekt, teknologirådgiver og kursholder. Java, J2EE, EJB, JMS, J2SE, J2ME, CORBA/DCOM, Jini/JavaSpaces, Scrummaster, UML, Rational Unified Process, C++ og Smalltalk. {{ forloop.counter0 }}</p></div></div>
-	{% endfor %}
-{% endcomment %}
-
 	{% else %}
 		<div class="block">
 			<p>Her er det ingen CVer, dessverre!</p>
 		</div>
 	{% endif %}
+	</div>
 
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-
-	<script>
-	$(function() {
-		var filterTxt;
-		$('#filter').keyup( function(event) {
-			filterTxt = $(this).val();
-			$('.person').addClass('hidden');
-			$('.techs')
-				.filter( function(index) {
-					return $(this).text().toLowerCase().indexOf(filterTxt.toLowerCase()) >= 0;
-				})
-				.parent().parent().removeClass('hidden');
-		});
-	});
-	</script>
-
-	<script>
-	$("input").change(function () {
-		var isChecked = this.checked;
-		var thisId = this.id;
-		$('a').each(function(i, t) {
-		
-			var tempUrl = $(this).attr('href');
-			
-			if(isChecked) {
-			
-				switch(thisId) {
-				case 'eng':
-					tempUrl += 'eng/';
-					break;
-				case 'doc':
-					tempUrl += 'doc/';
-					break;
-				}
-				
-			} else {
-			
-				switch(thisId) {
-				case 'eng':
-					tempUrl = tempUrl.replace(/\/eng\//, "/");
-					break;
-				case 'doc':
-					tempUrl = tempUrl.replace(/\/doc\//, "/");
-					break;
-				}
-				
-			}
-			
-		  $(this).attr('href', tempUrl);
-		  
-		});
-	});
-	</script>
 
 {% endblock %}

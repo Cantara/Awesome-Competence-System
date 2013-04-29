@@ -8,7 +8,7 @@ def cvlist(request):
 	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': ''}, context_instance=RequestContext(request))
 
 def cv_list(request):
-	all_persons = Person.objects.all()
+	all_persons = [] # Person.objects.all()
 	# style = Style.objects.get(id=1)
 	return render_to_response('cv/cv_list.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
 	
