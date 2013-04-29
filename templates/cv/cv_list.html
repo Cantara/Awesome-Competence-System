@@ -5,7 +5,7 @@
 
 {% block actions %}
 	<h1>Employee CV</h1>
-	<input type="text" name="filter" id="filter" size="20" style="margin:0;" placeholder="Search"/>
+	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search"/>
 	{% if user.is_authenticated %}
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a>
 	{% endif %}
@@ -16,9 +16,12 @@
 	<script>
 		$(function() {
 			var filterTxt;
+			var searchrequest;
 			$('#filter').keyup( function(event) {
+			    if(typeof searchrequest !== 'undefined')
+			        searchrequest.abort();
 				filterTxt = $(this).val();
-				$.ajax({
+				searchrequest = $.ajax({
 					type:"get",
 					url: "{% url ajax_search %}",
 					data: {'q':filterTxt},
