@@ -23,13 +23,14 @@
 			<div class="cvset">
 				{% if user.is_authenticated %}
 					<p class="ldetail">
-						<acronym title="{{ p.object.completeness.comment }}">Profile {{ p.object.completeness.percent }}% complete. Updated: {{ p.object.last_edited|date:"SHORT_DATE_FORMAT" }}</acronym><br>
+						Profile {{ p.object.completeness.percent }}% complete. Updated: {{ p.object.last_edited|date:"SHORT_DATE_FORMAT" }}<br>
 					</p>
+					{% if p.completeness.comment %}<ul class="ldetail">{{ p.completeness.comment|unordered_list }}</ul>{% endif %}
 					<a href="{% url admin:cv_person_change p.object.id %}" class="butt">Edit person</a>
 				{% endif %}
 				<table>
 				{% for cv in p.object.cv_set.all|dictsortreversed:"cvsort" %}
-					{% if user.is_anonymous and cv.tags == "Empty CV" %}
+					{% if user.is_anonymous and cv.tags == "Empty CV" or p.completeness.percent < 10 %}
 					{% else %}
 					<tr>
 						<td><a href="{% url cv_detail cv.id %}" class="butt bigbutt{% if cv.tags = "Empty CV" %} empty{% elif not cv.is_recent or not cv.status.complete %} red{% endif %}" title="{{ cv.status.comment }}">{{ cv.tags }}<br/>
