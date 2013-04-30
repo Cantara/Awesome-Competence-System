@@ -53,6 +53,6 @@ urlpatterns = patterns('cv.views',
 
     url(r'^search/', include('haystack.urls')),
     url(r'^fsearch/', FacetedSearchView(form_class=FacetedSearchForm, searchqueryset=sqs), name='haystack_search'),
-    url(r'^ajaxsearch/', search_view_factory(view_class=SearchView, template='search/ajaxsearch.html', searchqueryset=sqs), name='ajax_search'),
+    url(r'^ajaxsearch/', search_view_factory(view_class=SearchView, template='search/ajaxsearch.html', searchqueryset=sqs, load_all=False), name='ajax_search'),
 
 )

@@ -5,6 +5,7 @@ from cv.models import Person
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', faceted=True)
+    rendered = indexes.CharField(use_template=True, indexed=False)
     technology = indexes.MultiValueField()
 
     def get_model(self):
