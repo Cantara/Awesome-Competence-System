@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>{% block title %}Altran CV System{% endblock %}</title>
+		<title>{% block title %}Altran Competence System{% endblock %}</title>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/base.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/fontawesome.css"/>
 		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css"/>
@@ -30,7 +30,7 @@
 			{% endif %}
 		</form>
         <ul class="wide">
-            <li><a href="{% url cv.views.cv_list %}" class="butt empty">Employee CV list</a></li>
+            <li><a href="{% url cv.views.cv_list %}" class="butt empty">ACS Person list</a></li>
             <li><a href="{% url cv.views.matrix_list %}" class="butt empty">Competence Matrix list</a></li>
             <li><a href="{% url haystack_search %}" class="butt empty">Advanced Search</a></li>
 			{% if user.is_authenticated %}
