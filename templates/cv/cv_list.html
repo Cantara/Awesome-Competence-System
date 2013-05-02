@@ -4,7 +4,7 @@
 {% block title %}CV{% endblock %}
 
 {% block actions %}
-	<h1>Employee CV</h1>
+	<h1>ACS Persons</h1>
 	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search" autofocus/>
 	{% if user.is_authenticated %}
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a>

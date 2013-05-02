@@ -14,7 +14,7 @@
 {% block branding %}
 	<nav>
         <ul class="wide">
-            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee CV list</a></li>
+            <li><a href="{% url cv.views.cv_list %}" class="butt red">ACS Person list</a></li>
             <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
 			{% if user.is_authenticated %}
             <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
