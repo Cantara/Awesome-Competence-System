@@ -12,7 +12,20 @@ body { font-family: segoe ui;}
 
 #content-main {width: 80% !important;}
 
+.inline-group h2 {
+	cursor: pointer;
+}
 
+.inline-group h2:hover {
+	text-decoration: underline
+}
+
+.inline-group h2:before {
+	content: '- ';
+}
+.closed:before {
+	content: '+ ' !important;
+}
 
 
 /* START NAVIGATION */

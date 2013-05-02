@@ -67,19 +67,23 @@ $(document).ready( function()
 	
 	// Toggle subsections
 	$('.inline-group h2').click(function() {
-		$(this).toggleClass("closed");
-		$(this).parent().children("div").toggle(200);
-		$(this).parent().children(".empty-form").toggle();
+		if( $(this).hasClass("closed") ) {
+			$(this).removeClass("closed");
+			$(this).parent().children("div:not(.empty-form)").show(200);
+		} else {
+			$(this).addClass("closed");
+			$(this).parent().children("div").hide(200);
+		}
 	});
 	
-	// Append stuff to Technologies
+	/*// Append stuff to Technologies
 	var popTechs = 
 	'<div id="popTechs"><h4>Popular technologies! Drag and drop it!</h4>' +
 		{% for t in techlist %}
 		'<span>{{ t }}</span> ' +{% endfor %}
 	'</div>';
 	$('#technology_set-group .empty-form').after(popTechs);
-	$("#popTechs span").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
+	$("#popTechs span").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });*/
 	
 	// Tooltip for textarea
 	$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
