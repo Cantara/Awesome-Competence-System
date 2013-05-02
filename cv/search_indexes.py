@@ -1,6 +1,6 @@
 import datetime
 from haystack import indexes
-from cv.models import Person
+from cv.models.cvmodels import Person
 
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)

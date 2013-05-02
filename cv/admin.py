@@ -139,13 +139,12 @@ class CvAdmin(admin.ModelAdmin):
 	formfield_overrides = large
 	list_display = ('person', 'tags', 'title', 'last_edited', 'is_recent')
 	#filter_horizontal = ['experience']
-	'''
 	def response_change(self, request, obj, post_url_continue=None):
+		response = super(CvAdmin, self).response_change(request, obj)
 		if request.POST.has_key("_continue"):
-			return HttpResponseRedirect("/admin/cv/cv/%s" % obj.pk)
+			return response
 		else:
-			return HttpResponseRedirect("/cv/%s" % obj.id)
-	'''
+			return redirect("cv_list")
 
 admin.site.register(Cv, CvAdmin)
 

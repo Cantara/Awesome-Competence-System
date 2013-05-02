@@ -14,6 +14,20 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+'''
+import password 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'altrancv01', # Name of database
+        'USER': 'altranadmin@aeubq2l6zi',
+        'PASSWORD': password.AZURE_DATABASE_PASSWORD,
+        'HOST': 'altrancv01', # Name of connection in settings
+    },
+}
+'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
@@ -162,7 +176,6 @@ LOGGING = {
 # Webodt-stuff
 #WEBODT_CONVERTER = 'webodt.converters.googledocs.GoogleDocsODFConverter'
 #WEBODT_GOOGLEDOCS_EMAIL = 'documents.in.space@gmail.com'
-#import password 
 #WEBODT_GOOGLEDOCS_PASSWORD = password.WEBODT_GOOGLEDOCS_PASSWORD
 
 WEBODT_CONVERTER = 'webodt.converters.openoffice.OpenOfficeODFConverter'
@@ -184,4 +197,5 @@ HAYSTACK_CONNECTIONS = {
         'URL': 'http://127.0.0.1/solr'
     },
 }
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
