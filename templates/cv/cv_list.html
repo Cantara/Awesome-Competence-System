@@ -19,7 +19,7 @@
 				<h3><%=p.name%></h3>
 				<h4><%=p.title%></h4>
 			</header>
-			<img src="/media/<%=p.image%>" class="photo" style="float: left;">
+			<%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
 
 			<div class="completeness">
 				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
@@ -76,7 +76,18 @@
 			
 			var filterTxt;
 			var searchrequest;
-			
+			var defaultlist;
+
+			searchrequest = $.ajax({
+				type:"get",
+				url: "/solr/collection1/select",
+				data: {'q':'*','wt':'json','indent':'true','sort':'name_exact asc','rows':30},
+				cache: false
+			}).done(function( data ) {
+				defaultlist = data;
+				renderResults(data);
+			});
+
 			$('#filter').keyup( function(event) {
 			    if(typeof searchrequest !== 'undefined')
 			        searchrequest.abort();
@@ -85,13 +96,13 @@
 					searchrequest = $.ajax({
 						type:"get",
 						url: "/solr/collection1/select",
-						data: {'q':filterTxt+'*','wt':'json','indent':'true','sort':'name_exact asc'},
+						data: {'q':filterTxt+'*','wt':'json','indent':'true','sort':'name_exact asc','rows':30},
 						cache: false
 					}).done(function( data ) {
 						renderResults(data);
 					});
 				} else {
-					displayResults('');
+					renderResults(defaultlist);
 				}
 
 			});
