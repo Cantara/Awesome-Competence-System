@@ -13,6 +13,45 @@
 
 {% block content %}
 	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
+	<script id="persontemplate" type="text/x-dot-template">
+		<div class="block tiled">
+			<header>
+				<h3><%=p.name%></h3>
+				<h4><%=p.title%></h4>
+			</header>
+			<img src="/media/<%=p.image%>" class="photo" style="float: left;">
+
+			<div class="completeness">
+				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
+			</div>
+			<section><p class="ldetail"><%=p.phone%><br/><%=p.mail%></p></section>
+			<div class="cvset">
+				{% if user.is_authenticated %}
+					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
+					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
+					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+				{% endif %}
+				<table>
+				<%~p.cv :cv:index%>
+					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
+					<tr>
+						<td>
+							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.tags == "Empty CV" %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
+							<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>
+								<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>
+							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
+						</td>
+						{% if user.is_authenticated %}
+							<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
+							<span class="dato">CV</span></a></td>
+						{% endif %}
+					</tr>
+					<%?%>
+				<%~%>
+				</table>
+			</div>
+		</div>
+	</script> 
 	<script>
 
 		doT.templateSettings = {
@@ -28,44 +67,7 @@
 		  append: true,
 		  selfcontained: false
 		};
-		var personTemplate = 
-			'<div class="block tiled">'+
-				'<header>'+
-					'<h3><%=p.name%></h3>'+
-					'<h4><%=p.title%></h4>'+
-				'</header>'+
-				//'<img src="/media/<%=it.image%>" class="photo" style="float: left;">'+
-
-				'<div class="completeness">'+
-					'<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>'+
-				'</div>'+
-				'<section><p class="ldetail"><%=p.phone%><br/><%=p.mail%></p></section>'+
-				'<div class="cvset">'+
-					{% if user.is_authenticated %}
-						'<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>'+
-						'<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>'+
-						'<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>'+
-					{% endif %}
-					'<table>'+
-					'<%~p.cv :cv:index%>'+
-						'<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %>'+ 
-						'<tr>'+
-							'<td>'+
-								'<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.tags == "Empty CV" %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>'+
-								'<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>'+
-									'<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>'+
-								' <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>'+
-							'</td>'+
-							{% if user.is_authenticated %}
-								'<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>'+
-								'<span class="dato">CV</span></a></td>'+
-							{% endif %}
-						'</tr>'+
-						'<%?%>'+
-					'<%~%>'+
-					'</table>'+
-				'</div>'+
-			'</div>';
+		var personTemplate = $('#persontemplate').text();
 		// This is not very pretty, but it works.
 		personTemplate = personTemplate.replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>');
 		var personRender = doT.template(personTemplate);
@@ -101,8 +103,8 @@
 					var ppl = data.response.docs;
 					for(i=0;i<ppl.length;i++) {
 						var person = jQuery.parseJSON( data.response.docs[i].rendered );
+						person.image = person.image.replace('.jpg','_scale_110x110.jpg');
 						html += personRender(person);
-
 					}
 				} else {
 					html = "No people found for search " + data.responseHeader.params.q;
