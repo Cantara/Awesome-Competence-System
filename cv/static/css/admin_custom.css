@@ -12,6 +12,11 @@ body { font-family: segoe ui;}
 
 #content-main {width: 80% !important;}
 
+
+/* Hide datepicker */ 
+.datetimeshortcuts {display: none;}
+
+/* Collapsible subsections */
 .inline-group h2 {
 	cursor: pointer;
 }
