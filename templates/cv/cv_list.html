@@ -81,7 +81,7 @@
 			searchrequest = $.ajax({
 				type:"get",
 				url: "/solr/collection1/select",
-				data: {'q':'*','wt':'json','indent':'true','sort':'name_exact asc','rows':30},
+				data: {'q':'*','wt':'json','indent':'true','sort':'name_exact asc','rows':50},
 				cache: false
 			}).done(function( data ) {
 				defaultlist = data;
@@ -96,7 +96,7 @@
 					searchrequest = $.ajax({
 						type:"get",
 						url: "/solr/collection1/select",
-						data: {'q':filterTxt+'*','wt':'json','indent':'true','sort':'name_exact asc','rows':30},
+						data: {'q':filterTxt+'*','wt':'json','indent':'true','sort':'name_exact asc','rows':50},
 						cache: false
 					}).done(function( data ) {
 						renderResults(data);
