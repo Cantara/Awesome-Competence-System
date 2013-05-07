@@ -397,17 +397,28 @@ models.signals.post_save.connect(cv_reindex_person, sender=Experience)
 models.signals.post_save.connect(cv_reindex_person, sender=Workplace)
 models.signals.post_save.connect(cv_reindex_person, sender=Education)
 models.signals.post_save.connect(cv_reindex_person, sender=Other)
-models.signals.post_delete.connect(cv_reindex_person, sender=Cv)
-models.signals.post_delete.connect(cv_reindex_person, sender=Technology)
-models.signals.post_delete.connect(cv_reindex_person, sender=Experience)
-models.signals.post_delete.connect(cv_reindex_person, sender=Workplace)
-models.signals.post_delete.connect(cv_reindex_person, sender=Education)
-models.signals.post_delete.connect(cv_reindex_person, sender=Other)
+
+def cv_remove_person(sender, **kwargs):
+	try:
+		PersonIndex().remove_object(kwargs['instance'].person)
+	except:
+		pass
+models.signals.post_delete.connect(cv_remove_person, sender=Cv)
+models.signals.post_delete.connect(cv_remove_person, sender=Technology)
+models.signals.post_delete.connect(cv_remove_person, sender=Experience)
+models.signals.post_delete.connect(cv_remove_person, sender=Workplace)
+models.signals.post_delete.connect(cv_remove_person, sender=Education)
+models.signals.post_delete.connect(cv_remove_person, sender=Other)
 
 def person_reindex_person(sender, **kwargs):
 	PersonIndex().update_object(kwargs['instance'])
 models.signals.post_save.connect(person_reindex_person, sender=Person)
-models.signals.post_delete.connect(person_reindex_person, sender=Person)
+def person_remove_person(sender, **kwargs):
+	try:
+		PersonIndex().remove_object(kwargs['instance'])
+	except:
+		pass
+models.signals.post_delete.connect(person_remove_person, sender=Person)
 
 STYLE_CHOICES = (
 	('sky', 'Sky'),
