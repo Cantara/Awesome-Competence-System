@@ -93,7 +93,7 @@ class PersonAdmin(admin.ModelAdmin):
 		for p in Person.objects.all():
 			for t_set in p.technology_set.all():
 				for t in t_set.data_as_list():
-					item = t.encode('utf-8','ignore').replace('\n','').strip()
+					item = t.replace('\n','').strip()
 					if len(item) < 20 and len(item) > 0:
 						if item in techlist:
 							techlist[item] +=1
