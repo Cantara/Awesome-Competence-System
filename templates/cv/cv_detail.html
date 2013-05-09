@@ -14,6 +14,8 @@
 {% block actions %}
 		{% if user.is_authenticated %}
 			<h1>{{ p.name }} CV</h1>
+			{% if lang != 'eng' %}<a href="{% url cv_detail_en cv.id 'eng' %}" class="butt">Show in English</a>
+			{% else %}<a href="{% url cv_detail cv.id %}" class="butt">Show in original language</a>{% endif %}
 			<a href="{% url admin:cv_cv_change cv.id %}" class="butt">Edit CV</a>
 			<a href="{% url admin:cv_person_change p.id %}" class="butt">Edit Person</a>
 		{% endif %}
@@ -30,7 +32,7 @@
 		{% if user.is_authenticated %}
 			<br/>
 			<br/>
-			<p>Her kan du gjøre justeringer på CVens innhold. Disse endringene blir ikke lagret i databasen, men blir med når du genererer ODT-filen.</p>
+			<p>On this page you can make changes to the CV before downloading. These changes will not be stored permanently, but are only stored as a part of the downloaded document.</p>
 		{% endif %}
 {% endblock %}
 	
@@ -158,7 +160,7 @@
 {% if user.is_anonymous %}
 	<script>
 		$(function() {
-			$('textarea,input[type=text]').prop('disabled', true);
+			$('textarea, form input[type=text]').prop('disabled', true);
 			$('#cvjson').prop('disabled',false);
 			$('.toggle').remove();
 		});
@@ -166,5 +168,20 @@
 {% endif %}
 
 	</div>
+
+	<script>
+		$('textarea,input').each(function(){
+			if( this.value.indexOf('X-MISSING-TRANSLATION-X') > -1 ) {
+				this.className += ' missingtranslation';
+				this.value = this.value.replace(/X-MISSING-TRANSLATION-X/gi,'');
+				console.log(this.value);
+			}
+			if( this.value.indexOf('X-NOT-FILLED-X') > -1) {
+				this.className += ' notfilled';
+				this.value = this.value.replace(/X-NOT-FILLED-X/gi,'');
+				console.log(this.value);
+			}
+		});
+	</script>
 
 {% endblock %}

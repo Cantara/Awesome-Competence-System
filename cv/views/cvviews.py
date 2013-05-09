@@ -24,8 +24,8 @@ def detail(request, cv_id, lang = ''):
 	# Returns the a if it exists and isn't empty, or else b
 	def q(a, b):
 		if a != "" and a != " ": return a
-		if b != "" and a != " ": return b
-		return ""
+		if b != "" and b != " ": return b + " X-MISSING-TRANSLATION-X"
+		return "X-NOT-FILLED-X"
 	
 	# If they want English, give them English
 	if lang == 'eng':
@@ -97,4 +97,4 @@ def detail(request, cv_id, lang = ''):
 		
 	# style = Style.objects.get(id=1)
 	
-	return render_to_response('cv/cv_detail.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': ''}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_detail.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': '', 'lang': lang}, context_instance=RequestContext(request))

@@ -138,3 +138,7 @@
   visibility: hidden;
 }
 #cvdetails input[type=text] {background: transparent;}
+
+/* Missing or not filled fields*/
+.missingtranslation {color: red;}
+.notfilled {background-color: yellow !important;}
