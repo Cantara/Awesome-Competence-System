@@ -45,7 +45,7 @@ class ExperienceInline(admin.StackedInline):
 	extra = 0
 	ordering = order
 	formfield_overrides = large
-	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), ('techs',))
+	fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), ('techs','techs_en'))
 
 class EducationInline(admin.StackedInline):
 	model = Education
@@ -65,7 +65,7 @@ class PersonAdmin(admin.ModelAdmin):
 	
 	save_on_top = True
 	
-	fields = ('user', 'name', 'title', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
+	fields = ('user', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	

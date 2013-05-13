@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 import datetime
 import django.contrib.auth.models
@@ -25,6 +26,18 @@ MONTH_CHOICES = (
 	(12, 'Dec'),
 )
 
+LOCATION_CHOICES = (
+	('Oslo', 'Oslo'),
+	('Gothenburg', 'Gothenburg'),
+)
+
+DEPARTMENT_CHOICES = (
+	('Software Engineering', 'Software Engineering'),
+	('Business Intelligence', 'Business Intelligence'),
+	('Enterprise Content Management', 'Enterprise Content Management'),
+	('Other', 'Other'),
+)
+
 class Person(models.Model):
 	user = models.OneToOneField(User, null=True, blank=True)
 	name = models.CharField("Name*", max_length=50)
@@ -36,7 +49,17 @@ class Person(models.Model):
 	image = models.ImageField(upload_to="photos", null=True, blank=True)
 	birthdate = models.DateField("Date of birth (yyyy-mm-dd)", null=True, blank=True)
 	last_edited = models.DateTimeField(auto_now=True)
+	location = models.CharField("Location", max_length=50, choices=LOCATION_CHOICES, null=True, blank=True)
+	department = models.CharField("Department", max_length=50, choices=DEPARTMENT_CHOICES, null=True, blank=True)
 	
+	def country(self):
+		if self.location in ['Oslo']:
+			return 'no'
+		elif self.location in ['Stockholm', 'Gothenburg']:
+			return 'se'
+		else:
+			return False
+
 	def __unicode__(self):
 		return self.name
 	
@@ -229,6 +252,7 @@ class Experience(TimedSkill):
 	company_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	techs = models.CharField(max_length=140, null=True, blank=True)
+	techs_en = models.CharField(max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
 		if self.title is not None:

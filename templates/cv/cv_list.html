@@ -9,126 +9,10 @@
 	{% if user.is_authenticated %}
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a>
 	{% endif %}
+	<div id="facets"></div>
 {% endblock %}
 
 {% block content %}
-	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
-	<script id="persontemplate" type="text/x-dot-template">
-		<div class="block tiled">
-			<header>
-				<h3><%=p.name%></h3>
-				<h4><%=p.title%></h4>
-			</header>
-			<%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
-
-			<div class="completeness">
-				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
-			</div>
-			<section><p class="ldetail"><%=p.phone%><br/><%=p.mail%></p></section>
-			<div class="cvset">
-				{% if user.is_authenticated %}
-					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
-					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
-					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
-				{% endif %}
-				<table>
-				<%~p.cv :cv:index%>
-					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
-					<tr>
-						<td>
-							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.tags == "Empty CV" %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
-							<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>
-								<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>
-							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
-						</td>
-						{% if user.is_authenticated %}
-							<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
-							<span class="dato">CV</span></a></td>
-						{% endif %}
-					</tr>
-					<%?%>
-				<%~%>
-				</table>
-			</div>
-		</div>
-	</script> 
-	<script>
-
-		doT.templateSettings = {
-		  evaluate:    /\<\%([\s\S]+?)\%\>/g,
-		  interpolate: /\<\%=([\s\S]+?)\%\>/g,
-		  encode:      /\<\%!([\s\S]+?)\%\>/g,
-		  use:         /\<\%#([\s\S]+?)\%\>/g,
-		  define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
-		  conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
-		  iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
-		  varname: 'p',
-		  strip: true,
-		  append: true,
-		  selfcontained: false
-		};
-		var personTemplate = $('#persontemplate').text();
-		// This is not very pretty, but it works.
-		personTemplate = personTemplate.replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>');
-		var personRender = doT.template(personTemplate);
-
-		$(function() {
-			
-			var filterTxt;
-			var searchrequest;
-			var defaultlist;
-
-			searchrequest = $.ajax({
-				type:"get",
-				url: "/solr/collection1/select",
-				data: {'q':'*','wt':'json','indent':'true','sort':'name_exact asc','rows':50},
-				cache: false
-			}).done(function( data ) {
-				defaultlist = data;
-				renderResults(data);
-			});
-
-			$('#filter').keyup( function(event) {
-			    if(typeof searchrequest !== 'undefined')
-			        searchrequest.abort();
-				filterTxt = $(this).val();
-				if(filterTxt != '') {
-					searchrequest = $.ajax({
-						type:"get",
-						url: "/solr/collection1/select",
-						data: {'q':filterTxt+'*','wt':'json','indent':'true','sort':'name_exact asc','rows':50},
-						cache: false
-					}).done(function( data ) {
-						renderResults(data);
-					});
-				} else {
-					renderResults(defaultlist);
-				}
-
-			});
-
-			function renderResults(data) {
-				data = jQuery.parseJSON( data );
-				var html = "";
-				if(data.response.numFound > 0){
-					var ppl = data.response.docs;
-					for(i=0;i<ppl.length;i++) {
-						var person = jQuery.parseJSON( data.response.docs[i].rendered );
-						person.image = person.image.replace('.jpg','_scale_110x110.jpg');
-						html += personRender(person);
-					}
-				} else {
-					html = "No people found for search " + data.responseHeader.params.q;
-				}
-				displayResults(html);
-			}
-
-			function displayResults(text) {
-				$("#results").html(text);
-			}
-
-		});
-	</script>
 	<div id="results">
 	{% if all_persons %}
 		{% for p in all_persons|dictsort:"name" %}
@@ -182,5 +66,155 @@
 	</div>
 
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
+	<script id="persontemplate" type="text/x-dot-template">
+		<div class="block tiled">
+			<header>
+				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%></h3>
+				<h4><%=p.title%></h4>
+			</header>
+			<%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
+
+			<div class="completeness">
+				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
+			</div>
+			<section><p class="ldetail"><%=p.phone%><br/><%=p.mail%></p></section>
+			<div class="cvset">
+				{% if user.is_authenticated %}
+					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
+					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
+					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+				{% endif %}
+				<table>
+				<%~p.cv :cv:index%>
+					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
+					<tr>
+						<td>
+							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.tags == "Empty CV" %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
+							<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>
+								<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>
+							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
+						</td>
+						{% if user.is_authenticated %}
+							<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
+							<span class="dato">CV</span></a></td>
+						{% endif %}
+					</tr>
+					<%?%>
+				<%~%>
+				</table>
+			</div>
+		</div>
+	</script> 
+	<script id="facettemplate" type="text/x-dot-template">
+		<label><input type="checkbox" name="<%=p.name%>" onChange="toggleFacet('<%=p.name%>','<%=p.facet%>');"/><%=p.name%><%=p.count%></label>
+	</script>
+	<script>
+
+		doT.templateSettings = {
+		  evaluate:    /\<\%([\s\S]+?)\%\>/g,
+		  interpolate: /\<\%=([\s\S]+?)\%\>/g,
+		  encode:      /\<\%!([\s\S]+?)\%\>/g,
+		  use:         /\<\%#([\s\S]+?)\%\>/g,
+		  define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
+		  conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
+		  iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
+		  varname: 'p',
+		  strip: true,
+		  append: true,
+		  selfcontained: false
+		};
+		var personTemplate = $('#persontemplate').text();
+		// This is not very pretty, but it works.
+		personTemplate = personTemplate.replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>');
+		var personRender = doT.template(personTemplate);
+
+		var facetTemplate = $('#facettemplate').text();
+		var facetRender = doT.template(facetTemplate);
+
+		var filterTxt='';
+		var searchrequest;
+		var defaultlist;
+		var solrurl = "/solr/collection1/select";
+	 	var solrdata = {'q':'*','wt':'json','indent':'true','sort':'name asc','rows':50, 'facet': 'true', 'facet.field': ['location', 'department']};
+
+		searchrequest = $.ajax({
+			type:"get",
+			url: solrurl,
+			data: solrdata,
+			traditional: true,
+			cache: false
+		}).done(function( data ) {
+			defaultlist = data;
+			renderResults(data);
+		});
+
+		$('#filter').keyup( function(event) {
+		    if(typeof searchrequest !== 'undefined')
+		        searchrequest.abort();
+			filterTxt = $(this).val();
+			if(filterTxt != '') {
+				solrdata.q = filterTxt+'*';
+				doSearch();
+			} else {
+				renderResults(defaultlist);
+			}
+
+		});
+
+		function doSearch(){
+			searchrequest = $.ajax({
+				type:"get",
+				url: solrurl,
+				data: solrdata,
+				traditional: true,
+				cache: false
+			}).done(function( data ) {
+				renderResults(data);
+			});
+		}
+
+		function renderResults(data) {
+			data = jQuery.parseJSON( data );
+			var html = "";
+			if(data.response.numFound > 0){
+				var ppl = data.response.docs;
+				for(i=0;i<ppl.length;i++) {
+					var person = jQuery.parseJSON( data.response.docs[i].rendered );
+					person.image = person.image.replace(/.jpg/gi,'_scale_110x110.jpg').replace(/.png/gi,'_scale_110x110.jpg');
+					html += personRender(person);
+				}
+				showFacets(data.facet_counts.facet_fields);
+			} else {
+				html = "No people found for search " + data.responseHeader.params.q;
+			}
+			displayResults(html);
+		}
+
+		function showFacets(facets){
+			for( var facet in facets ){
+				for (i=0;i<facets[facet].length;i+=2){
+					var facetdata = {
+						facet: facet,
+						name: facets[facet][i],
+						count: facets[facet][i+1]
+					}
+					$("#facets").append( facetRender(facetdata) );	
+				}
+			}
+		}
+
+		function toggleFacet(facet,facetname){
+			// fq:['location:oslo','department:software engineering']
+			solrdata.fq = facetname+":"+facet;
+			doSearch();
+			console.log(solrdata);
+		}
+
+		function displayResults(text) {
+			$("#results").html(text);
+		}
+
+	</script>
 
 {% endblock %}
