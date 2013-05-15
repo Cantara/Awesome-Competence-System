@@ -152,3 +152,9 @@ span.completeness {
 span.percent {
 	border-radius: 2px 0 0 2px;
 }
+
+.highlight {
+	font-size: 0.8em;
+	opacity: 0.6;
+}
+em {font-weight: 700; opacity: 1;}

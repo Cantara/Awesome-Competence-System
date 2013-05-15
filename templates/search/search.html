@@ -8,23 +8,30 @@
     <form method="get" action=".">
 		<input type="text" name="q" value="{{ query }}" id="id_q" autofocus="autofocus" size="30" style="margin:0;" placeholder="Search" /> <input type="submit" value="Search" class="butt">
     </form>
-
-    {% if facets.fields.name %}
-    <div style="text-align: left; font-size: 80%; padding: 1em;">
-        <strong>Name:</strong>
-        {% for n in facets.fields.name %}
-	        {% if n.1 >= 1 %}
-	            <span style="background: #fff; border-radius: 2px; padding: 0.2em; margin: 0.2em; display: inline-block;"><a href="{{ request.get_full_path }}&amp;selected_facets=name_exact:{{ n.0|urlencode }}">{{ n.0 }}</a> ({{ n.1 }})</span>
-	        {% endif %}
-        {% endfor %}
-	</div>
-    {% endif %}
     
     {% if facets.fields.technologies %}
     <div style="text-align: left; font-size: 80%; padding: 1em;">
         <strong>Technologies</strong>
         {% for n in facets.fields.technologies %}
             <span style="background: #fff; border-radius: 2px; padding: 0.2em; margin: 0.2em; display: inline-block;"><a href="{{ request.get_full_path }}&amp;selected_facets=technologies_exact:{{ n.0|urlencode }}">{{ n.0 }}</a> ({{ n.1 }})</span>
+        {% endfor %}
+	</div>
+    {% endif %}
+    
+    {% if facets.fields.location %}
+    <div style="text-align: left; font-size: 80%; padding: 1em;">
+        <strong>Location</strong>
+        {% for n in facets.fields.location %}
+            <span style="background: #fff; border-radius: 2px; padding: 0.2em; margin: 0.2em; display: inline-block;"><a href="{{ request.get_full_path }}&amp;selected_facets=location_exact:{{ n.0|urlencode }}">{{ n.0 }}</a> ({{ n.1 }})</span>
+        {% endfor %}
+	</div>
+    {% endif %}
+    
+    {% if facets.fields.department %}
+    <div style="text-align: left; font-size: 80%; padding: 1em;">
+        <strong>Department</strong>
+        {% for n in facets.fields.department %}
+            <span style="background: #fff; border-radius: 2px; padding: 0.2em; margin: 0.2em; display: inline-block;"><a href="{{ request.get_full_path }}&amp;selected_facets=department_exact:{{ n.0|urlencode }}">{{ n.0 }}</a> ({{ n.1 }})</span>
         {% endfor %}
 	</div>
     {% endif %}

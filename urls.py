@@ -10,7 +10,7 @@ from haystack.query import SearchQuerySet
 from haystack.views import FacetedSearchView
 from haystack.views import SearchView, search_view_factory
 
-sqs = SearchQuerySet().facet('name')
+sqs = SearchQuerySet().facet('name').facet('location').facet('department')
 
 urlpatterns = patterns('cv.views',
 

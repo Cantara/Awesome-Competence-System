@@ -68,7 +68,7 @@
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
 	<script id="persontemplate" type="text/x-dot-template">
-		<div class="block tiled">
+		<div class="block tiled" id="p<%=p.id%>">
 			<header>
 				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%></h3>
 				<h4><%=p.title%></h4>
@@ -107,7 +107,7 @@
 		</div>
 	</script> 
 	<script id="facettemplate" type="text/x-dot-template">
-		<label><input type="checkbox" name="<%=p.name%>" onChange="toggleFacet('<%=p.name%>','<%=p.facet%>');"/><%=p.name%><%=p.count%></label>
+		<label><input type="checkbox" name="<%=p.name%>" onChange="toggleFacet('<%=p.name%>','<%=p.facet%>',this);"/><%=p.name%></label><br/>
 	</script>
 	<script>
 
@@ -134,9 +134,9 @@
 
 		var filterTxt='';
 		var searchrequest;
-		var defaultlist;
+		//var defaultlist;
 		var solrurl = "/solr/collection1/select";
-	 	var solrdata = {'q':'*','wt':'json','indent':'true','sort':'name asc','rows':50, 'facet': 'true', 'facet.field': ['location', 'department']};
+	 	var solrdata = {'q':'*','wt':'json','indent':'true','sort':'name_exact asc','rows':50, 'hl': 'false', 'facet': 'true', 'facet.field': ['location_exact', 'department_exact'], 'fq':[]};
 
 		searchrequest = $.ajax({
 			type:"get",
@@ -145,8 +145,10 @@
 			traditional: true,
 			cache: false
 		}).done(function( data ) {
-			defaultlist = data;
+			//defaultlist = data;
 			renderResults(data);
+			data = jQuery.parseJSON( data );
+			showFacets(data.facet_counts.facet_fields);
 		});
 
 		$('#filter').keyup( function(event) {
@@ -155,9 +157,13 @@
 			filterTxt = $(this).val();
 			if(filterTxt != '') {
 				solrdata.q = filterTxt+'*';
+				solrdata.hl = 'true';
 				doSearch();
 			} else {
-				renderResults(defaultlist);
+				solrdata.q = '*';
+				solrdata.hl = 'false';
+				doSearch();
+				//renderResults(defaultlist);
 			}
 
 		});
@@ -181,34 +187,85 @@
 				var ppl = data.response.docs;
 				for(i=0;i<ppl.length;i++) {
 					var person = jQuery.parseJSON( data.response.docs[i].rendered );
-					person.image = person.image.replace(/.jpg/gi,'_scale_110x110.jpg').replace(/.png/gi,'_scale_110x110.jpg');
+					person.image = person.image.replace(/(.jpg|.png)/gi,'_scale_110x110.jpg');
 					html += personRender(person);
 				}
-				showFacets(data.facet_counts.facet_fields);
 			} else {
 				html = "No people found for search " + data.responseHeader.params.q;
 			}
 			displayResults(html);
+			showHighlights(data.highlighting);
+		}
+
+		function showHighlights(highlights){
+			for( var person in highlights ){
+				var pid = person.replace(/cv.person./, 'p');
+				for( var highlight in highlights[person] ) {
+					$('#'+pid + ' .cvset').prepend('<div class="highlight">...'+highlights[person][highlight]+'...</div>');
+				}
+			}
 		}
 
 		function showFacets(facets){
+			var facethtml = "";
 			for( var facet in facets ){
+				var content = "";
 				for (i=0;i<facets[facet].length;i+=2){
 					var facetdata = {
 						facet: facet,
 						name: facets[facet][i],
 						count: facets[facet][i+1]
 					}
-					$("#facets").append( facetRender(facetdata) );	
+					content += facetRender(facetdata);
 				}
+				facethtml += '<div class="facetfilter"><h3>'+facet.replace('_exact','')+'</h3>'+content+'</div>';
 			}
+			$("#facets").append( facethtml );	
 		}
 
-		function toggleFacet(facet,facetname){
-			// fq:['location:oslo','department:software engineering']
-			solrdata.fq = facetname+":"+facet;
+		function toggleFacet(facet,facetname,t){
+			// fq:['location:(oslo OR gothenburg)','department:software engineering']
+			var facetentry = facetname+":"+facet;
+			if(t.checked){
+				fq.addFacet(facet, facetname);
+			} else {
+				fq.removeFacet(facet, facetname);
+			}
 			doSearch();
-			console.log(solrdata);
+		}
+
+		var fq = {
+			facets: {},
+			addFacet: function(facet, facetname) {
+				if(this.facets[facetname] === undefined)
+					this.facets[facetname] = [];
+				this.facets[facetname].push(facet);
+				this.updateFq();
+			},
+			removeFacet: function(facet, facetname) {
+				var i = this.facets[facetname].indexOf(facet);
+				if(i >= 0) {
+					this.facets[facetname].splice(i, 1);
+				}
+				this.updateFq();
+			},
+			updateFq: function(){
+				var results = [];
+				var result = "";
+				for( var f in this.facets ) {
+					if( this.facets[f].length > 0 ) {
+						result += f + ":(";
+						for(i=0;i<this.facets[f].length;i++) {
+							result += '"'+this.facets[f][i]+'"';
+							if(this.facets[f][+i+1] !== undefined) 
+								result+=" OR ";
+						}
+						result += ")";
+					}
+					results.push(result);
+				}
+				solrdata.fq = result;
+			}
 		}
 
 		function displayResults(text) {

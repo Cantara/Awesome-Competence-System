@@ -4,3 +4,4 @@
 db/
 static/media
 password.py
+.htaccess

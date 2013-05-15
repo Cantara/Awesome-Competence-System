@@ -213,6 +213,25 @@ input, textarea {
 	border: 1px solid rgba(127,127,127,0.3);
 }
 
+.highlight {
+	font-size: 0.8em;
+	opacity: 0.6;
+}
+em {font-weight: 700; opacity: 1;}
+
+.facetfilter {
+	display: inline-block;
+	text-align: left;
+	vertical-align: top;
+	padding: .5em;
+	margin: .5em;
+	background: #fff;
+}
+.facetfilter h3 {
+	text-transform: uppercase;
+	font-size: 0.7em;
+	margin-bottom: 0.5em;
+}
 
 /* FORM */
 

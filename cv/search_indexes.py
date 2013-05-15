@@ -2,7 +2,6 @@ import datetime
 from haystack import indexes
 from cv.models.cvmodels import Person
 
-
 def valid_XML_char_ordinal(i):
     return ( # conditions ordered by presumed frequency
         0x20 <= i <= 0xD7FF 
@@ -16,6 +15,8 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     name = indexes.CharField(model_attr='name', faceted=True)
     rendered = indexes.CharField(use_template=True, indexed=False)
     technology = indexes.MultiValueField()
+    location = indexes.CharField(model_attr='location', null=True, faceted=True)
+    department = indexes.CharField(model_attr='department', null=True, faceted=True)
 
     def get_model(self):
         return Person
@@ -23,9 +24,9 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
     def prepare_technology(self, obj):
         result = []
-        '''for t in obj.technology_set.all():
+        for t in obj.technology_set.all():
             for tdata in t.data_as_list():
-                result.append( tdata.encode('ascii', 'ignore') )'''
+                result.append( tdata.encode('ascii', 'ignore') )
         return result
 
     def prepare(self, object):

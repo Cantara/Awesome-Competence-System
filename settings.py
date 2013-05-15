@@ -20,7 +20,7 @@ import password
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'altrancv01', # Name of database
+        'NAME': 'altrancv02', # Name of database
         'USER': 'altranadmin@aeubq2l6zi',
         'PASSWORD': password.AZURE_DATABASE_PASSWORD,
         'HOST': 'altrancv01', # Name of connection in settings
