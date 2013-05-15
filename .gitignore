@@ -3,5 +3,7 @@
 *~
 db/
 static/media
-password.py
+.py
+localsettings.py
 .htaccess
+

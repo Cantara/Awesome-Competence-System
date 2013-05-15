@@ -15,14 +15,14 @@ ADMINS = (
 MANAGERS = ADMINS
 
 
-import password 
+import localsettings 
 
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'altrancv02', # Name of database
+        'NAME': localsettings.DBNAME, # Name of database
         'USER': 'altranadmin@aeubq2l6zi',
-        'PASSWORD': password.AZURE_DATABASE_PASSWORD,
+        'PASSWORD': localsettings.AZURE_DATABASE_PASSWORD,
         'HOST': 'altrancv01', # Name of connection in settings
     },
 }
