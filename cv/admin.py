@@ -1,6 +1,6 @@
 from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
 from django.contrib import admin
-from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput
+from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput, URLField
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
@@ -9,14 +9,11 @@ from django import forms
 small = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':2, 'cols':30 } ) },
 	}
-medium = {
-		models.TextField: { 'widget': Textarea( attrs = {'rows':3, 'cols':36 } ) },
-		models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
-	}
 large = {
-		models.TextField: { 'widget': Textarea( attrs = {'rows':8, 'cols':43 } ) },
-		models.CharField: { 'widget': TextInput( attrs = {'size':60} ) },
-		models.ManyToManyField: { 'widget': forms.SelectMultiple( attrs = {'size':16, 'style':'min-width: 200px;'} ) },
+		models.TextField: { 'widget': Textarea( attrs = {'rows':9, 'cols':47 } ) },
+		models.CharField: { 'widget': TextInput( attrs = {'size':45} ) },
+		models.URLField: { 'widget': TextInput( attrs = {'size':45} ) },
+		models.ManyToManyField: { 'widget': forms.SelectMultiple( attrs = {'size':16, 'style':'min-width: 200px;'} ) }
 	}
 wide = {
 		models.TextField: { 'widget': Textarea( attrs = {'rows':5, 'cols':80 } ) },
@@ -28,7 +25,8 @@ order = ('-from_year','-from_month',)
 
 class TechnologyInline(admin.StackedInline):
 	model = Technology
-	verbose_name_plural = "Technologies"
+	verbose_name = "Compentence"
+	verbose_name_plural = "Competences"
 	extra = 0
 	formfield_overrides = large
 	fields = (('title', 'title_en'), ('data', 'data_en'))
@@ -62,10 +60,10 @@ class OtherInline(admin.StackedInline):
 	fields = ('title', 'data', 'title_en', 'data_en')
 
 class PersonAdmin(admin.ModelAdmin):
+
+	formfield_overrides = large
 	
-	save_on_top = True
-	
-	fields = ('user', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
+	fields = ('name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
 	
 	inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
 	
@@ -132,7 +130,6 @@ class CvForm(ModelForm):
 		self.fields['other'].queryset = Other.objects.filter(person__exact = self.instance.person)
 
 class CvAdmin(admin.ModelAdmin):
-	save_on_top = True
 	form = CvForm
 	readonly_fields = ['person']
 	fields = ('person','tags', ('title', 'title_en'), ('profile', 'profile_en'), 'technology', 'experience', 'workplace', 'education', 'other')

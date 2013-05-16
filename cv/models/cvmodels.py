@@ -52,6 +52,12 @@ class Person(models.Model):
 	location = models.CharField("Location", max_length=50, choices=LOCATION_CHOICES, null=True, blank=True)
 	department = models.CharField("Department", max_length=50, choices=DEPARTMENT_CHOICES, null=True, blank=True)
 	
+	def __unicode__(self):
+		return self.name
+
+	def years_of_experience(self):
+		pass
+
 	def country(self):
 		if self.location in ['Oslo']:
 			return 'no'
@@ -59,9 +65,6 @@ class Person(models.Model):
 			return 'se'
 		else:
 			return False
-
-	def __unicode__(self):
-		return self.name
 	
 	def age(self):
 		if self.birthdate:
@@ -163,9 +166,9 @@ class Person(models.Model):
 				
 class Technology(models.Model):
 	person = models.ForeignKey(Person)
-	title = models.CharField(max_length=50, null=True, blank=True)
-	title_en = models.CharField(max_length=50, null=True, blank=True)
-	data = models.TextField("Data (separate with comma)", null=True, blank=True)
+	title = models.CharField("Competence category", max_length=50, null=True, blank=True)
+	title_en = models.CharField("Competence category (En)", max_length=50, null=True, blank=True)
+	data = models.TextField("List your competences in this category (separate with comma)", null=True, blank=True)
 	data_en = models.TextField(null=True, blank=True)
 	
 	def data_as_list(self):
@@ -190,16 +193,16 @@ class Technology(models.Model):
 
 class TimedSkill(models.Model):
 	
-	title = models.CharField(max_length=50, null=True, blank=True)
-	title_en = models.CharField(max_length=50, null=True, blank=True)
+	title = models.CharField("Title", max_length=50, null=True, blank=True)
+	title_en = models.CharField("Title (En)", max_length=50, null=True, blank=True)
 	
 	from_year = models.IntegerField('From year*', max_length=4, choices=YEAR_CHOICES, default=0)
 	from_month = models.IntegerField('From month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	to_year = models.IntegerField('To year', max_length=4, choices=YEAR_CHOICES, default=0, null=True, blank=True)
 	to_month = models.IntegerField('To month', max_length=2, choices=MONTH_CHOICES, default=0, null=True, blank=True)
 	
-	description = models.TextField(null=True, blank=True)
-	description_en = models.TextField(null=True, blank=True)
+	description = models.TextField("Description", null=True, blank=True)
+	description_en = models.TextField("Description (En)", null=True, blank=True)
 	
 	def from_ym(self):
 		if self.to_year:
@@ -249,10 +252,10 @@ class Experience(TimedSkill):
 	person = models.ForeignKey(Person)
 	
 	company = models.CharField("Client company, Project title", max_length=140, null=True, blank=True)
-	company_en = models.CharField(max_length=140, null=True, blank=True)
+	company_en = models.CharField("Client company, Project title (En)", max_length=140, null=True, blank=True)
 	
-	techs = models.CharField(max_length=140, null=True, blank=True)
-	techs_en = models.CharField(max_length=140, null=True, blank=True)
+	techs = models.CharField("Technologies / Methods", max_length=140, null=True, blank=True)
+	techs_en = models.CharField("Technologies / Methods (En)", max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
 		if self.title is not None:
@@ -271,8 +274,8 @@ class Workplace(TimedSkill):
 
 	person = models.ForeignKey(Person)
 	
-	company = models.CharField(max_length=140, null=True, blank=True)
-	company_en = models.CharField(max_length=140, null=True, blank=True)
+	company = models.CharField("Company", max_length=140, null=True, blank=True)
+	company_en = models.CharField("Company (En)", max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
 		return "%s, %s, %s - %s" % (self.title, self.company, self.from_year, self.to_year)
@@ -285,8 +288,8 @@ class Education(TimedSkill):
 
 	person = models.ForeignKey(Person)
 	
-	school = models.CharField(max_length=140, null=True, blank=True)
-	school_en = models.CharField(max_length=140, null=True, blank=True)
+	school = models.CharField("School", max_length=140, null=True, blank=True)
+	school_en = models.CharField("School (En)", max_length=140, null=True, blank=True)
 	
 	def __unicode__(self):
 		return "%s, %s, %s - %s" % (self.title, self.school, self.from_year, self.to_year)
@@ -299,11 +302,11 @@ class Other(models.Model):
 
 	person = models.ForeignKey(Person)
 	
-	title = models.CharField(max_length=50, null=True, blank=True)
-	title_en = models.CharField(max_length=50, null=True, blank=True)
+	title = models.CharField("Other information (e.g. languages, publications, hobbies)", max_length=50, null=True, blank=True)
+	title_en = models.CharField("Other (En)", max_length=50, null=True, blank=True)
 	
-	data = models.TextField(null=True, blank=True)
-	data_en = models.TextField(null=True, blank=True)
+	data = models.TextField("List your information", null=True, blank=True)
+	data_en = models.TextField("List your inforamtion (En)", null=True, blank=True)
 	
 	def data_as_list(self):
 		return self.data.split('\n')

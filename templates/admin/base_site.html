@@ -5,13 +5,14 @@
 
 {% block extrastyle %}
 <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>-->
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_custom.css"/>
-
+-->
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 {% endblock %}
 
 {% block branding %}
+<!--
 	<nav>
         <ul class="wide">
             <li><a href="{% url cv.views.cv_list %}" class="butt red">ACS Person list</a></li>
@@ -21,151 +22,169 @@
 			{% endif %}
         </ul>
     </nav>
+-->
 
-{% if not user.is_anonymous %}
-<script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
-	
-<script language="JavaScript" type="text/javascript">
-$(document).ready( function() 
-{
-	// Trash can 
-	$("#delete").droppable({
-		accept: "#DragWordList li",
-		hoverClass: "dropHover",
-		tolerance: "pointer",
-		drop: function(ev, ui) {
-			ui.draggable.remove(); // remove original item
+	<style>
+		body {font-size: 12px;}
+		._inline-group h2 { font-size: 1.2em;}
+		textarea, input[type=text], select {width: auto; font-size: 1em; line-height: 1em; padding: 2px;}
+		label {font-size: 1em;}
+		.form-actions {position: fixed; bottom:0;left:0;right:0; margin-bottom:0;}
+		.form-horizontal .control-group {
+			margin-bottom: 6px;
 		}
-	});
-	
-	// Activate drag upon load
-	activateDrag();
-	
-	// Make draggable elements on click
-	$('#MakeDrag').click(function() {
-		if($("#DragText").val()!="") {
-			$.each(
-				$("#DragText").val().split("\n"),
-				function(i, o){
-					$("#DragWordList").append('<li>'+o+"</li>");
-				}
-			);
-			$("#DragText").val("");
-			activateDrag();
-		} else {
-			alert("You should paste some text first...");
-		}
-		return false
-	});
-	
-	// Reactivate drag when new element is added
-	$('.add-row a').click(function() {
-		activateDrag();
-	});
-	
-	// Toggle subsections
-	$('.inline-group h2').click(function() {
-		if( $(this).hasClass("closed") ) {
-			$(this).removeClass("closed");
-			$(this).parent().children("div:not(.empty-form)").show(200);
-		} else {
-			$(this).addClass("closed");
-			$(this).parent().children("div").hide(200);
-		}
-	});
-	
-	/*// Append stuff to Technologies
-	var popTechs = 
-	'<div id="popTechs"><h4>Popular technologies! Drag and drop it!</h4>' +
-		{% for t in techlist %}
-		'<span>{{ t }}</span> ' +{% endfor %}
-	'</div>';
-	$('#technology_set-group .empty-form').after(popTechs);
-	$("#popTechs span").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });*/
-	
-	// Tooltip for textarea
-	$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
-	
-	// Add back-button
-	$('input[name=_continue]').before('<a class="button" class="back" style="font-size: 1.1em; color: #444 !important; background: #ddd; float: left;" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="' + document.referrer + '">Exit without saving</a>');
+		legend {font-size: 1.1em; line-height: 1.1em;}
+		legend small {font-size: 1em;}
+	</style>
 
-	// Remove Save and add another
-	$('input[name=_addanother]').remove();
-	
-	// Add "SELECT_ALL"-button to CV-edit
-	var set = ['technology','experience','workplace','education','other'];
-	for(var i=0;i<set.length;i++){
-		$('#id_'+set[i]).after('<a href="#" class="button" id="deselectall' + set[i] + '" style="color: #444 !important; background: #ddd;">Deselect all in ' + set[i] + '</a>');
-		$('#id_'+set[i]).after('<br/><a href="#" class="button" id="selectall' + set[i] + '" style="margin-left: 12em !important; color: #444 !important; background: #ddd;">Select all in ' + set[i] + '</a>');
-		$('#selectall'+set[i]).click(function(){
-			$(this).prev().prev().children().prop('selected', true);
-			return false;
+	{% if not user.is_anonymous %}
+	<script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
+		
+	<script language="JavaScript" type="text/javascript">
+	$(document).ready( function() 
+	{
+		// Trash can 
+		$("#delete").droppable({
+			accept: "#DragWordList li",
+			hoverClass: "dropHover",
+			tolerance: "pointer",
+			drop: function(ev, ui) {
+				ui.draggable.remove(); // remove original item
+			}
 		});
-		$('#deselectall'+set[i]).click(function(){
-			$(this).prev().prev().prev().children().prop('selected', false);
-			return false;
+		
+		// Activate drag upon load
+		activateDrag();
+		
+		// Make draggable elements on click
+		$('#MakeDrag').click(function() {
+			if($("#DragText").val()!="") {
+				$.each(
+					$("#DragText").val().split("\n"),
+					function(i, o){
+						$("#DragWordList").append('<li>'+o+"</li>");
+					}
+				);
+				$("#DragText").val("");
+				activateDrag();
+			} else {
+				alert("You should paste some text first...");
+			}
+			return false
+		});
+		
+		// Reactivate drag when new element is added
+		$('.add-row a').click(function() {
+			activateDrag();
+		});
+		
+		// Toggle subsections
+		$('.inline-group h2').click(function() {
+			if( $(this).hasClass("closed") ) {
+				$(this).removeClass("closed");
+				$(this).parent().children("div:not(.empty-form)").show(200);
+			} else {
+				$(this).addClass("closed");
+				$(this).parent().children("div").hide(200);
+			}
+		});
+		
+		/*// Append stuff to Technologies
+		var popTechs = 
+		'<div id="popTechs"><h4>Popular technologies! Drag and drop it!</h4>' +
+			{% for t in techlist %}
+			'<span>{{ t }}</span> ' +{% endfor %}
+		'</div>';
+		$('#technology_set-group .empty-form').after(popTechs);
+		$("#popTechs span").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });*/
+		
+		// Tooltip for textarea
+		$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
+		
+		// Add back-button
+		$('input[name=_continue]').val('Save').addClass('btn-primary').before('<button class="btn" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="' + document.referrer + '">Exit</button> ');
+
+		$('input[name=_save]').val('Save and exit').removeClass('btn-primary');
+
+		// Remove Save and add another
+		$('input[name=_addanother]').remove();
+		
+		// Add "SELECT_ALL"-button to CV-edit
+		var set = ['technology','experience','workplace','education','other'];
+		for(var i=0;i<set.length;i++){
+			$('#id_'+set[i]).after('<a href="#" class="button" id="deselectall' + set[i] + '" style="color: #444 !important; background: #ddd;">Deselect all in ' + set[i] + '</a>');
+			$('#id_'+set[i]).after('<br/><a href="#" class="button" id="selectall' + set[i] + '" style="margin-left: 12em !important; color: #444 !important; background: #ddd;">Select all in ' + set[i] + '</a>');
+			$('#selectall'+set[i]).click(function(){
+				$(this).prev().prev().children().prop('selected', true);
+				return false;
+			});
+			$('#deselectall'+set[i]).click(function(){
+				$(this).prev().prev().prev().children().prop('selected', false);
+				return false;
+			});
+		}
+		
+	});
+
+	function activateDrag() {
+		$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
+		$("textarea, input[type=text]").droppable({
+			accept: "#DragWordList li, #popTechs span",
+			hoverClass: "dropHover",
+			tolerance: "pointer",
+			drop: function(ev, ui) {
+				if(ui.draggable.is("span")) {
+					var comma = "";
+					if($(this).val() != "") { 
+						comma = ", ";
+					}
+					$(this).val($(this).val() + comma + ui.draggable.text());
+				} else {
+					$(this).insertAtCaret(ui.draggable.text());
+				}
+				ui.draggable.remove(); // remove original item
+			}
 		});
 	}
-	
-});
 
-function activateDrag() {
-	$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
-	$("textarea, input[type=text]").droppable({
-		accept: "#DragWordList li, #popTechs span",
-		hoverClass: "dropHover",
-		tolerance: "pointer",
-		drop: function(ev, ui) {
-			if(ui.draggable.is("span")) {
-				var comma = "";
-				if($(this).val() != "") { 
-					comma = ", ";
+	$.fn.insertAtCaret = function (myValue) {
+		return this.each(function(){
+				//IE support
+				if (document.selection) {
+						this.focus();
+						sel = document.selection.createRange();
+						sel.text = myValue;
+						this.focus();
 				}
-				$(this).val($(this).val() + comma + ui.draggable.text());
-			} else {
-				$(this).insertAtCaret(ui.draggable.text());
-			}
-			ui.draggable.remove(); // remove original item
-		}
-	});
-}
+				//MOZILLA / NETSCAPE support
+				else if (this.selectionStart || this.selectionStart == '0') {
+						var startPos = this.selectionStart;
+						var endPos = this.selectionEnd;
+						var scrollTop = this.scrollTop;
+						this.value = this.value.substring(0, startPos)+ myValue+ this.value.substring(endPos,this.value.length);
+						this.focus();
+						this.selectionStart = startPos + myValue.length;
+						this.selectionEnd = startPos + myValue.length;
+						this.scrollTop = scrollTop;
+				} else {
+						this.value += myValue;
+						this.focus();
+				}
+		});
+	};
+	</script>
+	{% endif %}
 
-$.fn.insertAtCaret = function (myValue) {
-	return this.each(function(){
-			//IE support
-			if (document.selection) {
-					this.focus();
-					sel = document.selection.createRange();
-					sel.text = myValue;
-					this.focus();
-			}
-			//MOZILLA / NETSCAPE support
-			else if (this.selectionStart || this.selectionStart == '0') {
-					var startPos = this.selectionStart;
-					var endPos = this.selectionEnd;
-					var scrollTop = this.scrollTop;
-					this.value = this.value.substring(0, startPos)+ myValue+ this.value.substring(endPos,this.value.length);
-					this.focus();
-					this.selectionStart = startPos + myValue.length;
-					this.selectionEnd = startPos + myValue.length;
-					this.scrollTop = scrollTop;
-			} else {
-					this.value += myValue;
-					this.focus();
-			}
-	});
-};
-</script>
-{% endif %}
-<h1 id="site-name">{% trans 'Altran CV' %}</h1>
+<!--
+	<h1 id="site-name">{% trans 'Altran CV' %}</h1>
+-->
 {% endblock %}
 
 {% block sidebar %}
-
 {% if 'person' in request.path %}
-
+<!--
 <div id="DragDiv">
 	<h4>Copy-Paste-Helper</h4>
 	<p><img src="{{ STATIC_URL }}img/trash.png" id="delete">You can paste text into the textarea, click "Make draggable text", and then drag the text to the form to paste the text. To remove a bit of unwanted text, drop it in the bin!</p>
@@ -175,7 +194,7 @@ $.fn.insertAtCaret = function (myValue) {
 	<textarea id="DragText" rows="5"></textarea><br/>
 	<a class="button" id="MakeDrag">Make draggable text</a>
 </div>
-
+-->
 {% endif %}
 
 {% endblock %}
