@@ -35,6 +35,9 @@ DEPARTMENT_CHOICES = (
 	('Software Engineering', 'Software Engineering'),
 	('Business Intelligence', 'Business Intelligence'),
 	('Enterprise Content Management', 'Enterprise Content Management'),
+	('Identity Access Management', 'Identity Access Management'),
+	('Sales', 'Sales'),
+	('PMDB', 'PMDB'),
 	('Other', 'Other'),
 )
 
