@@ -1,6 +1,7 @@
 import datetime
 from haystack import indexes
 from cv.models.cvmodels import Person
+from itertools import chain
 
 def valid_XML_char_ordinal(i):
     return ( # conditions ordered by presumed frequency
@@ -17,6 +18,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     technology = indexes.MultiValueField()
     location = indexes.CharField(model_attr='location', null=True, faceted=True)
     department = indexes.CharField(model_attr='department', null=True, faceted=True)
+    years_of_experience = indexes.IntegerField(faceted=True)
 
     def get_model(self):
         return Person
@@ -28,6 +30,15 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
             for tdata in t.data_as_list():
                 result.append( tdata.encode('ascii', 'ignore') )
         return result
+    def prepare_years_of_experience(self, obj):
+        years = 0
+        exp_and_work = list( chain( obj.experience_set.all(), obj.workplace_set.all() ) )
+        for i in exp_and_work:
+            if( i.from_year > 0):
+                yearspan = datetime.date.today().year - i.from_year
+                if( years < yearspan):
+                    years = yearspan
+        return years
 
     def prepare(self, object):
         self.prepared_data = super(PersonIndex, self).prepare(object)

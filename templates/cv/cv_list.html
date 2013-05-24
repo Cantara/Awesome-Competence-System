@@ -3,19 +3,37 @@
 
 {% block title %}CV{% endblock %}
 
+{% block extrastyles %}
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/nouislider.fox.css"/>
+{% endblock %}
+
 {% block actions %}
 	<h1>ACS Persons</h1>
 	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search" autofocus/>
 	{% if user.is_authenticated %}
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a>
+		<div>
+			<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
+		</div>
 	{% endif %}
-	<div id="facets"></div>
+	<div id="facets">
+		<div id="expslider" class="noUiSlider"></div>
+	</div>
 {% endblock %}
 
 {% block content %}
-	<div id="numfound"></div>
-	<div id="results">
-	</div>
+	<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);">Download multiple CVs</label>
+	<form name="multicv" action="{% url cv_multi %}" method="get">
+		<div id="multicontrols" style="display:none;">
+			Format:&nbsp;<select name="format" id="format">
+				<option value="doc">Microsoft Word (.doc)</option>
+				<option value="pdf">Adobe Reader (.pdf)</option>
+				<option value="odt">OpenDocument Text (.odt)</option>
+			</select>
+			<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+		</div>
+		<div id="numfound"></div>
+		<div id="results"></div>
+	</form>
 
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
@@ -60,141 +78,259 @@
 		</div>
 	</script> 
 
+	<style> 
+		.multiline {text-align: left; background: #fff; padding:.5em; margin:.2em;}
+		.multileft {display: inline-block; width: 300px;}
+		.multiright {display: inline-block; vertical-align: top;}
+	</style>
+
+	<script id="multitemplate" type="text/x-dot-template">
+		<div class="multiline" id="p<%=p.id%>">
+			<div class="multileft">
+				<%?p.image%><img src="/media/<%=p.image%>" class="" style="float: left;max-width:32px;max-height:32px;"><%?%>
+				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%></h3>
+				<h4><%=p.title%></h4>
+				<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
+			</div>
+
+			<div class="multiright">
+				<%~p.cv :cv:index%>
+					<%? cv.tags != "Empty CV" %>
+						<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
+						<div>
+							<input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>">
+							<label for="<%=cv.id%>">
+								<%=cv.tags%> <%=cv.last_edited%> <%=cv.status.percent%>% <a href="{% url cv_detail "999999" %}" class="butt" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
+								Download:&nbsp;
+								<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" class="butt" target="_blank">Word (.doc)</a>&nbsp;
+								<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" class="butt" target="_blank">Adobe Reader (.pdf)</a>&nbsp;
+								<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">OpenOffice (.odt)</a>&nbsp;
+							</label>
+						</div>
+						<%?%>
+					<%?%>
+				<%~%>
+			</div>
+		</div>
+	</script> 
+
 	<script id="facettemplate" type="text/x-dot-template">
-		<label><input type="checkbox" name="<%=p.name%>" onChange="toggleFacet('<%=p.name%>','<%=p.facet%>',this);"/><%=p.name%></label><br/>
+		<label><input type="checkbox" name="<%=p.name%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this);"/><%=p.name%></label><br/>
 	</script>
 
+	<script src="{{ STATIC_URL }}js/jquery.nouislider.min.js"></script>
 	<script>
 
-		doT.templateSettings = {
-		  evaluate:    /\<\%([\s\S]+?)\%\>/g,
-		  interpolate: /\<\%=([\s\S]+?)\%\>/g,
-		  encode:      /\<\%!([\s\S]+?)\%\>/g,
-		  use:         /\<\%#([\s\S]+?)\%\>/g,
-		  define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
-		  conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
-		  iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
-		  varname: 'p',
-		  strip: true,
-		  append: true,
-		  selfcontained: false
+		var cvlist = {
+
+			facetTemplate: $('#facettemplate').text(),
+			facetRenderer: '',
+			
+			personStandardTemplate: $('#persontemplate').text().replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>'),
+			personStandardRenderer: '',
+
+			personMultiTemplate: $('#multitemplate').text().replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>'),
+			personMultiRenderer: '',
+			
+			multi: false,
+			toggleMulti: function(t) {
+				var self = this;
+				self.multi = t.checked;
+				if(!t.checked){
+					$('#multicontrols').hide();
+				} else {
+					$('#multicontrols').show();
+				}
+				self.renderResults(self.bufferedData);
+			},
+			downloadMulti: function() {
+				if(this.multi){
+					document.forms['multicv'].submit();
+				} else {
+					alert('No soup for you.');
+				}
+			},
+
+			personRenderer: function(data) {
+				if(!this.multi){
+					return this.personStandardRenderer(data);
+				} else {
+					return this.personMultiRenderer(data);
+				}
+			},
+			
+			renderResults: function(data) {
+				var html = "";
+				var self = this;
+				data = jQuery.parseJSON( data );
+				if(data.response.numFound > 0){
+					this.updateNumfound(data.response.numFound);
+					var ppl = data.response.docs;
+					for(i=0;i<ppl.length;i++) {
+						var person = jQuery.parseJSON( data.response.docs[i].rendered );
+						person.image = person.image.replace(/(.jpg|.png)/gi,'_scale_110x110.jpg');
+						html += this.personRenderer(person);
+					}
+				} else {
+					this.updateNumfound('');
+					html = "No people found for search " + data.responseHeader.params.q;
+				}
+				self.displayResults(html);
+				self.showHighlights(data.highlighting);
+			},
+
+			displayResults: function(text) {
+				$("#results").html(text);
+			},
+
+			updateNumfound: function(num){
+				text = num > 0 ? " matches" : "";
+				document.getElementById('numfound').innerHTML = num + text;
+			},
+
+			showFacets: function(facets){
+				var facethtml = "";
+				for( var facet in facets ){
+					var content = "";
+					if(facet == 'years_of_experience_exact') {
+						var maxValue = 0;
+						var curValue = 0;
+						for (var j=0;j<facets[facet].length;j+=2){
+							curValue = parseInt(facets[facet][j]);
+							if( curValue > maxValue ) {
+								maxValue = curValue;
+							}
+						}
+						$("#expslider").noUiSlider({
+						    range: [0, maxValue]
+						   ,start: [0, maxValue]
+						   ,step: 1
+						   ,slide: function(){
+						   		console.log($(this).val());
+						   }
+						});
+					} else {
+						for (var i=0;i<facets[facet].length;i+=2){
+							var facetdata = {
+								facet: facet,
+								name: facets[facet][i],
+								count: facets[facet][i+1]
+							}
+							content += this.facetRenderer(facetdata);
+						}
+						facethtml += '<div class="facetfilter"><h3>'+facet.replace('_exact','')+'</h3>'+content+'</div>';
+					}
+				}
+				$("#facets").append( facethtml );	
+			},
+
+			toggleFacet: function(facet,facetname,t){
+				// fq:['location:(oslo OR gothenburg)','department:software engineering']
+				var facetentry = facetname+":"+facet;
+				if(t.checked){
+					fq.addFacet(facet, facetname);
+				} else {
+					fq.removeFacet(facet, facetname);
+				}
+				this.doSearch();
+			},
+
+			showHighlights: function(highlights){
+				for( var person in highlights ){
+					var pid = person.replace(/cv.person./, 'p');
+					for( var highlight in highlights[person] ) {
+						$('#'+pid + ' .cvset').prepend('<div class="highlight">...'+highlights[person][highlight]+'...</div>');
+					}
+				}
+			},
+
+			doSearch: function(){
+				var self = this,
+				searchrequest = $.ajax({
+					type:"get",
+					url: self.solrurl,
+					data: self.solrdata,
+					traditional: true,
+					cache: false
+				}).done(function( data ) {
+					self.bufferedData = data;
+					self.renderResults(data);
+				});
+			},
+
+			solrurl: "/solr/collection1/select",
+		 	solrdata: {
+		 		'q':'*',
+		 		'wt':'json',
+		 		'indent':'true',
+		 		'sort':'name_exact asc',
+		 		'rows':50,
+		 		'hl': 'false',
+		 		'facet': 'true',
+		 		'facet.field': [
+		 			'location_exact', 
+		 			'department_exact',
+		 			'years_of_experience_exact'
+		 			], 
+		 		'fq':[]
+		 	},
+		 	bufferedData: '',
+		 	filterTxt: '',
+			init: function() {
+				var self = this;
+
+				doT.templateSettings = {
+				  evaluate:    /\<\%([\s\S]+?)\%\>/g,
+				  interpolate: /\<\%=([\s\S]+?)\%\>/g,
+				  encode:      /\<\%!([\s\S]+?)\%\>/g,
+				  use:         /\<\%#([\s\S]+?)\%\>/g,
+				  define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
+				  conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
+				  iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
+				  varname: 'p',
+				  strip: true,
+				  append: true,
+				  selfcontained: false
+				};
+
+				self.searchrequest = $.ajax({
+					type:"get",
+					url: self.solrurl,
+					data: self.solrdata,
+					traditional: true,
+					cache: false
+				}).done(function( data ) {
+					self.bufferedData = data;
+					self.renderResults(data);
+					data = jQuery.parseJSON( data );
+					self.showFacets(data.facet_counts.facet_fields);
+				});
+
+				self.personStandardRenderer = doT.template(self.personStandardTemplate);
+				self.personMultiRenderer = doT.template(self.personMultiTemplate);
+				self.facetRenderer = doT.template(self.facetTemplate);
+
+			}
+
 		};
-		var personTemplate = $('#persontemplate').text();
-		// This is not very pretty, but it works.
-		personTemplate = personTemplate.replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>');
-		var personRender = doT.template(personTemplate);
 
-		var facetTemplate = $('#facettemplate').text();
-		var facetRender = doT.template(facetTemplate);
-
-		var filterTxt='';
-		var searchrequest;
-		//var defaultlist;
-		var solrurl = "/solr/collection1/select";
-	 	var solrdata = {'q':'*','wt':'json','indent':'true','sort':'name_exact asc','rows':50, 'hl': 'false', 'facet': 'true', 'facet.field': ['location_exact', 'department_exact'], 'fq':[]};
-
-		searchrequest = $.ajax({
-			type:"get",
-			url: solrurl,
-			data: solrdata,
-			traditional: true,
-			cache: false
-		}).done(function( data ) {
-			//defaultlist = data;
-			renderResults(data);
-			data = jQuery.parseJSON( data );
-			showFacets(data.facet_counts.facet_fields);
-		});
+		cvlist.init();
 
 		$('#filter').keyup( function(event) {
-		    if(typeof searchrequest !== 'undefined')
-		        searchrequest.abort();
-			filterTxt = $(this).val();
-			if(filterTxt != '') {
-				solrdata.q = filterTxt+'*';
-				solrdata.hl = 'true';
-				doSearch();
+		    if(typeof cvlist.searchrequest !== 'undefined'){
+		        cvlist.searchrequest.abort();
+		    }
+			cvlist.filterTxt = $(this).val();
+			if(cvlist.filterTxt != '') {
+				cvlist.solrdata.q = cvlist.filterTxt+'*';
+				cvlist.solrdata.hl = 'true';
+				cvlist.doSearch();
 			} else {
-				solrdata.q = '*';
-				solrdata.hl = 'false';
-				doSearch();
-				//renderResults(defaultlist);
+				cvlist.solrdata.q = '*';
+				cvlist.solrdata.hl = 'false';
+				cvlist.doSearch();
 			}
-
 		});
-
-		function doSearch(){
-			searchrequest = $.ajax({
-				type:"get",
-				url: solrurl,
-				data: solrdata,
-				traditional: true,
-				cache: false
-			}).done(function( data ) {
-				renderResults(data);
-			});
-		}
-
-		function renderResults(data) {
-			data = jQuery.parseJSON( data );
-			var html = "";
-			if(data.response.numFound > 0){
-				updateNumfound(data.response.numFound);
-				var ppl = data.response.docs;
-				for(i=0;i<ppl.length;i++) {
-					var person = jQuery.parseJSON( data.response.docs[i].rendered );
-					person.image = person.image.replace(/(.jpg|.png)/gi,'_scale_110x110.jpg');
-					html += personRender(person);
-				}
-			} else {
-				updateNumfound('');
-				html = "No people found for search " + data.responseHeader.params.q;
-			}
-			displayResults(html);
-			showHighlights(data.highlighting);
-		}
-
-		function updateNumfound(num){
-			text = num > 0 ? " matches" : "";
-			document.getElementById('numfound').innerHTML = num + text;
-		}
-
-		function showHighlights(highlights){
-			for( var person in highlights ){
-				var pid = person.replace(/cv.person./, 'p');
-				for( var highlight in highlights[person] ) {
-					$('#'+pid + ' .cvset').prepend('<div class="highlight">...'+highlights[person][highlight]+'...</div>');
-				}
-			}
-		}
-
-		function showFacets(facets){
-			var facethtml = "";
-			for( var facet in facets ){
-				var content = "";
-				for (i=0;i<facets[facet].length;i+=2){
-					var facetdata = {
-						facet: facet,
-						name: facets[facet][i],
-						count: facets[facet][i+1]
-					}
-					content += facetRender(facetdata);
-				}
-				facethtml += '<div class="facetfilter"><h3>'+facet.replace('_exact','')+'</h3>'+content+'</div>';
-			}
-			$("#facets").append( facethtml );	
-		}
-
-		function toggleFacet(facet,facetname,t){
-			// fq:['location:(oslo OR gothenburg)','department:software engineering']
-			var facetentry = facetname+":"+facet;
-			if(t.checked){
-				fq.addFacet(facet, facetname);
-			} else {
-				fq.removeFacet(facet, facetname);
-			}
-			doSearch();
-		}
 
 		var fq = {
 			facets: {},
@@ -226,12 +362,8 @@
 					}
 					results.push(result);
 				}
-				solrdata.fq = result;
+				cvlist.solrdata.fq = result;
 			}
-		}
-
-		function displayResults(text) {
-			$("#results").html(text);
 		}
 
 	</script>

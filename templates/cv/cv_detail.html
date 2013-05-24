@@ -26,9 +26,12 @@
 					document.cvjsonform.submit();
 				}
 			</script>
-			<a class="butt" onClick="dl('odt');">Download .odt</a>
-			<a class="butt" onClick="dl('doc');">Download .doc</a>
-			<a class="butt" onClick="dl('pdf');">Download .pdf</a>
+			<br/>
+			<br/>
+			Download for 
+			<a class="butt" onClick="dl('doc');">Word (.doc)</a>
+			<a class="butt" onClick="dl('pdf');">Adobe Reader (.pdf)</a>
+			<a class="butt" onClick="dl('odt');">OpenOffice (.odt)</a>
 		{% if user.is_authenticated %}
 			<br/>
 			<br/>
