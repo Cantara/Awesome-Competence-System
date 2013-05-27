@@ -9,7 +9,7 @@ Use ACS to build the best-selling CV for convincing your new customer you have t
 Documentation:
 * https://wiki.cantara.no/display/CV/ACS+-+Awesome+Competence+System
 
-![Blurred ScreenShot](https://github.com/altran/cvapp/blob/master/acs_blurred.png)
+![Blurred ScreenShot](https://raw.github.com/altran/cvapp/master/acs_blurred.png)
 
 
 
