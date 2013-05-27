@@ -1,4 +1,4 @@
-Awasome Competence System
+Awesome Competence System
 =========================
 
 
@@ -7,7 +7,7 @@ Your one stop shop for employee skill, competency and experience search.
 Use ACS to build the best-selling CV for convincing your new customer you have the right person for the The Job.
 
 Documentation:
-* https://wiki.cantara.no/display/CV/ACS+-+Autonomous+Competence+System
+* https://wiki.cantara.no/display/CV/ACS+-+Awesome+Competence+System
 
 
 
