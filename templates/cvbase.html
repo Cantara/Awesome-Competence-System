@@ -22,29 +22,154 @@
 			<input type="hidden" value="{{ request.path }}" name="path">
 			{% if user.is_authenticated %}
 				Welcome <strong>{{ user.username }}</strong>
-				<input type="submit" value="Log out" class="butt empty">
+				<input type="submit" value="Log out" class="">
 			{% else %}
 				<label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
 				<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/>
-				<input type="submit" value="Log in" class="butt empty">
+				<input type="submit" value="Log in" class="">
 			{% endif %}
 		</form>
         <ul class="wide">
-            <li><a href="{% url cv.views.cv_list %}" class="butt empty">ACS Person list</a></li>
-            <li><a href="{% url cv.views.matrix_list %}" class="butt empty">Competence Matrix list</a></li>
-            <!--<li><a href="{% url haystack_search %}" class="butt empty">Advanced Search</a></li>-->
+            <li><a href="{% url cv.views.cv_list %}" class="">ACS Person list</a></li>
+            <li><a href="{% url cv.views.matrix_list %}" class="">Competence Matrix list</a></li>
+            <!--<li><a href="{% url haystack_search %}" class="">Advanced Search</a></li>-->
 			{% if user.is_authenticated %}
-            <li><a href="{% url admin:index %}" class="butt empty">Admin</a></li>
+            <li><a href="{% url admin:index %}" class="">Admin</a></li>
 			{% endif %}
         </ul>
         {% endblock %}
     </nav>
 
-    <div id="actions" class="wide">
+    <div id="actions">
         {% block actions %}{% endblock %}
     </div>
+    <style>
+    	#options ~ #content {
+    		position: absolute;
+    		left: 22.5em;
+    		text-align: left;
+			transition: left 0.2s;
+		 -o-transition: left 0.2s; /* Opera */
+	   -moz-transition: left 0.2s; /* Firefox 4 */
+	-webkit-transition: left 0.2s; /* Safari and Chrome */
+    	}
+    	#options {
+    		position: absolute;
+    		left:1em;
+    		width: 21em;
+    		max-height: 40em;
+    		padding: .5em;
+    		text-align: left;
+    		background-color: #fff;
+			border-bottom: 2px solid #ccc;
+			box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			transition: all 0.2s;
+		 -o-transition: all 0.2s; /* Opera */
+	   -moz-transition: all 0.2s; /* Firefox 4 */
+	-webkit-transition: all 0.2s; /* Safari and Chrome */
+    	}
+    	#optionsinside {
+    		width: 20em;
+    	}
 
-    <div id="content" class="wide">
+		#options h3 {
+			text-transform: uppercase;
+			font-size: 0.7em;
+			margin: .5em 0 .5em 0;
+		}
+		.hiddenopts {
+			width: 3em !important;
+			max-height: 3em !important;
+			overflow: hidden;
+		}
+		.hiddenopts:hover {
+			width: 3.5em !important;
+			max-height: 3.5em !important;
+		}
+		.hiddenopts ~ #content {
+			left: 4.5em !important;
+		}
+
+		#view {
+			position: absolute;
+			left: 1em;
+			width: 3em;
+			height: 3em;
+			background: #fff;
+			border-bottom: 2px solid #ccc;
+		}
+			.filter {
+				margin-bottom: 1em;
+				padding-bottom: 1em;
+				border-bottom: 1px solid #ddd;
+			}
+		.clickable {
+			cursor: pointer;
+			overflow: visible;
+		}
+		.clickable:hover {
+			opacity: 0.8;
+		}
+		#options + label {
+			position: absolute;
+			z-index: 300;
+			left:6em;
+			font-size: 0.8em;
+			padding: 1em 0;
+			white-space:nowrap;
+			width: 0;
+			height: 2em;
+			background-color: #fff;
+			overflow: hidden;
+			transition: all 0.1s;
+		 -o-transition: all 0.1s; /* Opera */
+	   -moz-transition: all 0.1s; /* Firefox 4 */
+	-webkit-transition: all 0.1s; /* Safari and Chrome */
+		}
+		#options:hover + label {
+			width: 100px;
+			padding: 1em;
+		}
+
+
+		#numfound {
+			font-size: .8em;
+			margin: .5em;
+			display: inline-block;
+		}
+
+@media (max-width: 600px) {
+	#content {
+		position: static !important;
+		width: 100%;
+		text-align: center !important;
+	}
+	.hiddenopts {
+		width: 100% !important;
+	}
+	.clickable {
+		width: 100%;
+	}
+	#options {
+		position: static;
+		width: 100%;
+		margin-bottom: 1em;
+	}
+	#options + label {
+		display: none
+	}
+	#optionsinside {
+		width: 100% ;
+	}
+}
+
+    </style>
+
+	{% block options %}
+	{% endblock %}
+
+    <div id="content" class="">
         {% block content %}{% endblock %}
     </div>
 

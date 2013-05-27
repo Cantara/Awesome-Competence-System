@@ -34,9 +34,9 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         years = 0
         exp_and_work = list( chain( obj.experience_set.all(), obj.workplace_set.all() ) )
         for i in exp_and_work:
-            if( i.from_year > 0):
+            if( i.from_year > 1969):
                 yearspan = datetime.date.today().year - i.from_year
-                if( years < yearspan):
+                if( years < yearspan and yearspan < 80):
                     years = yearspan
         return years
 

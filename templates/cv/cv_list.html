@@ -10,18 +10,44 @@
 {% block actions %}
 	<h1>ACS Persons</h1>
 	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search" autofocus/>
-	{% if user.is_authenticated %}
-		<div>
-			<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
-		</div>
-	{% endif %}
-	<div id="facets">
-		<div id="expslider" class="noUiSlider"></div>
+	<p id="numfound" class="small"></p>
+{% endblock %}
+
+{% block options %}
+	<div id="view">
+		toggelt
 	</div>
+
+    <div id="options" class="hiddenopts">
+    	<span class="clickable" onClick="$('#options').toggleClass('hiddenopts');" style="width:2em;height:2em; margin-bottom:1em; text-align: center; display: table-cell; vertical-align: middle;">
+    		<i class="icon-screenshot"></i>
+    	</span>
+    	<div id="optionsinside">
+			<div class="filter">
+				<h3>View</h3>
+				<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);">List View</label>
+			</div>
+			<div id="facets">
+				<div class="filter">
+					<h3>Years of experience</h3>
+					<div style="text-align: center;">
+						<div id="expslider" class="noUiSlider" style="margin: 1em auto; width: 200px;"></div>
+						<input type="text" id="expfrom" size="3"/> <input type="text" id="expto" size="3"/>
+					</div>
+				</div>
+			</div>
+
+			{% if user.is_authenticated %}
+				<div>
+					<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
+				</div>
+			{% endif %}
+	    </div>
+	</div>
+    <label>Search options</label>
 {% endblock %}
 
 {% block content %}
-	<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);">Download multiple CVs</label>
 	<form name="multicv" action="{% url cv_multi %}" method="get">
 		<div id="multicontrols" style="display:none;">
 			Format:&nbsp;<select name="format" id="format">
@@ -31,7 +57,6 @@
 			</select>
 			<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
 		</div>
-		<div id="numfound"></div>
 		<div id="results"></div>
 	</form>
 
@@ -41,7 +66,7 @@
 	<script id="persontemplate" type="text/x-dot-template">
 		<div class="block tiled" id="p<%=p.id%>">
 			<header>
-				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%></h3>
+				<h3><%=p.name%></h3>
 				<h4><%=p.title%></h4>
 			</header>
 			<%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
@@ -49,7 +74,7 @@
 			<div class="completeness">
 				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
 			</div>
-			<section><p class="ldetail"><%=p.phone%><br/><%=p.mail%></p></section>
+			<section><p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/><%=p.mail%></p></section>
 			<div class="cvset">
 				{% if user.is_authenticated %}
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
@@ -79,17 +104,18 @@
 	</script> 
 
 	<style> 
-		.multiline {text-align: left; background: #fff; padding:.5em; margin:.2em;}
-		.multileft {display: inline-block; width: 300px;}
-		.multiright {display: inline-block; vertical-align: top;}
+		.multiline {text-align: left; background: #fff; padding:.5em; margin-bottom:3px; font-size: 0.8em;}
+		.multileft {display: inline-block; min-width: 300px; width: 45%;}
+		.multiright {display: inline-block; min-width: 400px; vertical-align: top;}
+		.multiline h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+		.multiline label {display: inline-block; width: 300px; overflow: hidden; text-overflow: ellipsis;}
 	</style>
 
 	<script id="multitemplate" type="text/x-dot-template">
 		<div class="multiline" id="p<%=p.id%>">
 			<div class="multileft">
-				<%?p.image%><img src="/media/<%=p.image%>" class="" style="float: left;max-width:32px;max-height:32px;"><%?%>
-				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%></h3>
-				<h4><%=p.title%></h4>
+				<div style="float: left; width:24px; height:24px; margin-right: .5em; <%?p.image%>background: url(/media/<%=p.image%>) no-repeat center; background-size: cover;<%?%>"></div>
+				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%> <%=p.title%></h4>
 				<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 			</div>
 
@@ -98,14 +124,12 @@
 					<%? cv.tags != "Empty CV" %>
 						<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
 						<div>
-							<input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>">
-							<label for="<%=cv.id%>">
-								<%=cv.tags%> <%=cv.last_edited%> <%=cv.status.percent%>% <a href="{% url cv_detail "999999" %}" class="butt" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
-								Download:&nbsp;
-								<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" class="butt" target="_blank">Word (.doc)</a>&nbsp;
-								<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" class="butt" target="_blank">Adobe Reader (.pdf)</a>&nbsp;
-								<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">OpenOffice (.odt)</a>&nbsp;
-							</label>
+							<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>">&nbsp;<%=cv.tags%>&nbsp;(<%=cv.status.percent%>%)</label>&nbsp;
+							<a href="{% url cv_detail "999999" %}" class="butt" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
+							Download:&nbsp;
+							<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" class="butt" target="_blank">DOC</a>&nbsp;
+							<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" class="butt" target="_blank">PDF</a>&nbsp;
+							<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">ODT</a>&nbsp;
 						</div>
 						<%?%>
 					<%?%>
@@ -162,7 +186,6 @@
 			renderResults: function(data) {
 				var html = "";
 				var self = this;
-				data = jQuery.parseJSON( data );
 				if(data.response.numFound > 0){
 					this.updateNumfound(data.response.numFound);
 					var ppl = data.response.docs;
@@ -184,8 +207,8 @@
 			},
 
 			updateNumfound: function(num){
-				text = num > 0 ? " matches" : "";
-				document.getElementById('numfound').innerHTML = num + text;
+				text = num > 0 ? " matches from " : "";
+				document.getElementById('numfound').innerHTML = num + text + this.totalCount;
 			},
 
 			showFacets: function(facets){
@@ -206,7 +229,11 @@
 						   ,start: [0, maxValue]
 						   ,step: 1
 						   ,slide: function(){
-						   		console.log($(this).val());
+						   		fq.updateExprange( $(this).val() );
+						   }
+						   ,serialization: {
+						      to: [$("#expfrom"),$("#expto")]
+						     ,resolution: 1
 						   }
 						});
 					} else {
@@ -218,7 +245,7 @@
 							}
 							content += this.facetRenderer(facetdata);
 						}
-						facethtml += '<div class="facetfilter"><h3>'+facet.replace('_exact','')+'</h3>'+content+'</div>';
+						facethtml += '<div class="filter"><h3>'+facet.replace('_exact','')+'</h3>'+content+'</div>';
 					}
 				}
 				$("#facets").append( facethtml );	
@@ -232,7 +259,7 @@
 				} else {
 					fq.removeFacet(facet, facetname);
 				}
-				this.doSearch();
+				//this.doSearch();
 			},
 
 			showHighlights: function(highlights){
@@ -253,6 +280,7 @@
 					traditional: true,
 					cache: false
 				}).done(function( data ) {
+					data = jQuery.parseJSON( data );
 					self.bufferedData = data;
 					self.renderResults(data);
 				});
@@ -275,6 +303,7 @@
 		 		'fq':[]
 		 	},
 		 	bufferedData: '',
+		 	totalCount: 0,
 		 	filterTxt: '',
 			init: function() {
 				var self = this;
@@ -300,9 +329,10 @@
 					traditional: true,
 					cache: false
 				}).done(function( data ) {
+					data = jQuery.parseJSON( data );
+					self.totalCount = data.response.numFound;
 					self.bufferedData = data;
 					self.renderResults(data);
-					data = jQuery.parseJSON( data );
 					self.showFacets(data.facet_counts.facet_fields);
 				});
 
@@ -333,7 +363,9 @@
 		});
 
 		var fq = {
+			// facets: { facetname1: [facet1, facet2, facet3], facetname2: [facet4, facet5] }
 			facets: {},
+			exprange: [0,100],
 			addFacet: function(facet, facetname) {
 				if(this.facets[facetname] === undefined)
 					this.facets[facetname] = [];
@@ -352,7 +384,7 @@
 				var result = "";
 				for( var f in this.facets ) {
 					if( this.facets[f].length > 0 ) {
-						result += f + ":(";
+						result = f + ":(";
 						for(i=0;i<this.facets[f].length;i++) {
 							result += '"'+this.facets[f][i]+'"';
 							if(this.facets[f][+i+1] !== undefined) 
@@ -362,10 +394,15 @@
 					}
 					results.push(result);
 				}
-				cvlist.solrdata.fq = result;
+				results.push('years_of_experience_exact:['+this.exprange[0]+' TO '+this.exprange[1]+']');
+				cvlist.solrdata.fq = results;
+				cvlist.doSearch();
+			},
+			updateExprange: function(vals){
+		   		this.exprange = vals;
+		   		this.updateFq();
 			}
 		}
-
 	</script>
 
 {% endblock %}

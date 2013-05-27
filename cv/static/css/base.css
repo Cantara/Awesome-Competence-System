@@ -3,7 +3,7 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 
 body {
 	background-color: #ddd;
-	background-image: url(../img/shattered.png);
+	background-image: url(../img/grid.png);
 	font-family: segoe ui, arial, sans serif !important;
 	color: #555;
 	text-align: center;
@@ -13,6 +13,7 @@ body {
 	max-width: 1337px;
 	margin: auto;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 }
 
 h1, h2, h3, h4, h5 {color: #555;}
@@ -20,31 +21,45 @@ h1, h2, h3, h4, h5 {color: #555;}
 /* START NAVIGATION */
 
 nav {
-	background: #fff;
-	border-bottom: 2px solid #eee;
-	padding: 0.5em;
+	background: #269;
+	border-bottom: 2px solid #157;
+	font-size: 0.8em;
+	color: #fff;
 }
 
-nav li {display:inline-block; }
+nav a { 
+	color: #fff;
+	text-decoration: none;
+}
+
+nav a:hover {
+	text-decoration: underline;
+}
+
+nav li {display:inline-block; padding: .5em;}
+
+
+/* LOGINFORM */
+
+#loginform { display: block; float: right;}
 
 /* END NAVIGATION */
 
 /* START Content */
 #actions {
-	margin-top: 1em;
-	padding: 0.5em;
+	padding: 1em;
 }
 h1 {
-	font-size: 200%;
+	font-size: 120%;
 	margin:0.5em;
-	font-weight: normal;
+	font-weight: 700;
+	display: inline-block;
 }
 /* END Content */
 
 /* START Content */
-#content {
-	margin-top: 1em;
-	padding-bottom:1em;
+#centercontent {
+	margin: auto;
 }
 /* END Content */
 
@@ -56,8 +71,10 @@ h1 {
 	margin-bottom: 1em;
 	display: inline-block;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	text-align: left;
 	vertical-align: top;
+	border-bottom: 2px solid #ccc;
 	width: 100%;
 			transition: all 0.5s;
 		 -o-transition: all 0.5s; /* Opera */
@@ -69,6 +86,9 @@ h1 {
 	line-height: 1.3em;
 	font-weight: normal;
 	font-size: 120%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .block h4 {
 	line-height: 1.3em;
@@ -83,8 +103,8 @@ h1 {
 }
 
 .tiled {
-	margin: 1em .5em 0 .5em;
-	max-width: 300px;
+	margin: 0 .5em 1em .5em;
+	width: 300px;
 	height: 130px;
 }
 
@@ -109,6 +129,10 @@ h1 {
 	overflow: hidden;
 }
 
+.cardstyle {
+	border-bottom: 2px solid #ccc;
+}
+
 /* END block-element */
 
 
@@ -121,28 +145,31 @@ h1 {
 	display: inline-block;
 	background: white;
 	max-height: 0px;
-	max-width: 0px;
+	width: 280px;
 	overflow: hidden;
 	position: absolute;
-	padding: .5em 0 0 .5em;
-	top:120px;
-	left:20px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	top:127px;
+	left:10px;
 	z-index: 500;
 	/* onMouseOut: Width waits until height is done before shrinking */
-			transition: max-height 0.3s, max-width 0 ease 0.3s;
-		 -o-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Opera */
-	   -moz-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Firefox 4 */
-	-webkit-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Safari and Chrome */
+			transition: max-height 0.2s, padding 0 0.3s, box-shadow 0 0.3s;
+		 -o-transition: max-height 0.2s, padding 0 0.3s, box-shadow 0 0.3s; /* Opera */
+	   -moz-transition: max-height 0.2s, padding 0 0.3s, box-shadow 0 0.3s; /* Firefox 4 */
+	-webkit-transition: max-height 0.2s, padding 0 0.3s, box-shadow 0 0.3s; /* Safari and Chrome */
 }
 
 .block:hover .cvset {
-	max-height: 250px;
-	max-width: 300px;
+	max-height: 300px;
+	padding: .5em;
+	margin:0;
+	box-shadow: 0 5px 6px 1px rgba(0,0,0,.3);
 	/* onMouseOver: Width expands immediately before height transitions */
-			transition: max-height 0.3s, max-width 0 ease 0;
-		 -o-transition: max-height 0.3s, max-width 0 ease 0; /* Opera */
-	   -moz-transition: max-height 0.3s, max-width 0 ease 0; /* Firefox 4 */
-	-webkit-transition: max-height 0.3s, max-width 0 ease 0; /* Safari and Chrome */
+			transition: max-height 0.2s;
+		 -o-transition: max-height 0.2s; /* Opera */
+	   -moz-transition: max-height 0.2s; /* Firefox 4 */
+	-webkit-transition: max-height 0.2s; /* Safari and Chrome */
 }
 
 .cvset table {
@@ -175,8 +202,8 @@ ul.ldetail {
 	left:0;
 	display: inline-block;
 	width: 100%;
-	height: 8px;
-	background: #C21A01;
+	height: 6px;
+	background: #999;
 	margin-bottom: 2px;
 	padding: 0px;
 	overflow: hidden;
@@ -219,19 +246,6 @@ input, textarea {
 }
 em {font-weight: 700; opacity: 1;}
 
-.facetfilter {
-	display: inline-block;
-	text-align: left;
-	vertical-align: top;
-	padding: .5em;
-	margin: .5em;
-	background: #fff;
-}
-.facetfilter h3 {
-	text-transform: uppercase;
-	font-size: 0.7em;
-	margin-bottom: 0.5em;
-}
 
 /* FORM */
 
@@ -271,10 +285,6 @@ fieldset.competence {
 
 .lock { padding: .5em; color: #fff;}
 
-/* LOGINFORM */
-
-#loginform { display: inline-block; float: right;}
-
 /* FORM END*/
 
 
@@ -290,7 +300,7 @@ input.butt {
 .butt {
 	position: relative;
 	cursor: pointer;
-	background-color: #00A8C6;
+	background-color: #3877A5;
 	border-radius: 2px;
 	color: #fff;
 	text-decoration: none;
@@ -317,7 +327,7 @@ input.butt {
 .empty { background-color: #bbb; }
 
 .butt:hover {
-	background-color: #40C0CB;
+	background-color: #369;
 	}
 .remove { position: aboslute; right:0; top:0;}
 .red { background-color: #C21A01;}
