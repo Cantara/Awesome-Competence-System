@@ -160,6 +160,10 @@ h1 {
 	-webkit-transition: max-height 0.2s, padding 0 0.3s, box-shadow 0 0.3s; /* Safari and Chrome */
 }
 
+.block:hover {
+	box-shadow: 0 5px 6px 1px rgba(0,0,0,.3);
+}
+
 .block:hover .cvset {
 	max-height: 300px;
 	padding: .5em;
