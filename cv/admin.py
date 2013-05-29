@@ -73,12 +73,6 @@ class PersonAdmin(admin.ModelAdmin):
 			return response
 		else:
 			return redirect("cv_list")
-	def response_add(self, request, obj, post_url_continue=None):
-		response = super(PersonAdmin, self).response_add(request, obj, post_url_continue)
-		if request.POST.has_key("_continue"):
-			return response
-		else:
-			return redirect("cv_list")
 	def response_delete(self, request, obj, post_url_continue=None):
 		return redirect("cv_list")
 	
