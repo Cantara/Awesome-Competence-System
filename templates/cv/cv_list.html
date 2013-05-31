@@ -49,6 +49,7 @@
     		<i class="icon-question-sign"></i>
     	</a>
     </div>
+
 </div>
 {% endblock %}
 
@@ -85,6 +86,7 @@
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
 					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+					<%? p.completeness.percent < 100 %><button onClick="nagmail.showDialog(this); return false;" class="butt">Nag</button><%?%>
 				{% endif %}
 				<table>
 				<%~p.cv :cv:index%>
@@ -146,6 +148,25 @@
 	<script id="facettemplate" type="text/x-dot-template">
 		<label><input type="checkbox" name="<%=p.name%>" id="<%=p.id%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this.checked);"/><%=p.name%></label><br/>
 	</script>
+
+
+
+	{% if user.is_authenticated %}
+	<script id="nagmailtemplate" type="text/x-dot-template">
+	    <div class="nagmail">
+	    	<form action="{% url cv_nagmail %}" method="POST">
+	    		{% csrf_token %}
+	    		<input type="hidden" name="receiver_id" value="1">
+	    		<input type="text" name="message" placeholder="Message">
+	    		<input type="hidden" name="sendermail" value="{{ user.email }}">
+	    		<input type="submit" class="butt" value="Nag!">
+	    	</form>
+	    </div>
+	</script>
+    {% endif %}
+
+
+
 	<script id="init_data" type="application/json">
 		{{ g|safe }}
 	</script>
@@ -377,19 +398,25 @@
 						var jsonText = document.getElementById('init_data').innerHTML;
 						var initData = JSON.parse(jsonText);
 						// Set Querystring
-						self.filterTxt = initData.q;
-						document.getElementById('filter').value = self.filterTxt;
+						if( initData.q !== undefined ){
+							self.filterTxt = initData.q;
+							document.getElementById('filter').value = self.filterTxt;
+						}
 						// Set Facets
-						initData.fq = jQuery.parseJSON( initData.fq );
-						for(var key in initData.fq){
-							for(var x in initData.fq[key]){
-								self.toggleFacet(initData.fq[key][x], key, true, true);
+						if( initData.fq !== undefined ){
+							initData.fq = jQuery.parseJSON( initData.fq );
+							for(var key in initData.fq){
+								for(var x in initData.fq[key]){
+									self.toggleFacet(initData.fq[key][x], key, true, true);
+								}
 							}
 						}
 						// Set Experience Range
-						var range = [initData.expfrom, initData.expto];
-						$("#expslider").val(range);
-						fq.updateExprange(range);
+						if( initData.expfrom !== undefined && initData.expto !== undefined){
+							var range = [initData.expfrom, initData.expto];
+							$("#expslider").val(range);
+							fq.updateExprange(range);
+						}
 						// Do search
 						self.prepSearch();
 					}
@@ -444,6 +471,23 @@
 			updateExprange: function(vals){
 		   		this.exprange = vals;
 		   		this.updateFq();
+			}
+		}
+
+		var nagmail = {
+			template: $('#nagmailtemplate').text(),
+			showDialog: function(t) {
+				if(!this.renderer){
+					this.renderer = doT.template(this.template);
+				}
+				var nagdata = {
+					facet: facet,
+					name: facets[facet][i],
+					count: facets[facet][i+1],
+					id: facets[facet][i].replace(' ','')
+				}
+				var dialog = this.renderer(nagdata);
+				$(t).parent().append(dialog);
 			}
 		}
 	</script>

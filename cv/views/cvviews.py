@@ -2,6 +2,8 @@ from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Ed
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 import json
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse
 
 def cvlist(request):
 	all_persons = Person.objects.all()
@@ -102,3 +104,20 @@ def detail(request, cv_id, lang = ''):
 	# style = Style.objects.get(id=1)
 	
 	return render_to_response('cv/cv_detail.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': '', 'lang': lang}, context_instance=RequestContext(request))
+
+def nagmail(request):
+	receiver_id = request.POST.get('receiver_id', '')
+	message = request.POST.get('message', '')
+	sendermail = request.POST.get('sendermail', '')
+	if receiver_id and message and sendermail:
+		p = get_object_or_404(Person, pk=receiver_id)
+		'''try:
+			send_mail("Hi, please complete your CV! -ACS", message, sendermail, [p.mail])
+		except BadHeaderError:
+			return HttpResponse('Invalid header found.')'''
+		testmail = "Hi, please complete your CV! -ACS "+message+sendermail+p.mail
+		return HttpResponse(testmail)
+	else:
+		# In reality we'd use a form class
+		# to get proper validation errors.
+		return HttpResponse('Make sure all fields are entered and valid.')
