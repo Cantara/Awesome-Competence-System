@@ -157,21 +157,24 @@ def getCvDictionary(cvid):
 	d = c.education.all()
 	o = c.other.all()
 	
-	c.profile = escape( c.profile.encode('utf-8') )
+	c.profile = c.profile.encode('utf-8')
 
 	for ex in e:
 		ex.description	= escape( ex.description.encode("utf-8") )
 		ex.orderkey = ex.from_ym()
+		ex.from_year = ex.period()
 		# ex.from_year = "%i %i - %i %i" % (ex.from_year, ex.from_month, ex.to_year, ex.to_month)
 		
 	for wp in w:
 		wp.description	= escape( wp.description.encode('utf-8') )
 		wp.orderkey = wp.from_ym()
+		wp.from_year = wp.period()
 		# wp.from_year = "%i %i - %i %i" % (wp.from_year, wp.from_month, wp.to_year, wp.to_month)
 		
 	for du in d:
 		du.description	= escape( du.description.encode('utf-8') )
 		du.orderkey = du.from_ym()
+		du.from_year = du.period()
 		# du.from_year = "%i %i - %i %i" % (du.from_year, du.from_month, du.to_year, du.to_month)
 	
 	e = sorted( e, key=operator.attrgetter('orderkey'), reverse=True )

@@ -58,9 +58,6 @@ class Person(models.Model):
 	def __unicode__(self):
 		return self.name
 
-	def years_of_experience(self):
-		pass
-
 	def country(self):
 		if self.location in ['Oslo']:
 			return 'no'
@@ -83,9 +80,6 @@ class Person(models.Model):
 				return today.year - born.year
 		else:
 			return 0
-	
-	def test(self):
-		return self.experience_set.count()
 	
 	def completeness(self):
 		maxscore = 0
@@ -188,8 +182,6 @@ class Technology(models.Model):
 		else:
 			return self.title_en
 
-
-
 	class Meta:
 		app_label = 'cv'
 		db_table = 'cv_technology'
@@ -207,6 +199,18 @@ class TimedSkill(models.Model):
 	description = models.TextField("Description", null=True, blank=True)
 	description_en = models.TextField("Description (En)", null=True, blank=True)
 	
+	def period(self):
+		period = ""
+		if(self.from_year!=0):
+			period = "%d " % self.from_year
+			if(self.from_month!=0):
+				period = period + MONTH_CHOICES[self.from_month][1]
+		if(self.to_year!=0):
+			period = "%s - %d " % (period, self.to_year)
+			if(self.to_month!=0):
+				period = period + MONTH_CHOICES[self.to_month][1]
+		return period
+
 	def from_ym(self):
 		if self.to_year:
 			ym = self.to_year*100
