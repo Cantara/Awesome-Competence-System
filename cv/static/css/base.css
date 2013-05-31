@@ -76,10 +76,10 @@ h1 {
 	vertical-align: top;
 	border-bottom: 2px solid #ccc;
 	width: 100%;
-			transition: all 0.5s;
-		 -o-transition: all 0.5s; /* Opera */
-	   -moz-transition: all 0.5s; /* Firefox 4 */
-	-webkit-transition: all 0.5s; /* Safari and Chrome */
+			transition: all 0.2s;
+		 -o-transition: all 0.2s; /* Opera */
+	   -moz-transition: all 0.2s; /* Firefox 4 */
+	-webkit-transition: all 0.2s; /* Safari and Chrome */
 }
 
 .block h3 {
@@ -160,14 +160,16 @@ h1 {
 	-webkit-transition: max-height 0.2s, padding 0 0.3s, box-shadow 0 0.3s; /* Safari and Chrome */
 }
 
-.block:hover {
+.tiled:hover {
 	box-shadow: 0 5px 6px 1px rgba(0,0,0,.3);
+	margin: -.2em .5em 1.2em .5em;
 }
 
 .block:hover .cvset {
 	max-height: 300px;
 	padding: .5em;
 	margin:0;
+	border-bottom: 2px solid #ccc;
 	box-shadow: 0 5px 6px 1px rgba(0,0,0,.3);
 	/* onMouseOver: Width expands immediately before height transitions */
 			transition: max-height 0.2s;

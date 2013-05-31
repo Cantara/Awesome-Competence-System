@@ -15,6 +15,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', faceted=True)
     rendered = indexes.CharField(use_template=True, indexed=False)
+    fulljson = indexes.CharField(use_template=True, indexed=False)
     technology = indexes.MultiValueField()
     location = indexes.CharField(model_attr='location', null=True, faceted=True)
     department = indexes.CharField(model_attr='department', null=True, faceted=True)

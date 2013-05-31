@@ -1,6 +1,7 @@
 from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+import json
 
 def cvlist(request):
 	all_persons = Person.objects.all()
@@ -9,8 +10,11 @@ def cvlist(request):
 
 def cv_list(request):
 	all_persons = [] # Person.objects.all()
+	get_params = False;
+	if(request.GET):
+		get_params = json.dumps(request.GET)
 	# style = Style.objects.get(id=1)
-	return render_to_response('cv/cv_list.html', {'all_persons': all_persons}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_list.html', {'all_persons': all_persons, 'g': get_params}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)

@@ -14,16 +14,18 @@
 {% endblock %}
 
 {% block options %}
-
-    <div id="options" class="hiddenopts">
-    	<span class="clickable" onClick="$('#options').toggleClass('hiddenopts');" style="width:2em;height:2em; margin-bottom:1em; text-align: center; display: table-cell; vertical-align: middle;">
-    		<i class="icon-screenshot"></i>
+<div id="optionsbox"{% if not g %} class="hiddenopts"{% endif %}>
+    
+    <div class="option">
+		<h3>View</h3>
+		<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);"><i class="icon-th"></i><i class="icon-list"></i></label>
+    </div>
+    
+    <div class="option animateheight">
+    	<span class="clickable" onClick="$('#optionsbox').toggleClass('hiddenopts');">
+    		<i class="icon-double-angle-right"></i>
     	</span>
     	<div id="optionsinside">
-			<div class="filter">
-				<h3>View</h3>
-				<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);">List View</label>
-			</div>
 			<div id="facets">
 				<div class="filter">
 					<h3>Years of experience</h3>
@@ -40,8 +42,14 @@
 				</div>
 			{% endif %}
 	    </div>
-	</div>
-    <label>Search options</label>
+	</div><!--<label>Search options</label>-->
+
+    <div class="option">
+    	<a class="clickable" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
+    		<i class="icon-question-sign"></i>
+    	</a>
+    </div>
+</div>
 {% endblock %}
 
 {% block content %}
@@ -101,7 +109,7 @@
 	</script> 
 
 	<style> 
-		.multiline {text-align: left; background: #fff; padding:.5em; margin-bottom:3px; font-size: 0.8em;}
+		.multiline {text-align: left; background: #fff; padding:.5em; margin: 0 0 3px .6em; font-size: 0.8em;}
 		.multileft {display: inline-block; min-width: 300px; width: 45%;}
 		.multiright {display: inline-block; min-width: 400px; vertical-align: top;}
 		.multiline h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
@@ -136,9 +144,11 @@
 	</script> 
 
 	<script id="facettemplate" type="text/x-dot-template">
-		<label><input type="checkbox" name="<%=p.name%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this);"/><%=p.name%></label><br/>
+		<label><input type="checkbox" name="<%=p.name%>" id="<%=p.id%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this.checked);"/><%=p.name%></label><br/>
 	</script>
-
+	<script id="init_data" type="application/json">
+		{{ g|safe }}
+	</script>
 	<script src="{{ STATIC_URL }}js/jquery.nouislider.min.js"></script>
 	<script>
 
@@ -186,7 +196,7 @@
 				if(data.response.numFound > 0){
 					this.updateNumfound(data.response.numFound);
 					var ppl = data.response.docs;
-					for(i=0;i<ppl.length;i++) {
+					for(var i=0, ppllength = ppl.length;i<ppllength;i++) {
 						var person = jQuery.parseJSON( data.response.docs[i].rendered );
 						person.image = person.image.replace(/(.jpg|.png)/gi,'_scale_110x110.jpg');
 						html += this.personRenderer(person);
@@ -204,7 +214,7 @@
 			},
 
 			updateNumfound: function(num){
-				text = num > 0 ? " matches found. Persons total: " : "";
+				text = num > 0 ? " matches from " : "";
 				document.getElementById('numfound').innerHTML = num + text + this.totalCount;
 			},
 
@@ -238,7 +248,8 @@
 							var facetdata = {
 								facet: facet,
 								name: facets[facet][i],
-								count: facets[facet][i+1]
+								count: facets[facet][i+1],
+								id: facets[facet][i].replace(' ','')
 							}
 							content += this.facetRenderer(facetdata);
 						}
@@ -248,15 +259,17 @@
 				$("#facets").append( facethtml );	
 			},
 
-			toggleFacet: function(facet,facetname,t){
+			toggleFacet: function(facet,facetname,t,checkit){
 				// fq:['location:(oslo OR gothenburg)','department:software engineering']
 				var facetentry = facetname+":"+facet;
-				if(t.checked){
+				if(t){
 					fq.addFacet(facet, facetname);
 				} else {
 					fq.removeFacet(facet, facetname);
 				}
-				//this.doSearch();
+				if(checkit){
+					document.getElementById( facet.replace(' ','') ).checked = true;
+				}
 			},
 
 			showHighlights: function(highlights){
@@ -265,6 +278,29 @@
 					for( var highlight in highlights[person] ) {
 						$('#'+pid + ' .cvset').prepend('<div class="highlight">...'+highlights[person][highlight]+'...</div>');
 					}
+				}
+			},
+
+			prepSearch: function(t){
+				var self = this;
+			    if(typeof self.searchrequest !== 'undefined'){
+			        self.searchrequest.abort();
+			    }
+			    if(t){
+					self.filterTxt = $(t).val();
+			    }
+				if(self.filterTxt != '') {
+					var asterisk = "";
+					if(self.filterTxt[self.filterTxt.length-1]!=' '){
+						asterisk = "*";
+					}
+					self.solrdata.q = self.filterTxt+asterisk;
+					self.solrdata.hl = 'true';
+					self.doSearch();
+				} else {
+					self.solrdata.q = '*';
+					self.solrdata.hl = 'false';
+					self.doSearch();
 				}
 			},
 
@@ -291,6 +327,7 @@
 		 		'sort':'name_exact asc',
 		 		'rows':50,
 		 		'hl': 'false',
+		 		'fl': 'rendered',
 		 		'facet': 'true',
 		 		'facet.field': [
 		 			'location_exact', 
@@ -302,6 +339,7 @@
 		 	bufferedData: '',
 		 	totalCount: 0,
 		 	filterTxt: '',
+		 	hasParameters: {% if g %}true{% else %}false{% endif %},
 			init: function() {
 				var self = this;
 
@@ -319,6 +357,10 @@
 				  selfcontained: false
 				};
 
+				self.personStandardRenderer = doT.template(self.personStandardTemplate);
+				self.personMultiRenderer = doT.template(self.personMultiTemplate);
+				self.facetRenderer = doT.template(self.facetTemplate);
+
 				self.searchrequest = $.ajax({
 					type:"get",
 					url: self.solrurl,
@@ -331,11 +373,27 @@
 					self.bufferedData = data;
 					self.renderResults(data);
 					self.showFacets(data.facet_counts.facet_fields);
+					if(self.hasParameters) {
+						var jsonText = document.getElementById('init_data').innerHTML;
+						var initData = JSON.parse(jsonText);
+						// Set Querystring
+						self.filterTxt = initData.q;
+						document.getElementById('filter').value = self.filterTxt;
+						// Set Facets
+						initData.fq = jQuery.parseJSON( initData.fq );
+						for(var key in initData.fq){
+							for(var x in initData.fq[key]){
+								self.toggleFacet(initData.fq[key][x], key, true, true);
+							}
+						}
+						// Set Experience Range
+						var range = [initData.expfrom, initData.expto];
+						$("#expslider").val(range);
+						fq.updateExprange(range);
+						// Do search
+						self.prepSearch();
+					}
 				});
-
-				self.personStandardRenderer = doT.template(self.personStandardTemplate);
-				self.personMultiRenderer = doT.template(self.personMultiTemplate);
-				self.facetRenderer = doT.template(self.facetTemplate);
 
 			}
 
@@ -344,19 +402,7 @@
 		cvlist.init();
 
 		$('#filter').keyup( function(event) {
-		    if(typeof cvlist.searchrequest !== 'undefined'){
-		        cvlist.searchrequest.abort();
-		    }
-			cvlist.filterTxt = $(this).val();
-			if(cvlist.filterTxt != '') {
-				cvlist.solrdata.q = cvlist.filterTxt+'*';
-				cvlist.solrdata.hl = 'true';
-				cvlist.doSearch();
-			} else {
-				cvlist.solrdata.q = '*';
-				cvlist.solrdata.hl = 'false';
-				cvlist.doSearch();
-			}
+			cvlist.prepSearch(this);
 		});
 
 		var fq = {
