@@ -86,7 +86,7 @@
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
 					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
-					<%? p.completeness.percent < 100 %><button onClick="nagmail.showDialog(this); return false;" class="butt">Nag</button><%?%>
+					
 				{% endif %}
 				<table>
 				<%~p.cv :cv:index%>
@@ -476,7 +476,7 @@
 
 		var nagmail = {
 			template: $('#nagmailtemplate').text(),
-			showDialog: function(t) {
+			showDialog: function(t, pid) {
 				if(!this.renderer){
 					this.renderer = doT.template(this.template);
 				}
