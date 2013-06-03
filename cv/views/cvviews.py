@@ -2,8 +2,9 @@ from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Ed
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 import json
-from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils.html import escape
 
 def cvlist(request):
 	all_persons = Person.objects.all()
@@ -109,15 +110,36 @@ def nagmail(request):
 	receiver_id = request.POST.get('receiver_id', '')
 	message = request.POST.get('message', '')
 	sendermail = request.POST.get('sendermail', '')
-	if receiver_id and message and sendermail:
+	sendername = request.POST.get('sendername', '')
+	if receiver_id and message and sendermail and sendername:
 		p = get_object_or_404(Person, pk=receiver_id)
-		'''try:
-			send_mail("Hi, please complete your CV! -ACS", message, sendermail, [p.mail])
+		subject = "%s has indicated that you should update your data in ACS" % sendername
+		mailtext = '''Hi %s,
+
+A colleague of yours, %s, has indicated that you should update your CV in ACS with the message:
+
+"%s"
+
+Missing elements in your profile include:
+
+- %s
+
+Update your CV here: http://altran:4ever@cv.altran.no/cv/?q=%s
+
+It is of key importance to us that we have consistent and complete information in ACS as we use it on a daily basis to find and allocate the correct people for the tasks. 
+If you have problems accessing or updating ACS, please check https://wiki.cantara.no/display/ACS/User+Manual for FAQ, User Manual and contact information.
+
+Best regards,
+
+The Awesome Competence System''' % ( p.name, sendername, message, '\n- '.join(p.completeness()['comment']), p.name.replace(" ","%20") )
+		try:
+			mail = EmailMessage(subject, mailtext, 'noreply@altran.no', [p.mail], headers = {'Reply-To': sendermail})
+			mail.send()
 		except BadHeaderError:
-			return HttpResponse('Invalid header found.')'''
-		testmail = "Hi, please complete your CV! -ACS "+message+sendermail+p.mail
+			return HttpResponseBadRequest('Invalid header found.')
+		testmail = "Nag mail sent!<br/><br/>To: %s <br/><br/>Subject: %s <br/><br/>%s" % ( p.mail, subject, escape(mailtext).replace("\n","<br/>") ) 
 		return HttpResponse(testmail)
 	else:
 		# In reality we'd use a form class
 		# to get proper validation errors.
-		return HttpResponse('Make sure all fields are entered and valid.')
+		return HttpResponseBadRequest('Make sure all fields are entered and valid.')

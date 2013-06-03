@@ -66,6 +66,51 @@
 		<div id="results"></div>
 	</form>
 
+	{% if user.is_authenticated %}
+	<style>
+	#blanket {background: rgba(0,0,0,0.2); text-align: center; position: fixed;top:0;left:0;right:0;bottom:0; z-index: 500; }
+	#blanket:before {
+	  content: '';
+	  display: inline-block;
+	  height: 100%;
+	  vertical-align: middle;
+	  margin-right: -0.25em; /* Adjusts for spacing */
+	}
+	#nagmail {
+		display: inline-block;
+		background: #fff;
+		vertical-align: middle;
+		text-align: left;
+		padding: 1em;
+	}
+	</style>
+		<div id="blanket" style="display: none;">
+		    <div id="nagmail" style=" display: none;">
+				{% if user.person.completeness.percent < 100 %}
+					Your own profile is not complete, please fill it out before you nag others.
+					<div style="display:none;">
+				{% endif %}
+		    	<form name="nagmailform" id="nagmailformid" style="display:none;">
+		    		{% csrf_token %}
+		    		<h3>Tell <span id="nagname">Name</span> why you need them to update their CV:</h3>
+		    		<input type="hidden" name="receiver_id">
+		    		<input type="hidden" name="sendermail" value="{{ user.email }}">
+		    		<input type="hidden" name="sendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
+		    		<textarea name="message" cols="30" rows="6" placeholder="Message"></textarea>
+		    		<br/>
+		    		<input type="button" class="butt" onClick="nagmail.submit();" value="Nag!">
+		    	</form>
+				{% if user.person.completeness.percent < 100 %}
+					</div>
+				{% endif %}
+		    	<section id="nagresponse">
+		    		<p id="nagresponsemsg"></p>
+		    		<button class="butt" onClick="nagmail.hide();">Close</button>
+		    	</section>
+		    </div>
+		</div>
+    {% endif %}
+
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
 
@@ -80,13 +125,16 @@
 			<div class="completeness">
 				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
 			</div>
-			<section><p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/><%=p.mail%></p></section>
+			<section>
+				{% if user.is_authenticated %}<%? p.completeness.percent < 100 %><a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt" style="float: right;">Nag</a><%?%>{% endif %}
+				<p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
+				<%=p.mail%></p>
+			</section>
 			<div class="cvset">
 				{% if user.is_authenticated %}
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
 					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
-					
 				{% endif %}
 				<table>
 				<%~p.cv :cv:index%>
@@ -148,24 +196,6 @@
 	<script id="facettemplate" type="text/x-dot-template">
 		<label><input type="checkbox" name="<%=p.name%>" id="<%=p.id%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this.checked);"/><%=p.name%></label><br/>
 	</script>
-
-
-
-	{% if user.is_authenticated %}
-	<script id="nagmailtemplate" type="text/x-dot-template">
-	    <div class="nagmail">
-	    	<form action="{% url cv_nagmail %}" method="POST">
-	    		{% csrf_token %}
-	    		<input type="hidden" name="receiver_id" value="1">
-	    		<input type="text" name="message" placeholder="Message">
-	    		<input type="hidden" name="sendermail" value="{{ user.email }}">
-	    		<input type="submit" class="butt" value="Nag!">
-	    	</form>
-	    </div>
-	</script>
-    {% endif %}
-
-
 
 	<script id="init_data" type="application/json">
 		{{ g|safe }}
@@ -475,21 +505,41 @@
 		}
 
 		var nagmail = {
-			template: $('#nagmailtemplate').text(),
-			showDialog: function(t, pid) {
-				if(!this.renderer){
-					this.renderer = doT.template(this.template);
-				}
-				var nagdata = {
-					facet: facet,
-					name: facets[facet][i],
-					count: facets[facet][i+1],
-					id: facets[facet][i].replace(' ','')
-				}
-				var dialog = this.renderer(nagdata);
-				$(t).parent().append(dialog);
+			dialog: $('#nagmail'),
+			blanket: $('#blanket'),
+			nagname: $('#nagname'),
+			nagform: $('#nagmailformid'),
+			show: function(name, pid) {
+				this.nagform.show();
+				document.forms.nagmailform.receiver_id.value = pid;
+				document.getElementById('nagname').innerHTML = name;
+				this.blanket.show();
+				this.dialog.show();
+			},
+			hide: function() {
+				this.dialog.hide();
+				this.blanket.hide();
+				document.getElementById('nagresponsemsg').innerHTML = '';
+				document.getElementById('nagname').innerHTML = '';
+				document.forms.nagmailform.message.value = '';
+			},
+			submit: function() {
+				var self = this;
+				var formdata = self.nagform.serialize();
+				$.ajax({
+					type: "POST",
+					url: "{% url cv_nagmail %}",
+					data: formdata
+				}).done(function( msg ) {
+					self.nagform.hide();
+					document.getElementById('nagresponsemsg').innerHTML = msg;
+				}).fail(function( response ) {
+					document.getElementById('nagresponsemsg').innerHTML = response.responseText;
+				});
 			}
 		}
+
 	</script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
 
 {% endblock %}
