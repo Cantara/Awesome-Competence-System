@@ -124,7 +124,7 @@ Missing elements in your profile include:
 
 - %s
 
-Update your CV here: http://altran:4ever@cv.altran.no/cv/?q=%s
+Update your CV here: http://cv.altran.no/cv/?q=%s
 
 It is of key importance to us that we have consistent and complete information in ACS as we use it on a daily basis to find and allocate the correct people for the tasks. 
 If you have problems accessing or updating ACS, please check https://wiki.cantara.no/display/ACS/User+Manual for FAQ, User Manual and contact information.
