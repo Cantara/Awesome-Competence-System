@@ -200,3 +200,6 @@ HAYSTACK_CONNECTIONS = {
 }
 
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
+
+# Prevent redirect to localhost because of proxy setup
+USE_X_FORWARDED_HOST = True
