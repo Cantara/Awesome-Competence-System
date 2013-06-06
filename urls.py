@@ -23,6 +23,8 @@ urlpatterns = patterns('cv.views',
     url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),
     url(r'^cv/nagmail/$', 'nagmail', name='cv_nagmail'),
 
+    url(r'^changelog/$', 'changelog', name='changelog'),
+
     url(r'^login/$', 'mylogin'),
     url(r'^logout/$', 'mylogout'),
 

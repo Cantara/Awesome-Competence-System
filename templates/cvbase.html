@@ -34,6 +34,7 @@
             <li><a href="{% url cv.views.matrix_list %}" class="">Competence Matrix list</a></li>
             <!--<li><a href="{% url haystack_search %}" class="">Advanced Search</a></li>-->
 			{% if user.is_authenticated %}
+            <li><a href="{% url changelog %}" class="">Changelog</a></li>
             <li><a href="{% url admin:index %}" class="">Admin</a></li>
 			{% endif %}
         </ul>

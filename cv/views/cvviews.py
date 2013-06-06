@@ -125,7 +125,7 @@ Missing elements in your profile include:
 
 - %s
 
-Update your CV here: http://%s%s?q=%s
+Update your CV here: http://%s%s?q=name:"%s"
 
 It is of key importance to us that we have consistent and complete information in ACS as we use it on a daily basis to find and allocate the correct people for the tasks. 
 If you have problems accessing or updating ACS, please check https://wiki.cantara.no/display/ACS/User+Manual for FAQ, User Manual and contact information.
@@ -144,3 +144,10 @@ The Awesome Competence System''' % ( p.name, sendername, message, '\n- '.join(p.
 		# In reality we'd use a form class
 		# to get proper validation errors.
 		return HttpResponseBadRequest('Make sure all fields are entered and valid.')
+
+from django.contrib.admin.models import LogEntry
+
+def changelog(request):
+	# log = LogEntry.objects.filter(user__person__location='Oslo').select_related('content_type', 'user', 'person')[:20]
+	log = LogEntry.objects.all().select_related('content_type', 'user', 'person')[:100]
+	return render_to_response('cv/changelog.html', {'log':log}, context_instance=RequestContext(request))

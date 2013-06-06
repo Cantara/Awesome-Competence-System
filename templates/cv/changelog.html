@@ -1,0 +1,59 @@
+{% extends "./cvbase.html" %}
+
+
+{% block content %}
+<style>
+	.actionlist {font-size: 0.7em;}
+</style>
+<div class="block" style="width: 40%; min-width: 500px;">
+
+	{% regroup log|dictsort:"user.person.location" by user.person.location as loc_list %}
+    {% for loc in loc_list %}
+    <h1>{% firstof loc.grouper "No location" %}</h1>
+	<ul class="actionlist">
+    	{% regroup loc.list|dictsortreversed:"action_time" by action_time|date:"Y-m-d" as date_list %}
+    	{% for d in date_list %}
+	    	<h1>{{ d.grouper }}</h1>
+	    		{% for entry in d.list %}
+			    <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+			            <i class="icon-{% if entry.is_addition %}plus{% endif %}{% if entry.is_change %}edit{% endif %}{% if entry.is_deletion %}remove{% endif %}"></i>
+			            {{ entry }} by {% firstof entry.user.person entry.user.username "No title" %}
+			            {% if entry.content_type %}
+			            	<span>({{ entry.content_type.name }})</span>
+			            {% else %}
+			            	<span>('Unknown content')</span>
+			            {% endif %}
+			    </li>
+			    {% endfor %}
+	    {% endfor %}
+	</ul>
+    {% endfor %}
+</div>
+
+<div class="block" style="width: 40%; min-width: 500px;">
+	{% regroup log|dictsort:"user.person.department" by user.person.department as dep_list %}
+    {% for dep in dep_list %}
+    <h1>{% firstof dep.grouper "No practice" %}</h1>
+	<ul class="actionlist">
+    	{% regroup dep.list|dictsortreversed:"action_time" by action_time|date:"Y-m-d" as date_list %}
+	    {% for d in date_list %}
+	    	<h1>{{ d.grouper }}</h1>
+	    		{% for entry in d.list %}
+			    <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+			            <i class="icon-{% if entry.is_addition %}plus{% endif %}{% if entry.is_change %}edit{% endif %}{% if entry.is_deletion %}remove{% endif %}"></i>
+			            {{ entry }} by {% firstof entry.user.person entry.user.username "No title" %}
+			            {% if entry.content_type %}
+			            	<span>({{ entry.content_type.name }})</span>
+			            {% else %}
+			            	<span>('Unknown content')</span>
+			            {% endif %}
+			    </li>
+			    {% endfor %}
+	    {% endfor %}
+	</ul>
+    {% endfor %}
+
+
+</div>
+
+{% endblock %}
