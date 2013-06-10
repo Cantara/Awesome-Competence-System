@@ -201,13 +201,13 @@ class TimedSkill(models.Model):
 	
 	def period(self):
 		period = ""
-		if(self.from_year!=0):
+		if(self.from_year>0):
 			period = "%d " % self.from_year
-			if(self.from_month!=0):
+			if(self.from_month>0):
 				period = period + MONTH_CHOICES[self.from_month][1]
-		if(self.to_year!=0):
+		if(self.to_year>0):
 			period = "%s - %d " % (period, self.to_year)
-			if(self.to_month!=0):
+			if(self.to_month>0):
 				period = period + MONTH_CHOICES[self.to_month][1]
 		return period
 
