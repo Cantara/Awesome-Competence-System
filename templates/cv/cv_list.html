@@ -34,6 +34,11 @@
 						<input type="text" id="expfrom" size="3"/> <input type="text" id="expto" size="3"/>
 					</div>
 				</div>
+				<div class="filter">
+					<h3>Has completed CV</h3>
+						<label><input type="checkbox" name="hasfullcv" id="hasfullcv" onChange="additionalParams.toggle('fullcv',this.checked);"/>Show completed</label><br/>
+						<label><input type="checkbox" name="hasfullcv" id="hasfullcv" onChange="additionalParams.toggle('notfullcv',this.checked);"/>Show incomplete</label><br/>
+				</div>
 			</div>
 
 			{% if user.is_authenticated %}
@@ -332,6 +337,8 @@
 				}
 			},
 
+			additionalParams: '',
+
 			prepSearch: function(t){
 				var self = this;
 			    if(typeof self.searchrequest !== 'undefined'){
@@ -345,11 +352,11 @@
 					if(self.filterTxt[self.filterTxt.length-1]!=' '){
 						asterisk = "*";
 					}
-					self.solrdata.q = self.filterTxt+asterisk;
+					self.solrdata.q = self.filterTxt+asterisk+" "+self.additionalParams;
 					self.solrdata.hl = 'true';
 					self.doSearch();
 				} else {
-					self.solrdata.q = '*';
+					self.solrdata.q = self.additionalParams + '*';
 					self.solrdata.hl = 'false';
 					self.doSearch();
 				}
@@ -501,6 +508,25 @@
 			updateExprange: function(vals){
 		   		this.exprange = vals;
 		   		this.updateFq();
+			}
+		}
+
+		var additionalParams = {
+			params: {
+				'fullcv':[false, 'fulljson:"completeness+percent+100"~1'],
+				'notfullcv':[false,'-fulljson:"completeness+percent+100"~1']
+			},
+			toggle: function(param, t) {
+				var self = this;
+				self.params[param][0] = t;
+				var allparams = "";
+				for (var k in self.params) {
+					if(self.params[k][0]) {
+						allparams += " " + self.params[k][1] + " ";
+					}
+				}
+				cvlist.additionalParams = allparams;
+				cvlist.prepSearch();
 			}
 		}
 

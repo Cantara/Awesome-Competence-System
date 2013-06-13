@@ -149,5 +149,18 @@ from django.contrib.admin.models import LogEntry
 
 def changelog(request):
 	# log = LogEntry.objects.filter(user__person__location='Oslo').select_related('content_type', 'user', 'person')[:20]
-	log = LogEntry.objects.all().select_related('content_type', 'user', 'person')[:100]
+	log = LogEntry.objects.all().select_related('content_type', 'user', 'person')
+	for l in log:
+		try: 
+			l_obj = l.get_edited_object()
+			if ( hasattr(l_obj, 'location') ):
+				l.location = l_obj.location
+				l.department = l_obj.department
+				l.personname = l_obj.name
+			else: 
+				l.location = l_obj.person.location
+				l.department = l_obj.person.department
+				l.personname = l_obj.person.name
+		except: 
+			pass
 	return render_to_response('cv/changelog.html', {'log':log}, context_instance=RequestContext(request))

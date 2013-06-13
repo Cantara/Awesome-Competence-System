@@ -35,6 +35,7 @@
 		}
 		legend {font-size: 1.1em; line-height: 1.1em;}
 		legend small {font-size: 1em;}
+		.radio input[type="radio"], .checkbox input[type="checkbox"] {float:none;}
 	</style>
 
 	{% if not user.is_anonymous %}
@@ -114,8 +115,8 @@
 		// Add "SELECT_ALL"-button to CV-edit
 		var set = ['technology','experience','workplace','education','other'];
 		for(var i=0;i<set.length;i++){
-			$('#id_'+set[i]).after('<a href="#" class="button" id="deselectall' + set[i] + '" style="color: #444 !important; background: #ddd;">Deselect all in ' + set[i] + '</a>');
-			$('#id_'+set[i]).after('<br/><a href="#" class="button" id="selectall' + set[i] + '" style="margin-left: 12em !important; color: #444 !important; background: #ddd;">Select all in ' + set[i] + '</a>');
+			$('#id_'+set[i]).after('<button class="btn" id="deselectall' + set[i] + '">Deselect all in ' + set[i] + '</button>');
+			$('#id_'+set[i]).after('<br/><button class="btn" id="selectall' + set[i] + '">Select all in ' + set[i] + '</button>');
 			$('#selectall'+set[i]).click(function(){
 				$(this).prev().prev().children().prop('selected', true);
 				return false;
