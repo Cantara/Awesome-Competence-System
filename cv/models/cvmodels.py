@@ -150,7 +150,11 @@ class Person(models.Model):
 	def save(self, *args, **kwargs):
 		
 		super(Person, self).save(*args, **kwargs)
-		
+
+		if self.image is not None:
+			from cv.templatetags.image_tags import scale
+			scale(self.image, '110x110')
+
 		# If there are less than 4 existing CVs, create 4 new CVs for the person.
 		if self.cv_set.count() < 4:
 			for a in range(1, 5-self.cv_set.count()):
@@ -424,7 +428,7 @@ from cv.search_indexes import PersonIndex
 
 # Triggers reindex of Solr on save.
 def cv_reindex_person(sender, **kwargs):
-    PersonIndex().update_object(kwargs['instance'].person)
+	PersonIndex().update_object(kwargs['instance'].person)
 models.signals.post_save.connect(cv_reindex_person, sender=Cv)
 models.signals.post_save.connect(cv_reindex_person, sender=Technology)
 models.signals.post_save.connect(cv_reindex_person, sender=Experience)
