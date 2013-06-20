@@ -57,7 +57,7 @@ def download(request, format):
 				t_set.append( 
 					Technology( 
 						title		= item['title'], 
-						data		= item['data']
+						data		= item['data'].encode( "utf-8", "ignore" )
 					) 
 				)
 		
@@ -183,7 +183,6 @@ def getCvDictionary(cvid):
 
 	for te in t:
 		te.data = escape( te.data.encode('utf-8') )
-		te.data = '<ul><li>' + '</li><li>'.join( te.data_as_list() ) + '</li></ul>'
 
 	e = sorted( e, key=operator.attrgetter('orderkey'), reverse=True )
 	w = sorted( w, key=operator.attrgetter('orderkey'), reverse=True )
