@@ -177,6 +177,14 @@ def getCvDictionary(cvid):
 		du.from_year = du.period()
 		# du.from_year = "%i %i - %i %i" % (du.from_year, du.from_month, du.to_year, du.to_month)
 	
+	for ot in o:
+		ot.data = escape( ot.data.encode('utf-8') )
+		ot.data = '<ul><li>' + '</li><li>'.join( ot.data_as_list() ) + '</li></ul>'
+
+	for te in t:
+		te.data = escape( te.data.encode('utf-8') )
+		te.data = '<ul><li>' + '</li><li>'.join( te.data_as_list() ) + '</li></ul>'
+
 	e = sorted( e, key=operator.attrgetter('orderkey'), reverse=True )
 	w = sorted( w, key=operator.attrgetter('orderkey'), reverse=True )
 	d = sorted( d, key=operator.attrgetter('orderkey'), reverse=True )
