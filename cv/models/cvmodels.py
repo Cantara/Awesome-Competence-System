@@ -27,15 +27,26 @@ MONTH_CHOICES = (
 )
 
 LOCATION_CHOICES = (
-	('Oslo', 'Oslo'),
-	('Gothenburg', 'Gothenburg'),
+	('Borlänge',	'Borlänge'),
+	('Gothenburg', 	'Gothenburg'),
+	('Karlstad',	'Karlstad'),
+	('Malmö',		'Malmö'),
+	('Oslo', 		'Oslo'),
+	('Stockholm',	'Stockholm'),
 )
 
 DEPARTMENT_CHOICES = (
+	('Automotive', 'Automotive'),
+	('Business and Quality Management', 'Business and Quality Management, BQM'),
+	('Business Intelligence', 'Business Intelligence, BI'),
+	('Enterprise Content Management', 'Enterprise Content Management, ECM'),
+	('Identity Access Management', 'Identity and Access Management, IAM'),
+	('Intelligent Systems', 'Intelligent Systems, ISY'),
+	('Life Sciences', 'Life Sciences'),
+	('Project and Service Management', 'Project and Service Management, PSM'),
 	('Software Engineering', 'Software Engineering'),
-	('Business Intelligence', 'Business Intelligence'),
-	('Enterprise Content Management', 'Enterprise Content Management'),
-	('Identity Access Management', 'Identity Access Management'),
+	('Telecom', 'Telecom'),
+
 	('Sales', 'Sales'),
 	('PMDB', 'PMDB'),
 	('Other', 'Other'),
