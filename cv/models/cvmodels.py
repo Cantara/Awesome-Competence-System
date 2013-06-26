@@ -48,7 +48,6 @@ DEPARTMENT_CHOICES = (
 	('Telecom', 'Telecom'),
 
 	('Sales', 'Sales'),
-	('PMDB', 'PMDB'),
 	('Other', 'Other'),
 )
 
