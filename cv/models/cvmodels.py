@@ -27,10 +27,10 @@ MONTH_CHOICES = (
 )
 
 LOCATION_CHOICES = (
-	('Borlänge',	'Borlänge'),
+	(u'Borlänge',	'Borlänge'),
 	('Gothenburg', 	'Gothenburg'),
 	('Karlstad',	'Karlstad'),
-	('Malmö',		'Malmö'),
+	(u'Malmö',		'Malmö'),
 	('Oslo', 		'Oslo'),
 	('Stockholm',	'Stockholm'),
 )
