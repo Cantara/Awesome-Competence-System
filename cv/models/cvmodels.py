@@ -161,9 +161,12 @@ class Person(models.Model):
 		
 		super(Person, self).save(*args, **kwargs)
 
-		if self.image is not None:
+		if self.image:
 			from cv.templatetags.image_tags import scale
-			scale(self.image, '110x110')
+			try:
+				scale(self.image, '110x110')
+			except:
+				pass
 
 		# If there are less than 4 existing CVs, create 4 new CVs for the person.
 		if self.cv_set.count() < 4:
