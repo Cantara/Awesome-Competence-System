@@ -164,3 +164,6 @@ def changelog(request):
 		except: 
 			pass
 	return render_to_response('cv/changelog.html', {'log':log}, context_instance=RequestContext(request))
+
+def multisearch(request):
+	return render_to_response('cv/multisearch.html', context_instance=RequestContext(request) )
