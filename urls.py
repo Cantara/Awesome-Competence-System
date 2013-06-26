@@ -24,6 +24,7 @@ urlpatterns = patterns('cv.views',
     url(r'^cv/nagmail/$', 'nagmail', name='cv_nagmail'),
 
     url(r'^changelog/$', 'changelog', name='changelog'),
+    url(r'^multisearch/$', 'multisearch', name='multisearch'),
 
     url(r'^login/$', 'mylogin'),
     url(r'^logout/$', 'mylogout'),
