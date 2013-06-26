@@ -163,7 +163,7 @@
 {% if user.is_anonymous %}
 	<script>
 		$(function() {
-			$('textarea, form input[type=text]').prop('disabled', true);
+			$('#cvform textarea, #cvform input[type=text]').prop('disabled', true);
 			$('#cvjson').prop('disabled',false);
 			$('.toggle').remove();
 		});
