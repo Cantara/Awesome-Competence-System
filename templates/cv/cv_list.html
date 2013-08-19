@@ -219,13 +219,13 @@
 
 			facetTemplate: $('#facettemplate').text(),
 			facetRenderer: '',
-			
+
 			personStandardTemplate: $('#persontemplate').text().replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>'),
 			personStandardRenderer: '',
 
 			personMultiTemplate: $('#multitemplate').text().replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>'),
 			personMultiRenderer: '',
-			
+
 			multi: false,
 			toggleMulti: function(t) {
 				var self = this;
@@ -252,7 +252,7 @@
 					return this.personMultiRenderer(data);
 				}
 			},
-			
+
 			renderResults: function(data) {
 				var html = "";
 				var self = this;
@@ -362,6 +362,7 @@
 					self.solrdata.q = self.filterTxt+asterisk+" "+self.additionalParams;
 					self.solrdata.hl = 'true';
 					self.doSearch();
+					self.updateUrl();
 				} else {
 					self.solrdata.q = self.additionalParams + '*';
 					self.solrdata.hl = 'false';
@@ -382,6 +383,17 @@
 					self.bufferedData = data;
 					self.renderResults(data);
 				});
+			},
+
+			updateUrl: function(){
+				var self = this;
+				var urlData = [
+					"exprange=[" + fq.exprange + "]",
+					"fq=" + JSON.stringify(fq.facets),
+					"q=" + self.filterTxt
+				];
+				var newurl = "/?" + urlData.join("&");
+				window.history.replaceState({}, "title", newurl);
 			},
 
 			solrurl: "/solr/collection1/select",
@@ -446,6 +458,12 @@
 							self.filterTxt = initData.q;
 							document.getElementById('filter').value = self.filterTxt;
 						}
+						// Set Experience Range
+						if( initData.exprange !== undefined){
+							var range = jQuery.parseJSON( initData.exprange );
+							$("#expslider").val(range);
+							fq.updateExprange(range);
+						}
 						// Set Facets
 						if( initData.fq !== undefined ){
 							initData.fq = jQuery.parseJSON( initData.fq );
@@ -454,12 +472,6 @@
 									self.toggleFacet(initData.fq[key][x], key, true, true);
 								}
 							}
-						}
-						// Set Experience Range
-						if( initData.expfrom !== undefined && initData.expto !== undefined){
-							var range = [initData.expfrom, initData.expto];
-							$("#expslider").val(range);
-							fq.updateExprange(range);
 						}
 						// Do search
 						self.prepSearch();
@@ -511,6 +523,7 @@
 				results.push('years_of_experience_exact:['+this.exprange[0]+' TO '+this.exprange[1]+']');
 				cvlist.solrdata.fq = results;
 				cvlist.doSearch();
+				cvlist.updateUrl();
 			},
 			updateExprange: function(vals){
 		   		this.exprange = vals;

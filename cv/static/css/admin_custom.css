@@ -1,5 +1,17 @@
-body { font-family: segoe ui;}
+/* START NAVIGATION */
 
+nav {
+	padding: 0.5em;
+	color: #fff;
+	text-align: center;
+	position: absolute;
+	left:0;
+	top:0;
+}
+
+nav li {display:inline-block; margin-right: 1em;}
+
+/* END NAVIGATION */
 
 .ui-autocomplete { list-style: none !important; display:inline-block; text-align: left;}
 .ui-autocomplete li { list-style: none !important; display:inline-block;}
@@ -8,67 +20,25 @@ body { font-family: segoe ui;}
 
 .dropHover { border-color: #dda !important; background-color: #ffd !important;}
 
-#DragDiv { position: fixed; right: 1em; top: 100px; width: 16%; background: #fff; overflow: hidden; border: 1px solid #ddd; padding: 1em;}
-
-#content-main {width: 80% !important;}
 
 
 /* Hide datepicker */ 
 .datetimeshortcuts {display: none;}
 
 /* Collapsible subsections */
-.inline-group h2 {
+._inline-group h2 {
 	cursor: pointer;
 }
 
-.inline-group h2:hover {
-	text-decoration: underline
+._inline-group h2:hover {
+	text-decoration: underline;
+	background: #eee;
 }
 
-.inline-group h2:before {
+._inline-group h2:before {
 	content: '- ';
 }
 .closed:before {
 	content: '+ ' !important;
 }
 
-
-/* START NAVIGATION */
-
-nav {
-	background: #555;
-	border-bottom: 2px solid #555;
-	padding: 0.5em;
-	color: #fff;
-	text-align: center;
-}
-
-nav li {display:inline-block; }
-
-
-button {border:none;}
-input.butt {
-	border:none;
-}
-
-.butt {
-	position: relative;
-	cursor: pointer;
-	background: #00A8C6;
-	text-transform: uppercase;
-	color: #fff;
-	text-decoration: none;
-	padding: 0.5em;
-	display: inline-block;
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  -ms-user-select: none;      /* IE 10+ */
-
-  /* No support for these yet, use at own risk */
-  -o-user-select: none;
-  user-select: none;      
-	}
-.red { background-color: #C21A01;}
-.red:hover { background-color: #F03C02;}
-
-/* END NAVIGATION */

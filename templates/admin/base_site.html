@@ -6,13 +6,12 @@
 {% block extrastyle %}
 <!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_custom.css"/>
 -->
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_custom.css"/>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 {% endblock %}
 
 {% block branding %}
-<!--
 	<nav>
         <ul class="wide">
             <li><a href="{% url cv.views.cv_list %}" class="butt red">ACS Person list</a></li>
@@ -22,14 +21,13 @@
 			{% endif %}
         </ul>
     </nav>
--->
 
 	<style>
 		body {font-size: 12px;}
 		._inline-group h2 { font-size: 1.2em;}
 		textarea, input[type=text], select {width: auto; font-size: 1em; line-height: 1em; padding: 2px;}
 		label {font-size: 1em;}
-		.form-actions {position: fixed; bottom:0;left:0;right:0; margin-bottom:0;}
+		.form-actions {position: fixed; bottom:0;left:0;right:0; margin-bottom:0; z-index: 1050;}
 		.form-horizontal .control-group {
 			margin-bottom: 6px;
 		}
@@ -46,16 +44,6 @@
 	<script language="JavaScript" type="text/javascript">
 	$(document).ready( function() 
 	{
-		// Trash can 
-		$("#delete").droppable({
-			accept: "#DragWordList li",
-			hoverClass: "dropHover",
-			tolerance: "pointer",
-			drop: function(ev, ui) {
-				ui.draggable.remove(); // remove original item
-			}
-		});
-		
 		// Activate drag upon load
 		activateDrag();
 		
@@ -65,7 +53,9 @@
 				$.each(
 					$("#DragText").val().split("\n"),
 					function(i, o){
-						$("#DragWordList").append('<li>'+o+"</li>");
+						if(/\S/.test(o)){
+							$("#DragWordList").append('<li>'+o+"<div></div></li>");
+						}
 					}
 				);
 				$("#DragText").val("");
@@ -82,7 +72,7 @@
 		});
 		
 		// Toggle subsections
-		$('.inline-group h2').click(function() {
+		$('._inline-group h2').click(function() {
 			if( $(this).hasClass("closed") ) {
 				$(this).removeClass("closed");
 				$(this).parent().children("div:not(.empty-form)").show(200);
@@ -131,6 +121,9 @@
 
 	function activateDrag() {
 		$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
+		$("#DragWordList li div").click(function(){
+			$(this).parent().remove();
+		});
 		$("textarea, input[type=text]").droppable({
 			accept: "#DragWordList li, #popTechs span",
 			hoverClass: "dropHover",
@@ -185,17 +178,87 @@
 
 {% block sidebar %}
 {% if 'person' in request.path %}
-<!--
+<style>
+	#DragDiv { 
+		position: fixed; 
+		right: -320px; top:0; bottom: 0;
+		width: 300px;
+		padding: 5em 10px 5em 10px;
+		border-left: 1px solid #ccc;
+		background: #fff;
+    	-moz-transition: right .3s;
+    	-webkit-transition: right .3s;
+    	-o-transition: right .3s;
+    	transition: right .3s;
+	}
+	.DragDivShown {
+		right: 0 !important;
+	}
+	#content-main {
+    	-moz-transition: padding .3s;
+    	-webkit-transition: padding .3s;
+    	-o-transition: padding .3s;
+    	transition: padding .3s;
+    }
+	.addSpace {
+		padding-right: 350px;
+	}
+	#DragHandle {
+		cursor: pointer;
+		position: absolute;
+		background: #eee;
+		border: 1px solid #ccc;
+		border-right: none;
+		border-radius: 4px 0 0 4px;
+		left: -31px;
+		top: 50%;
+		margin-top:-81px;
+		height: 160px;
+		width: 30px;
+		background-image: linear-gradient(to left,#fff,#e6e6e6);
+		background-repeat: repeat-x;
+	}
+	#DragHandle:hover {
+		background-image: linear-gradient(to left,#fff,#f2f2f2);
+	}
+	#DragHandle div {
+		width: 160px;
+		text-align: center;
+		text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+	    -webkit-transform-origin: .8em 50%;
+	    -moz-transform-origin:    .8em 50%;
+	    -ms-transform-origin:     .8em 50%;
+	    -o-transform-origin:      .8em 50%;
+		-webkit-transform: rotate(90deg);
+		-moz-transform: rotate(90deg);
+		-ms-transform: rotate(90deg);
+		-o-transform: rotate(90deg);
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+		}
+	#DragText { width: 100%;}
+	#DragWordList {list-style: none; margin:5px; max-height: 80%; overflow-y: scroll; overflow-x: hidden;}
+	.ui-draggable {border: 1px solid #cc9; background: #ffe; cursor: move; display: inline-block; padding: .2em; margin: .2em;width: 250px; position: relative;}
+	.ui-draggable div {width: 14px; height: 14px; background: #fdd; border: 1px solid #f55; position: absolute; top:4px; right: 4px; cursor: pointer;}
+	.ui-draggable div:hover {background-color: red;}
+	.ui-draggable-dragging {}
+</style>
+
 <div id="DragDiv">
-	<h4>Copy-Paste-Helper</h4>
-	<p><img src="{{ STATIC_URL }}img/trash.png" id="delete">You can paste text into the textarea, click "Make draggable text", and then drag the text to the form to paste the text. To remove a bit of unwanted text, drop it in the bin!</p>
+	<div id="DragHandle" onClick="$('#DragDiv').toggleClass('DragDivShown');$('#content-main').toggleClass('addSpace');"><div>Copy-Paste-Help</div></div>
+	<h4>Copy-Paste-Help</h4>
+	<textarea id="DragText" rows="5" placeholder="Paste CV-text here"></textarea>
+	<a class="btn" id="MakeDrag">Turn it into draggable text-bits</a>
     <ul id="DragWordList">
-      <li>Altran AS</li>
+      <li>Example: Drag me to a text-field!<div></div></li>
     </ul>
-	<textarea id="DragText" rows="5"></textarea><br/>
-	<a class="button" id="MakeDrag">Make draggable text</a>
+	<ol>
+		<li>Paste text into the textarea</li>
+		<li>Click "Make draggable text"</li>
+		<li>Drag the text to the input-fields to paste the text</li>
+		<li>To remove a bit of unwanted text, click the red button</li>
+	</ol>
 </div>
--->
+
 {% endif %}
 
 {% endblock %}
