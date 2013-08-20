@@ -392,6 +392,8 @@
 					"fq=" + JSON.stringify(fq.facets),
 					"q=" + self.filterTxt
 				];
+				if(fq.facets)
+				urlData.push
 				var newurl = "/?" + urlData.join("&");
 				window.history.replaceState({}, "title", newurl);
 			},
