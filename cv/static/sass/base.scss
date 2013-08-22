@@ -6,7 +6,7 @@ $main_c: #269;
 
 body {
 	background-color: #ddd;
-	// background-image: url(../img/grid.png);
+	background-image: url(../img/grid.png);
 	font-family: segoe ui, arial, sans serif !important;
 	color: $text_c;
 	text-align: center;
@@ -19,7 +19,7 @@ body {
 	-moz-box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5 {color: #555;}
+h1, h2, h3, h4, h5 {color: $text_c;}
 
 /* START NAVIGATION */
 
@@ -39,9 +39,6 @@ nav {
 
 	li {display:inline-block; padding: .5em;}
 }
-
-
-
 
 /* LOGINFORM */
 

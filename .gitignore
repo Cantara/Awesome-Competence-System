@@ -6,4 +6,4 @@ static/media
 .py
 localsettings.py
 .htaccess
-
+.sass-cache/
