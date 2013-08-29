@@ -146,7 +146,7 @@
 				{% if user.is_authenticated %}
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
-					<%? p.mail == "{{ user.email }}" %>
+					<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
 						<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
 					<%?%>
 				{% endif %}
@@ -161,7 +161,7 @@
 							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
 						</td>
 						{% if user.is_authenticated %}
-							<%? p.mail == "{{ user.email }}" %>
+							<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
 								<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
 								<span class="dato">CV</span></a></td>
 							<%?%>
