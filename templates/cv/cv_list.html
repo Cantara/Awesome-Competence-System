@@ -146,7 +146,9 @@
 				{% if user.is_authenticated %}
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
-					<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+					<%? p.mail == "{{ user.email }}" %>
+						<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+					<%?%>
 				{% endif %}
 				<table>
 				<%~p.cv :cv:index%>
@@ -159,8 +161,10 @@
 							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
 						</td>
 						{% if user.is_authenticated %}
-							<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
-							<span class="dato">CV</span></a></td>
+							<%? p.mail == "{{ user.email }}" %>
+								<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
+								<span class="dato">CV</span></a></td>
+							<%?%>
 						{% endif %}
 					</tr>
 					<%?%>
@@ -350,6 +354,7 @@
 				var self = this;
 			    if(typeof self.searchrequest !== 'undefined'){
 			        self.searchrequest.abort();
+			        console.log('aboerted');
 			    }
 			    if(t){
 					self.filterTxt = $(t).val();
@@ -371,8 +376,8 @@
 			},
 
 			doSearch: function(){
-				var self = this,
-				searchrequest = $.ajax({
+				var self = this;
+				self.searchrequest = $.ajax({
 					type:"get",
 					url: self.solrurl,
 					data: self.solrdata,
