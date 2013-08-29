@@ -180,8 +180,8 @@ class Person(models.Model):
 				
 class Technology(models.Model):
 	person = models.ForeignKey(Person)
-	title = models.CharField("Competence category", max_length=50, null=True, blank=True)
-	title_en = models.CharField("Competence category (En)", max_length=50, null=True, blank=True)
+	title = models.CharField("Competence category", max_length=140, null=True, blank=True)
+	title_en = models.CharField("Competence category (En)", max_length=140, null=True, blank=True)
 	data = models.TextField("List your competences in this category (separate with comma)", null=True, blank=True)
 	data_en = models.TextField(null=True, blank=True)
 	
@@ -278,8 +278,8 @@ class Experience(TimedSkill):
 	company = models.CharField("Client company, Project title", max_length=140, null=True, blank=True)
 	company_en = models.CharField("Client company, Project title (En)", max_length=140, null=True, blank=True)
 	
-	techs = models.CharField("Technologies / Methods", max_length=140, null=True, blank=True)
-	techs_en = models.CharField("Technologies / Methods (En)", max_length=140, null=True, blank=True)
+	techs = models.CharField("Technologies / Methods", max_length=180, null=True, blank=True)
+	techs_en = models.CharField("Technologies / Methods (En)", max_length=180, null=True, blank=True)
 	
 	def __unicode__(self):
 		if self.title is not None:
