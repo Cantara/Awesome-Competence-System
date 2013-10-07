@@ -1,5 +1,11 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+import xml.etree.ElementTree as ET
+import urllib
+import urllib2
+import logging
+log = logging.getLogger("cv")
 
 def mylogin(request):
 	if request.method == 'POST':
@@ -20,7 +26,15 @@ def mylogin(request):
 			logout(request)
 	return HttpResponseRedirect(redirect_url)
 			
-def mylogout(request):
-	logout(request)
-	redirect_url = request.POST.get('path', '/')
-	return HttpResponseRedirect(redirect_url)
+
+def myRemoteLogin(request):
+	if request.method == 'POST':
+		redirect_url = request.POST.get('path', '/')
+		log.info(redirect_url)
+		if request.user.is_authenticated():
+			logout(request)
+			return HttpResponseRedirect("http://acs02.cloudapp.net/")
+		else:
+			return HttpResponseRedirect("http://acs02.cloudapp.net/sso/login?redirectURI=" + redirect_url)
+	else:
+		return HttpResponseRedirect("http://acs02.cloudapp.net/")

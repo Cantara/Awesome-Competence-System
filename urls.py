@@ -26,8 +26,7 @@ urlpatterns = patterns('cv.views',
     url(r'^changelog/$', 'changelog', name='changelog'),
     url(r'^multisearch/$', 'multisearch', name='multisearch'),
 
-    url(r'^login/$', 'mylogin'),
-    url(r'^logout/$', 'mylogout'),
+    url(r'^login/$', 'myRemoteLogin'),
 
     url(r'^matrix/$', 'matrix_list'),
     url(r'^matrix/edit/$', 'matrix_edit'),
