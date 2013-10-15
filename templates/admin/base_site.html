@@ -11,17 +11,22 @@
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
 {% endblock %}
 
+
 {% block branding %}
+
 	<nav>
         <ul class="wide">
-            <li><a href="{% url cv.views.cv_list %}" class="butt red">ACS Person list</a></li>
+            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee List</a></li>
             <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
 			{% if user.is_authenticated %}
             <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
 			{% endif %}
         </ul>
-    </nav>
 
+    </nav>
+<div>
+
+</div>
 	<style>
 		body {font-size: 12px;}
 		._inline-group h2 { font-size: 1.2em;}
@@ -170,11 +175,13 @@
 	};
 	</script>
 	{% endif %}
+	
 
 <!--
 	<h1 id="site-name">{% trans 'Altran CV' %}</h1>
 -->
 {% endblock %}
+
 
 {% block sidebar %}
 {% if 'person' in request.path %}
