@@ -5,6 +5,7 @@ from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django import forms
+import logging
 
 small = {
         models.TextField: { 'widget': Textarea( attrs = {'rows':2, 'cols':30 } ) },
@@ -88,7 +89,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     # Adding the list of popular techs
     def render_change_form(self, request, context, *args, **kwargs):
-        
+        log = logging.getLogger('edit_person')
         techlist = {}
         
         for p in Person.objects.all():
@@ -104,6 +105,10 @@ class PersonAdmin(admin.ModelAdmin):
         sortedtechlist = [x for x in techlist.iteritems()]
         sortedtechlist.sort(key=lambda x: x[1])
         sortedtechlist.reverse()
+        #request.path[len(request.path) - 2]
+        
+        #the_id = Cv.objects.get(person=3).[0].pk
+        the_cvs = Person.objects.get(pk=kwargs['obj'].pk).cv_set.all()
         
         t = []
         for i in sortedtechlist:
@@ -113,6 +118,7 @@ class PersonAdmin(admin.ModelAdmin):
         extra = {
             'has_file_field': True, # Make your form render as multi-part.
             'techlist': t,
+            'cvs': the_cvs,
         }
 
         context.update(extra)

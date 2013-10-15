@@ -11,7 +11,10 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
 {% endblock %}
 
+
+
 {% block actions %}
+
 		{% if user.is_authenticated %}
 			<h1>{{ p.name }} CV</h1>
 			{% if lang != 'eng' %}<a href="{% url cv_detail_en cv.id 'eng' %}" class="butt">Show in English</a>
