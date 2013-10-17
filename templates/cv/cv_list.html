@@ -66,6 +66,48 @@
 {% endblock %}
 
 {% block content %}
+    <script type="text/javascript">
+        function addToEmailString(obj, email)
+        {
+            var mailAndSemi = email + ";";
+            if(obj.checked)
+            {
+                document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
+            }else{
+                document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
+            }
+            if(document.getElementById("emails").href == "mailto:")
+            {
+                document.getElementById("emails").innerHTML = "No e-mails selected.";
+            }else{
+                document.getElementById("emails").innerHTML = "Click to send e-mails.";
+            }
+        }
+        function toggle(source) {
+          checkboxes = document.getElementsByName('rowMailCheckbox');
+          for(var i=0, n=checkboxes.length;i<n;i++) {
+            if(source.checked != checkboxes[i].checked)
+            {
+                checkboxes[i].click();
+            }
+          }
+        }
+        function selectAllSetFalseTrigger() 
+            { 
+                if(document.getElementById("selectAllCheckbox").checked == true)
+                document.getElementById("selectAllCheckbox").click();
+            }
+        $('#optionsinside').on('change','input', 
+            selectAllSetFalseTrigger
+        );
+    </script>
+    <div id="emailStuff" style="display: none">
+        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>E-mail all</label><br/>
+        <address>    
+           <a id="emails" href="mailto:">No e-mails selected.</a>
+        </address>
+    </div>
+    </br>
 	<form name="multicv" action="{% url cv_multi %}" method="get">
 		<div id="multicontrols" style="display:none;">
 			Format:&nbsp;<select name="format" id="format">
@@ -74,6 +116,7 @@
 				<option value="odt">OpenDocument Text (.odt)</option>
 			</select>
 			<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+            
 		</div>
 		<div id="results"></div>
 	</form>
@@ -195,12 +238,14 @@
 					<%? cv.tags != "Empty CV" %>
 						<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
 						<div>
-							<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>">&nbsp;<%=cv.tags%>&nbsp;(<%=cv.status.percent%>%)</label>&nbsp;
+							<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" >&nbsp;<%=cv.tags%>&nbsp;(<%=cv.status.percent%>%)</label>&nbsp;
 							<a href="{% url cv_detail "999999" %}" class="butt" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
 							Download:&nbsp;
 							<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" class="butt" target="_blank">DOC</a>&nbsp;
 							<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" class="butt" target="_blank">PDF</a>&nbsp;
 							<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">ODT</a>&nbsp;
+                            Mail:&nbsp;
+                            <input type="checkbox" name="rowMailCheckbox" value="<%=cv.id%>" id="<%=cv.id%>" onchange="addToEmailString(this, '<%=p.mail%>')"/>
 						</div>
 						<%?%>
 					<%?%>
@@ -218,7 +263,6 @@
 	</script>
 	<script src="{{ STATIC_URL }}js/jquery.nouislider.min.js"></script>
 	<script>
-
 		var cvlist = {
 
 			facetTemplate: $('#facettemplate').text(),
@@ -231,13 +275,17 @@
 			personMultiRenderer: '',
 
 			multi: false,
-			toggleMulti: function(t) {
+			toggleMulti: function(t) {                
 				var self = this;
 				self.multi = t.checked;
 				if(!t.checked){
-					$('#multicontrols').hide();
+					$('#multicontrols').hide();labelSelectAll
+                    document.getElementById("emailStuff").style.display = "none";
+                    selectAllSetFalseTrigger();
+                    
 				} else {
 					$('#multicontrols').show();
+                    document.getElementById("emailStuff").style.display = "";
 				}
 				self.renderResults(self.bufferedData);
 			},
