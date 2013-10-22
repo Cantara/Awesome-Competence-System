@@ -105,6 +105,7 @@ def detail(request, cv_id, lang = ''):
 		
 	# style = Style.objects.get(id=1)
 	
+	
 	return render_to_response('cv/cv_detail.html', {'cv': cv, 'p': p, 't': t, 'e': e, 'w': w, 'd': d, 'o': o, 'l': l, 'style': '', 'lang': lang}, context_instance=RequestContext(request))
 
 def nagmail(request):
@@ -144,6 +145,43 @@ The Awesome Competence System''' % ( p.name, sendername, message, '\n- '.join(p.
 		# In reality we'd use a form class
 		# to get proper validation errors.
 		return HttpResponseBadRequest('Make sure all fields are entered and valid.')
+        
+def multinagmail(request):
+    receiver_email = request.POST.get('receiver_email', '')
+    message = request.POST.get('message', '')
+    sendermail = request.POST.get('multisendermail', '')
+    sendername = request.POST.get('multisendername', '')
+    #sendcopy = request.POST.get('checkboxcopy', '')
+    no_reply = 'no-reply@altran.com'
+    if receiver_email and message:
+        if not sendermail:
+            sendermail = no_reply
+        if not sendername:
+            sendername = 'Mr/Ms Not_logged_in'
+        subject = "%s is nagging you through ACS" % sendername
+        mailtext = '''Hi, 
+The following message have been sent through ACS.
+Sent by: %s
+Sent by E-mail: %s
+
+%s
+
+ACS url: %s''' % (sendername, sendermail, message, "https://"+request.get_host())
+        temp_list = receiver_email.split(';', 1)
+        try:
+            mail = EmailMessage(subject, mailtext, sendermail, temp_list, headers = {'Reply-To': sendermail})
+            mail.send()
+            #if sendcopy:
+                #copy = EmailMessage(subject, mailtext, no_reply, [sendermail], headers = {'Reply-To': no_reply})
+                #copy.send()
+        except BadHeaderError:
+            return HttpResponseBadRequest('Invalid header found.')
+        testmail = "Nag mail sent!<br/><br/>To: %s <br/><br/>Subject: %s <br/><br/>%s" % ( receiver_email, subject, escape(mailtext).replace("\n","<br/>") ) 
+        return HttpResponse(testmail)
+    else:
+        # In reality we'd use a form class
+        # to get proper validation errors.
+        return HttpResponseBadRequest('Make sure all fields are entered and valid.')
 
 from django.contrib.admin.models import LogEntry
 
