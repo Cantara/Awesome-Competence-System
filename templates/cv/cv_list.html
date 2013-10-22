@@ -40,11 +40,16 @@
 						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',1);"/>Show completed</label><br/>
 						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',-1);"/>Show incomplete</label><br/>
 				</div>
-				<div class="filter">
+                
+				<div class="filter">                
 					<h3>Sorting</h3>
-						<label><input type="checkbox" name="sortyears" onChange="sortingParams.toggle('years',this.checked);"/>Years of experience</label><br/>
-						<label><input type="checkbox" name="sortname" onChange="sortingParams.toggle('name',this.checked);"/>Name</label><br/>
-						<label><input type="checkbox" name="sortLastEdited" onChange="sortingParams.toggle('lastEdited',this.checked);"/>Last Edited</label><br/>
+                    <select id="asc_desc_sort" onChange="sortingParams.toggle();">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select></br>            
+                    <label><input type="radio" name="sort" id="year" onChange="sortingParams.toggle();"/>Years of experience</label><br/>
+                    <label><input type="radio" name="sort" id="name" onChange="sortingParams.toggle();"/>Name</label><br/>
+                    <label><input type="radio" name="sort" id="lastEdit" onChange="sortingParams.toggle();"/>Last Edited</label><br/>
 				</div>
 			</div>
 
@@ -77,10 +82,12 @@
                 document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
             }
             if(document.getElementById("emails").href == "mailto:")
-            {
-                document.getElementById("emails").innerHTML = "No e-mails selected.";
+            {                
+                $("#emailsText").html("No e-mails selected.");
+                document.getElementById("createMail").style.display = "none";
             }else{
-                document.getElementById("emails").innerHTML = "Click to send e-mails.";
+                $("#emailsText").html("Click to get e-mails.");
+                document.getElementById("createMail").style.display = "";                
             }
         }
         function toggle(source) {
@@ -101,12 +108,15 @@
             selectAllSetFalseTrigger
         );
     </script>
-    <div id="emailStuff" style="display: none">
-        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>E-mail all</label><br/>
+    <div  id="emailStuff" style="display: none">
+    
+        <label class="ldetail" id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all listed e-mails</label><br/>
         <address>    
-           <a id="emails" href="mailto:">No e-mails selected.</a>
-        </address>
+           <!-- <a id="emails" href="mailto:">No e-mails selected.</a> -->
+           <a id="emails" href="mailto:" return false;" class="butt"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
+        </address>        
     </div>
+    <a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>           
     </br>
 	<form name="multicv" action="{% url cv_multi %}" method="get">
 		<div id="multicontrols" style="display:none;">
@@ -121,9 +131,9 @@
 		<div id="results"></div>
 	</form>
 
-	{% if user.is_authenticated %}
 	<style>
 	#blanket {background: rgba(0,0,0,0.2); text-align: center; position: fixed;top:0;left:0;right:0;bottom:0; z-index: 500; }
+    
 	#blanket:before {
 	  content: '';
 	  display: inline-block;
@@ -131,7 +141,14 @@
 	  vertical-align: middle;
 	  margin-right: -0.25em; /* Adjusts for spacing */
 	}
-	#nagmail {
+	#nagmail{
+		display: inline-block;
+		background: #fff;
+		vertical-align: middle;
+		text-align: left;
+		padding: 1em;
+	}
+    #multinagmail {
 		display: inline-block;
 		background: #fff;
 		vertical-align: middle;
@@ -139,8 +156,10 @@
 		padding: 1em;
 	}
 	</style>
+    
 		<div id="blanket" style="display: none;">
-		    <div id="nagmail" style=" display: none;">
+        {% if user.is_authenticated %}
+		    <div id="nagmail" style="display: none;">
 				{% if user.person.completeness.percent < 100 %}
 					Your own profile is not complete, please fill it out before you nag others.
 					<div style="display:none;">
@@ -163,8 +182,29 @@
 		    		<button class="butt" onClick="nagmail.hide();">Close</button>
 		    	</section>
 		    </div>
+        
+        {% endif %}
+            <div id="multinagmail" style="display: none;">
+				<form name="multinagmailform" id="multinagmailformid" style="display:none;">
+		    		{% csrf_token %}
+		    		<input type="hidden" name="receiver_email" value="">
+		    		<input type="hidden" name="multisendermail" value="{{ user.email }}"><!--  -->
+		    		<input type="hidden" name="multisendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
+                    <h3>Send a message to all of those who you selected.</h3>
+		    		<textarea name="message" cols="30" rows="6" placeholder="Message"></textarea>
+                    <br/>
+                    <!--    <label>Send me a copy<input type="checkbox" name="checkboxcopy" value="false">                 
+                    <br/> -->
+                    <br/>
+                    <a onClick="multinagmail.submit(); return false;" class="butt"><i class="icon-mail-reply"></i> Send message</a>                    
+		    	</form>
+		    	<section id="multinagresponse">
+		    		<p id="multinagresponsemsg"></p>
+                    <a onClick="multinagmail.hide(); return false;" class="butt">Close</a>
+		    	</section>
+		    </div>
 		</div>
-    {% endif %}
+    
 
 	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
@@ -222,12 +262,13 @@
 		.multileft {display: inline-block; min-width: 300px; width: 45%;}
 		.multiright {display: inline-block; min-width: 400px; vertical-align: top;}
 		.multiline h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-		.multiline label {display: inline-block; width: 300px; overflow: hidden; text-overflow: ellipsis;}
+		.multiright label {display: inline-block; width: 300px; overflow: hidden; text-overflow: ellipsis;}
+        .testclass label{float:right}
 	</style>
 
 	<script id="multitemplate" type="text/x-dot-template">
 		<div class="multiline" id="p<%=p.id%>">
-			<div class="multileft">
+			<div class="multileft">                
 				<div style="float: left; width:24px; height:24px; margin-right: .5em; <%?p.image%>background: url(/media/<%=p.image%>) no-repeat center; background-size: cover;<%?%>"></div>
 				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%> <%=p.title%></h4>
 				<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
@@ -243,15 +284,18 @@
 							Download:&nbsp;
 							<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" class="butt" target="_blank">DOC</a>&nbsp;
 							<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" class="butt" target="_blank">PDF</a>&nbsp;
-							<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">ODT</a>&nbsp;
-                            Mail:&nbsp;
-                            <input type="checkbox" name="rowMailCheckbox" value="<%=cv.id%>" id="<%=cv.id%>" onchange="addToEmailString(this, '<%=p.mail%>')"/>
+							<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">ODT</a>&nbsp;                            
 						</div>
 						<%?%>
-					<%?%>
+					<%?%>                 
 				<%~%>
+                
 			</div>
+            <span class="testclass">
+                <label>Mail<input type="checkbox" name="rowMailCheckbox" RightToLeft="Yes" onchange="addToEmailString(this, '<%=p.mail%>' )"/></label>          
+            </span>
 		</div>
+        
 	</script> 
 
 	<script id="facettemplate" type="text/x-dot-template">
@@ -279,7 +323,7 @@
 				var self = this;
 				self.multi = t.checked;
 				if(!t.checked){
-					$('#multicontrols').hide();labelSelectAll
+					$('#multicontrols').hide();
                     document.getElementById("emailStuff").style.display = "none";
                     selectAllSetFalseTrigger();
                     
@@ -607,26 +651,18 @@
 		}
 
 		var sortingParams = {
-			params: {
-				years: ['years_of_experience', ''],
-				name: ['name_exact', 'asc'],
-				lastEdited: ['last_edited', ''],
-			},
-			toggle: function(param, t) {
+			toggle: function() {
 				var self = this;
-				var status = "";
-				if(t){
-					status="asc";
-				}
-				self.params[param][1] = status;
-				var allparams = [];
-				for (var k in self.params) {
-					if(self.params[k][1]!="") {
-						var neg = "";
-						allparams.push( self.params[k].join(' ') );
-					}
-				}
-				cvlist.solrdata.sort = allparams.join(',');
+                var sort = "";
+                if(document.getElementById('year').checked) {
+                    sort = "years_of_experience";
+                }else if(document.getElementById('name').checked) {
+                    sort = "name_exact";
+                }else if(document.getElementById('lastEdit').checked) {
+                    sort = "last_edited";
+                }
+                sort += " " + document.getElementById('asc_desc_sort').value;
+				cvlist.solrdata.sort = sort;
 				cvlist.prepSearch();
 			}
 		}
@@ -662,6 +698,40 @@
 					document.getElementById('nagresponsemsg').innerHTML = msg;
 				}).fail(function( response ) {
 					document.getElementById('nagresponsemsg').innerHTML = response.responseText;
+				});
+			}
+		}
+        
+        var multinagmail = {
+			dialog: $('#multinagmail'),
+			blanket: $('#blanket'),
+			nagform: $('#multinagmailformid'),
+			show: function() {
+				this.nagform.show();
+                var emails = document.getElementById("emails").href;
+                emails = emails.replace("mailto:", "");
+				document.forms.multinagmailform.receiver_email.value = emails;
+				this.blanket.show();
+				this.dialog.show();
+			},
+			hide: function() {
+				this.dialog.hide();
+				this.blanket.hide();
+				document.getElementById('multinagresponsemsg').innerHTML = '';
+				document.forms.multinagmailform.message.value = '';
+			},
+			submit: function() {
+				var self = this;
+				var formdata = self.nagform.serialize();
+				$.ajax({
+					type: "POST",
+					url: "{% url cv_multinagmail %}",
+					data: formdata
+				}).done(function( msg ) {
+					self.nagform.hide();
+					document.getElementById('multinagresponsemsg').innerHTML = msg;
+				}).fail(function( response ) {
+					document.getElementById('multinagresponsemsg').innerHTML = response.responseText;
 				});
 			}
 		}
