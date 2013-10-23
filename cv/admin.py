@@ -54,6 +54,11 @@ class EducationInline(admin.StackedInline):
     ordering = order
     formfield_overrides = large
     fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('school', 'school_en'), ('description', 'description_en'))
+    
+    class Media:
+        css = {
+            'all': ('/static/css/hotfix.css',)
+        }
 
 class OtherInline(admin.StackedInline):
     model = Other
@@ -109,7 +114,8 @@ class PersonAdmin(admin.ModelAdmin):
         #request.path[len(request.path) - 2]
         
         #the_id = Cv.objects.get(person=3).[0].pk
-        the_cvs = Person.objects.get(pk=kwargs['obj'].pk).cv_set.all()
+        person_key = kwargs['obj'].pk
+        the_cvs = Person.objects.get(pk=person_key).cv_set.all()
         
         t = []
         for i in sortedtechlist:
