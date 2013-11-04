@@ -83,6 +83,9 @@ class PersonAdmin(admin.ModelAdmin):
         if obj is not None and not request.user.is_superuser and request.user.email != obj.mail:
             return False
         return True
+
+    def has_delete_permission(self, request, obj=None):
+        return False
     
     def response_change(self, request, obj, post_url_continue=None):
         response = super(PersonAdmin, self).response_change(request, obj)
@@ -158,6 +161,9 @@ class CvAdmin(admin.ModelAdmin):
             return response
         else:
             return redirect("cv_list")
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 admin.site.register(Cv, CvAdmin)
 
