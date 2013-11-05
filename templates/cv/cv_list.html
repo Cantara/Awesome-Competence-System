@@ -46,10 +46,10 @@
                     <select id="asc_desc_sort" onChange="sortingParams.toggle();">
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
-                    </select></br>            
-                    <label><input type="radio" name="sort" id="year" onChange="sortingParams.toggle();"/>Years of experience</label><br/>
-                    <label><input type="radio" name="sort" id="name" onChange="sortingParams.toggle();"/>Name</label><br/>
-                    <label><input type="radio" name="sort" id="lastEdit" onChange="sortingParams.toggle();"/>Last Edited</label><br/>
+                    </select></br>
+                    <label><input type="radio" name="sort" value="years_of_experience" onChange="sortingParams.toggle();"/>Years of experience</label><br/>
+                    <label><input type="radio" name="sort" value="name_exact" onChange="sortingParams.toggle();"/>Name</label><br/>
+                    <label><input type="radio" name="sort" value="last_edited" onChange="sortingParams.toggle();"/>Last Edited</label><br/>
 				</div>
 			</div>
 
@@ -72,23 +72,24 @@
 
 {% block content %}
     <script type="text/javascript">
-        function addToEmailString(obj, email)
-        {
+        function addToEmailString(obj, email) {
+
             var mailAndSemi = email + ";";
-            if(obj.checked)
-            {
+
+            if(obj.checked) {
                 document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
             }else{
                 document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
             }
-            if(document.getElementById("emails").href == "mailto:")
-            {                
+
+            if(document.getElementById("emails").href == "mailto:") {                
                 $("#emailsText").html("No e-mails selected.");
                 document.getElementById("createMail").style.display = "none";
-            }else{
+            } else {
                 $("#emailsText").html("Click to get e-mails.");
                 document.getElementById("createMail").style.display = "";                
             }
+
         }
         function toggle(source) {
           checkboxes = document.getElementsByName('rowMailCheckbox');
@@ -99,27 +100,23 @@
             }
           }
         }
-        function selectAllSetFalseTrigger() 
-            { 
-                if(document.getElementById("selectAllCheckbox").checked == true)
-                document.getElementById("selectAllCheckbox").click();
-            }
+        function selectAllSetFalseTrigger() { 
+            if(document.getElementById("selectAllCheckbox").checked == true)
+            	document.getElementById("selectAllCheckbox").click();
+        }
         $('#optionsinside').on('change','input', 
             selectAllSetFalseTrigger
         );
     </script>
-    <div  id="emailStuff" style="display: none">
-    
-        <label class="ldetail" id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all listed e-mails</label><br/>
-        <address>    
-           <!-- <a id="emails" href="mailto:">No e-mails selected.</a> -->
-           <a id="emails" href="mailto:" return false;" class="butt"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
-        </address>        
-    </div>
-    <a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>           
-    </br>
 	<form name="multicv" action="{% url cv_multi %}" method="get">
 		<div id="multicontrols" style="display:none;">
+
+		    <div>
+		        <label class="ldetail" id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all listed e-mails</label><br/>
+	           <a id="emails" href="mailto:" class="butt"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
+    			<a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>
+		    </div>
+
 			Format:&nbsp;<select name="format" id="format">
 				<option value="doc">Microsoft Word (.doc)</option>
 				<option value="pdf">Adobe Reader (.pdf)</option>
@@ -141,7 +138,7 @@
 	  vertical-align: middle;
 	  margin-right: -0.25em; /* Adjusts for spacing */
 	}
-	#nagmail{
+	#nagmail {
 		display: inline-block;
 		background: #fff;
 		vertical-align: middle;
@@ -238,7 +235,7 @@
 					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
 					<tr>
 						<td>
-							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.tags == "Empty CV" %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
+							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
 							<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>
 								<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>
 							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
@@ -324,12 +321,10 @@
 				self.multi = t.checked;
 				if(!t.checked){
 					$('#multicontrols').hide();
-                    document.getElementById("emailStuff").style.display = "none";
                     selectAllSetFalseTrigger();
                     
 				} else {
 					$('#multicontrols').show();
-                    document.getElementById("emailStuff").style.display = "";
 				}
 				self.renderResults(self.bufferedData);
 			},
@@ -654,12 +649,11 @@
 			toggle: function() {
 				var self = this;
                 var sort = "";
-                if(document.getElementById('year').checked) {
-                    sort = "years_of_experience";
-                }else if(document.getElementById('name').checked) {
-                    sort = "name_exact";
-                }else if(document.getElementById('lastEdit').checked) {
-                    sort = "last_edited";
+                var sortInputs = document.getElementsByName('sort');
+                for(var i = 0; i < sortInputs.length; i++) { 
+                	if(sortInputs[i].checked){
+                		sort = sortInputs[i].value;
+                	}
                 }
                 sort += " " + document.getElementById('asc_desc_sort').value;
 				cvlist.solrdata.sort = sort;

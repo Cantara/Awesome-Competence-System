@@ -21,7 +21,10 @@
 			{% csrf_token %}
 			<input type="hidden" value="{{ request.path }}" name="path">
 			{% if user.is_authenticated %}
-				<span>Welcome <strong>{{ user.username }}</strong></span>
+				<span>
+					{% if personpk %}<a class="btn btn-primary" href="https://{{ request.get_host }}/admin/cv/person/{{personpk}}/">My Profile</a> | {% endif %}
+					Welcome <strong>{{ user.username }}</strong>
+				</span>
 				<input type="submit" value="Log out" class="butt">
 			{% else %}
 				<!--label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>

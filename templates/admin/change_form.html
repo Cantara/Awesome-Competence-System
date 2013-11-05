@@ -18,25 +18,29 @@
 
 {% if not is_popup %}
 {% block breadcrumbs %}
-<div class="btn-toolbar">
-    <div class="btn-group">
-        <button class="btn btn-primary" data-toggle="dropdown" href="#">
-            Edit CV's
-        </button>
-        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            <span class="caret">
-            </span>
-        </button>         
-    <ul class="dropdown-menu">
-    {% for cv in cvs %}
-    {% if cv.profile %}
-        <li><a href="https://{{ request.get_host }}/cv/{{cv.pk}}">CV — {{cv.title}} (id: {{cv.pk}})</a></li>
-    {% endif %}
-    {% endfor %}
-    </ul>
+
+    {% if cvs %}
+    <div class="btn-toolbar">
+        <div class="btn-group">
+            <button class="btn btn-primary" data-toggle="dropdown" href="#">
+                Edit CV's
+            </button>
+            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                <span class="caret">
+                </span>
+            </button>         
+        <ul class="dropdown-menu">
+        {% for cv in cvs %}
+        {% if cv.status.percent > 0 %}
+            <li><a href="{% url 'admin:cv_cv_change' cv.pk %}">{{cv.title}}</a></li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+        </div>
     </div>
-</div>
-</br>
+    </br>
+    {% endif %}
+
 {% endblock %}
 {% endif %}
 
@@ -107,25 +111,4 @@
         </div>
     </div>
 </form>
-
-<script type="text/javascript">
-    function onloadSite() {
-        $(".icon-resize-full").click();
-        //Delay because of some loading bug, ugly fix, there is probably a better solution to this. Not all elements got their properties set right before minimizing.
-        setTimeout(function (){
-            $("h2").click();
-         }, 200);
-        
-    }
-    function resizeTextArea(){
-        if($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
-                    $(this).height($(this).height() * 2);
-                    $(this).width($(this).width() * 2);
-                    $(this).min
-                };
-    }
-    $("textarea").keyup(resizeTextArea);
-    $("textarea").click(resizeTextArea);     
-    window.onload = onloadSite;
-</script>
 {% endblock %}

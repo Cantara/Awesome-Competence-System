@@ -42,13 +42,12 @@
 	</style>
 
 	{% if not user.is_anonymous %}
-	<script type='text/javascript' src='{{ STATIC_URL }}js/jquery-1.7.2.min.js'></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/expautocomplete.js"></script>
 		
 	<script language="JavaScript" type="text/javascript">
-	$(document).ready( function() 
-	{
+	$(document).ready( function() {
 		// Activate drag upon load
 		activateDrag();
 		
@@ -86,7 +85,32 @@
 				$(this).parent().children("div").hide(200);
 			}
 		});
-		
+
+	    $(".icon-resize-full").click();
+	    $("h2").click();
+
+	    function isRowEmpty( textarea , row ){
+	        return textarea.value.split("\n")[row-1] == "";
+	    }
+	    function isLessThanHalfEmpty(textarea){
+	        var rows = textarea.value.split("\n").length;
+	        var height = textarea.rows;
+	        if(rows < height/2) {
+	            return true;
+	        }
+	        return false;
+	    }
+	    function resizeTextArea(){
+	        if(isLessThanHalfEmpty(this)){
+	            $(this).attr('rows', this.rows / 2);
+	        }
+	        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+	            $(this).attr('rows', this.rows + 1);
+	        }
+	    }
+	    $("textarea").keyup(resizeTextArea);
+	    $("textarea").click(resizeTextArea);     
+
 		/*// Append stuff to Technologies
 		var popTechs = 
 		'<div id="popTechs"><h4>Popular technologies! Drag and drop it!</h4>' +

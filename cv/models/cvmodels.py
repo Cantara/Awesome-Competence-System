@@ -174,9 +174,13 @@ class Person(models.Model):
 				c = Cv(tags = 'Empty CV', person = self)
 				c.save()
 
+	def natural_key(self):
+		return (self.name, self.mail)
+
 	class Meta:
 		app_label = 'cv'
 		db_table = 'cv_person'
+		unique_together = (('name', 'mail'),)
 				
 class Technology(models.Model):
 	person = models.ForeignKey(Person)
