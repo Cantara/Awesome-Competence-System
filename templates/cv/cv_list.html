@@ -52,14 +52,21 @@
                     <label><input type="radio" name="sort" value="last_edited" onChange="sortingParams.toggle();"/>Last Edited</label><br/>
 				</div>
 			</div>
-
-			{% if user.is_authenticated %}
-				<div>
-					<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
-				</div>
-			{% endif %}
 	    </div>
 	</div><!--<label>Search options</label>-->
+
+    <div class="option animateheight">
+    	<span class="clickable" onClick="$('#optionsbox').toggleClass('hiddenopts');">
+    		<i class="icon-double-angle-right"></i>
+    	</span>
+    	<br/>
+		{% if user.is_authenticated %}
+			<div>
+				<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
+				<button id="showJsonBtn" class="butt"><i class="icon-plus-sign"></i> Show as JSON</button><br/>
+			</div>
+		{% endif %}
+    </div>
 
     <div class="option">
     	<a class="clickable" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
@@ -71,43 +78,6 @@
 {% endblock %}
 
 {% block content %}
-    <script type="text/javascript">
-        function addToEmailString(obj, email) {
-
-            var mailAndSemi = email + ";";
-
-            if(obj.checked) {
-                document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
-            }else{
-                document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
-            }
-
-            if(document.getElementById("emails").href == "mailto:") {                
-                $("#emailsText").html("No e-mails selected.");
-                document.getElementById("createMail").style.display = "none";
-            } else {
-                $("#emailsText").html("Click to get e-mails.");
-                document.getElementById("createMail").style.display = "";                
-            }
-
-        }
-        function toggle(source) {
-          checkboxes = document.getElementsByName('rowMailCheckbox');
-          for(var i=0, n=checkboxes.length;i<n;i++) {
-            if(source.checked != checkboxes[i].checked)
-            {
-                checkboxes[i].click();
-            }
-          }
-        }
-        function selectAllSetFalseTrigger() { 
-            if(document.getElementById("selectAllCheckbox").checked == true)
-            	document.getElementById("selectAllCheckbox").click();
-        }
-        $('#optionsinside').on('change','input', 
-            selectAllSetFalseTrigger
-        );
-    </script>
 	<form name="multicv" action="{% url cv_multi %}" method="get">
 		<div id="multicontrols" style="display:none;">
 
@@ -203,7 +173,7 @@
 		</div>
     
 
-	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+	<script src="//code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
 
 	<script id="persontemplate" type="text/x-dot-template">
@@ -347,8 +317,8 @@
 			renderResults: function(data) {
 				var html = "";
 				var self = this;
+				this.updateNumfound(data.response.numFound);
 				if(data.response.numFound > 0){
-					this.updateNumfound(data.response.numFound);
 					var ppl = data.response.docs;
 					for(var i=0, ppllength = ppl.length;i<ppllength;i++) {
 						var person = jQuery.parseJSON( data.response.docs[i].rendered );
@@ -356,7 +326,6 @@
 						html += this.personRenderer(person);
 					}
 				} else {
-					this.updateNumfound('');
 					html = "No people found for search " + data.responseHeader.params.q;
 				}
 				self.displayResults(html);
@@ -368,8 +337,7 @@
 			},
 
 			updateNumfound: function(num){
-				text = num > 0 ? " matches from " : "";
-				document.getElementById('numfound').innerHTML = num + text + this.totalCount;
+				document.getElementById('numfound').innerHTML = num + " matches from " + this.totalCount;
 			},
 
 			showFacets: function(facets){
@@ -731,6 +699,66 @@
 		}
 
 	</script>
+
+    <script type="text/javascript">
+        function addToEmailString(obj, email) {
+
+            var mailAndSemi = email + ";";
+
+            if(obj.checked) {
+                document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
+            }else{
+                document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
+            }
+
+            if(document.getElementById("emails").href == "mailto:") {                
+                $("#emailsText").html("No e-mails selected.");
+                document.getElementById("createMail").style.display = "none";
+            } else {
+                $("#emailsText").html("Click to get e-mails.");
+                document.getElementById("createMail").style.display = "";                
+            }
+
+        }
+        function toggle(source) {
+          checkboxes = document.getElementsByName('rowMailCheckbox');
+          for(var i=0, n=checkboxes.length;i<n;i++) {
+            if(source.checked != checkboxes[i].checked)
+            {
+                checkboxes[i].click();
+            }
+          }
+        }
+        function selectAllSetFalseTrigger() { 
+            if(document.getElementById("selectAllCheckbox").checked == true)
+            	document.getElementById("selectAllCheckbox").click();
+        }
+        $('#optionsinside').on('change','input', 
+            selectAllSetFalseTrigger
+        );
+
+		function downloadJson() {
+			var tempRows = cvlist.solrdata.rows;
+			var tempFl = cvlist.solrdata.fl;
+			cvlist.solrdata.fl = '*';
+			cvlist.solrdata.rows = 1000000;
+			jsonRequest = $.ajax({
+					type:"get",
+					url: cvlist.solrurl,
+					data: cvlist.solrdata,
+					traditional: true,
+					cache: false,
+					beforeSend: function(jqXHR, settings) {
+		            	jqXHR.url = settings.url;
+					}
+				});
+			window.open(jsonRequest.url);
+			cvlist.solrdata.fl = tempFl;
+			cvlist.solrdata.rows = tempRows;
+		}
+
+        $('#showJsonBtn').click(downloadJson);
+    </script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
 
 {% endblock %}

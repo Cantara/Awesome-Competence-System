@@ -21,8 +21,9 @@ nav li {display:inline-block; margin-right: 1em;}
     overflow-y: auto;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
+    box-shadow: 0 5px 6px 1px rgba(0,0,0,0.5);
 }
-.ui-autocomplete li { list-style: none !important; display:inline-block; border-bottom: 1px solid #ccc;}
+.ui-autocomplete li { list-style: none !important; display:inline-block; border-bottom: 1px solid #ccc; margin-bottom: 1em;}
 .ui-autocomplete a { color: #444 !important;}
 .ui-autocomplete li:hover a { color: #fff !important; font-weight: normal !important;}
 

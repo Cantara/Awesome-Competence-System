@@ -21,10 +21,11 @@ urlpatterns = patterns('cv.views',
     url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail', name='cv_detail_en'),
     
     url(r'^cv/download/$', 'download', name='cv_download'),
+    url(r'^cv/downloadasjson/(?P<cv_id>\d+)/$', 'downloadAsJson', name='cv_downloadasjson'),
     url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),
 
     url(r'^cv/expautocomplete/$', 'expautocomplete', name='cv_expautocomplete'),
-    
+
     url(r'^cv/nagmail/$', 'nagmail', name='cv_nagmail'),
     url(r'^cv/multinagmail/$', 'multinagmail', name='cv_multinagmail'),
 

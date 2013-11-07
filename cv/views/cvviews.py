@@ -214,6 +214,6 @@ from django.core import serializers
 def expautocomplete(request):
 	if(request.GET['term']):
 		term = request.GET['term']
-		es = Experience.objects.filter(company__icontains=term).select_related('person')
+		es = Experience.objects.filter(company__icontains=term) | Experience.objects.filter(description__icontains=term)
 		jsones = serializers.serialize('json', es, indent=2, use_natural_keys=True)
 	return HttpResponse(jsones)

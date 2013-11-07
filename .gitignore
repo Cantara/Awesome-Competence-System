@@ -7,3 +7,4 @@ static/media
 localsettings.py
 .htaccess
 .sass-cache/
+.idea/

@@ -26,7 +26,12 @@ $(function() {
         $(this).data('uiAutocomplete')._renderItem = function(ul, item) {
           return $( "<li>" )
             .attr( "data-value", item.fields.company )
-            .append( $( "<a>" ).html( item.fields.company + '<br>' + item.fields.description) )
+            .append( $( "<a>" ).html( 
+                '<strong>Author:</strong><br/>'+item.fields.person[0] +
+                '<br/><br/><strong>Company/Project:</strong><br/>' + item.fields.company + 
+                '<br/><br/><strong>Description:</strong><br/>' + item.fields.description + '<br/><br/>'
+              ) 
+            )
             .appendTo( ul );
         }
       }
