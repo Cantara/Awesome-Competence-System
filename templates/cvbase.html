@@ -25,7 +25,7 @@
 					{% if personpk %}<a class="btn btn-primary" href="https://{{ request.get_host }}/admin/cv/person/{{personpk}}/">My Profile</a> | {% endif %}
 					Welcome <strong>{{ user.username }}</strong>
 				</span>
-				<input type="submit" value="Log out" class="butt">
+				<input type="submit" value="Log out" class="butt" onClick="eraseCookie('whydahusertoken');">
 			{% else %}
 				<!--label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
 				<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/-->
@@ -191,8 +191,25 @@
 		width: 100% ;
 	}
 }
-
     </style>
+<script>
+	
+    function createCookie(name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        } else {
+            var expires = "";
+        } 
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
+
+</script>
 
 	{% block options %}
 	{% endblock %}
