@@ -29,12 +29,15 @@ def mylogin(request):
 
 def myRemoteLogin(request):
 	if request.method == 'POST':
-		redirect_url = request.POST.get('path', '/')
+		redirect_url = 'https://' + request.get_host() + request.POST.get('path', '/')
 		log.info(redirect_url)
 		if request.user.is_authenticated():
+			log.info('logging out')
 			logout(request)
-			return HttpResponseRedirect("http://acs02.cloudapp.net/")
+			response = HttpResponseRedirect(redirect_url)
+			response.delete_cookie(key='whydahusertoken', path='/', domain='aaacs02.cloudapp.net')
+			return response
 		else:
 			return HttpResponseRedirect("http://acs02.cloudapp.net/sso/login?redirectURI=" + redirect_url)
 	else:
-		return HttpResponseRedirect("http://acs02.cloudapp.net/")
+		return HttpResponseRedirect(redirect_url)

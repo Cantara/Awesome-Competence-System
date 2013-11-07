@@ -60,11 +60,9 @@
     		<i class="icon-double-angle-right"></i>
     	</span>
     	<br/>
+		<button id="showJsonBtn" class="butt"><i class="icon-plus-sign"></i> Show as JSON</button><br/>
 		{% if user.is_authenticated %}
-			<div>
-				<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
-				<button id="showJsonBtn" class="butt"><i class="icon-plus-sign"></i> Show as JSON</button><br/>
-			</div>
+			<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
 		{% endif %}
     </div>
 
