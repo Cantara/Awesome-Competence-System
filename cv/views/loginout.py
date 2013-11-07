@@ -36,7 +36,7 @@ def myRemoteLogin(request):
 			logout(request)
 			response = HttpResponseRedirect(redirect_url)
 			response.delete_cookie(key='whydahusertoken')
-			response.delete_cookie(key='whydahusertoken', path='/', domain='acs02.cloudapp.net')
+			response.delete_cookie(key='whydahusertoken', path='/', domain=request.get_host() )
 			response.set_cookie('whydahusertoken','WHY')
 			return response
 		else:
