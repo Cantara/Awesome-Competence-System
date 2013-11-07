@@ -35,9 +35,11 @@ def myRemoteLogin(request):
 			log.info('logging out')
 			logout(request)
 			response = HttpResponseRedirect(redirect_url)
-			response.delete_cookie(key='whydahusertoken', path='/', domain='aaacs02.cloudapp.net')
+			response.delete_cookie(key='whydahusertoken')
+			response.delete_cookie(key='whydahusertoken', path='/', domain='acs02.cloudapp.net')
+			response.set_cookie('whydahusertoken','WHY')
 			return response
 		else:
-			return HttpResponseRedirect("http://acs02.cloudapp.net/sso/login?redirectURI=" + redirect_url)
+			return HttpResponseRedirect("https://" + request.get_host() + "/sso/login?redirectURI=" + redirect_url)
 	else:
 		return HttpResponseRedirect(redirect_url)

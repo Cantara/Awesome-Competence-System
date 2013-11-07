@@ -16,9 +16,12 @@ class WhydahMiddleware(object):
 			log.info('You are not logged in - Attempting log in')
 			if request.method == 'GET':
 				userTokenID = request.COOKIES.get('whydahusertoken')
+				log.info('usertoken: ' + userTokenID)
 				if userTokenID is not None:
 					appToken = getAppToken('Styrerommet', 'dummy')
+					log.info('Attempting to get usertoken')
 					userToken = getUserToken(appToken, userTokenID)
+					log.info(userToken)
 					if userToken:
 						userTokenXML = ET.XML(userToken)
 						userName = userTokenXML.findtext('uid')
@@ -27,7 +30,7 @@ class WhydahMiddleware(object):
 						user.backend = 'django.contrib.auth.backends.ModelBackend'
 						request.user = user
 						login (request, user)
-						return HttpResponseRedirect("http://acs02.cloudapp.net/")
+						return # HttpResponseRedirect("http://acs02.cloudapp.net/")
 
 def getAppToken(appID, appPass):
 	values = { 'applicationcredential' : getAppCredXML(appID, appPass) }
