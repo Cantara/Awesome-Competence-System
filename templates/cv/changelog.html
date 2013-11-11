@@ -26,7 +26,8 @@
 			<tr><th colspan="5"><input class="search" /></th></tr>
 			<tr>
 				<th class="sort" data-sort="t_time">Time</th>
-				<th class="sort" data-sort="t_name">Person</th>
+				<th class="sort" data-sort="t_name">Person changed</th>
+				<th class="sort" data-sort="t_user">Edited by</th>
 				<th class="sort" data-sort="t_location">Location</th>
 				<th class="sort" data-sort="t_department">Department</th>
 				<th>Change</th>
@@ -45,6 +46,7 @@
 		            	<span>(Unknown content)</span>
 		            {% endif %}
 		        </td>
+				<td class="t_user">{{ entry.user }}</td>
 				<td class="t_location">{{ entry.location }}</td>
 				<td class="t_department">{{ entry.department }}</td>
 				<td>{{ entry.change_message }}</td>
@@ -61,7 +63,7 @@
 
 <script>
 	var options = {
-	    valueNames: [ 't_time', 't_name', 't_location', 't_department' ],
+	    valueNames: [ 't_time', 't_name', 't_user', 't_location', 't_department' ],
 		page: 50,
 		plugins: [
 		  [ 'paging' ]
