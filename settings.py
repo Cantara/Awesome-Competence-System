@@ -5,16 +5,6 @@ import os
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 WWW_ROOT = '/var/www/'
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
-
-
 import localsettings 
 
 DATABASES = {
