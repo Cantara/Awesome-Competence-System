@@ -81,7 +81,7 @@
 
 		    <div>
 		        <label class="ldetail" id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all listed e-mails</label><br/>
-	           <a id="emails" href="mailto:" class="butt"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
+	           <a id="emails" href="mailto:" class="butt" style="display:none"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
     			<a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>
 		    </div>
 
@@ -709,10 +709,11 @@
                 document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
             }
 
-            if(document.getElementById("emails").href == "mailto:") {                
-                $("#emailsText").html("No e-mails selected.");
+            if(document.getElementById("emails").href == "mailto:") {
+                $("#emails").hide();
                 document.getElementById("createMail").style.display = "none";
             } else {
+                $("#emails").show();
                 $("#emailsText").html("Click to get e-mails.");
                 document.getElementById("createMail").style.display = "";                
             }
