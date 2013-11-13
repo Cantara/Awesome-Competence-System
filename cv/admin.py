@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django import forms
 import logging
+log = logging.getLogger('cv')
 
 small = {
         models.TextField: { 'widget': Textarea( attrs = {'rows':2, 'cols':30 } ) },
@@ -85,6 +86,8 @@ class PersonAdmin(admin.ModelAdmin):
         return True
 
     def has_delete_permission(self, request, obj=None):
+        if request.path[-7:] == 'person/' and request.user.is_superuser:
+            return True
         return False
     
     def response_change(self, request, obj, post_url_continue=None):
@@ -114,12 +117,7 @@ class PersonAdmin(admin.ModelAdmin):
         sortedtechlist = [x for x in techlist.iteritems()]
         sortedtechlist.sort(key=lambda x: x[1])
         sortedtechlist.reverse()
-        #request.path[len(request.path) - 2]
-        
-        #the_id = Cv.objects.get(person=3).[0].pk
-        person_key = kwargs['obj'].pk
-        the_cvs = Person.objects.get(pk=person_key).cv_set.all()
-        
+
         t = []
         for i in sortedtechlist:
             if i[1] > 1:
@@ -128,8 +126,13 @@ class PersonAdmin(admin.ModelAdmin):
         extra = {
             'has_file_field': True, # Make your form render as multi-part.
             'techlist': t,
-            'cvs': the_cvs,
         }
+
+        try:
+            person_key = kwargs['obj'].pk
+            extra['cvs'] = Person.objects.get(pk=person_key).cv_set.all()
+        except:
+            pass
 
         context.update(extra)
         

@@ -12,7 +12,7 @@ def valid_XML_char_ordinal(i):
         )
     
 class PersonIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+    text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', faceted=True)
 
     rendered = indexes.CharField(use_template=True, indexed=False)

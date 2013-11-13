@@ -238,9 +238,8 @@ class TimedSkill(models.Model):
 			if self.to_month:
 				ym += self.to_month
 		else:
-			ym = self.from_year*100
-			if self.from_month:
-				ym += self.from_month
+			today = datetime.date.today()
+			ym = today.year * 100 + 13
 		return  ym
 	
 	def from_monthname(self):
@@ -445,7 +444,10 @@ from cv.search_indexes import PersonIndex
 
 # Triggers reindex of Solr on save.
 def cv_reindex_person(sender, **kwargs):
-	PersonIndex().update_object(kwargs['instance'].person)
+	try:
+		PersonIndex().update_object(kwargs['instance'].person)
+	except:
+		pass
 
 models.signals.post_save.connect(cv_reindex_person, sender=Cv)
 models.signals.post_save.connect(cv_reindex_person, sender=Technology)
