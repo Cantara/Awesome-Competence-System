@@ -21,9 +21,13 @@ class WhydahMiddleware(object):
 					userToken = getUserToken(appToken, userTokenID)
 					if userToken:
 						userTokenXML = ET.XML(userToken)
+						log.info('username:')
+						log.info(userTokenXML.findtext('firstname'))
 						userName = userTokenXML.findtext('uid')
-						useremail = userTokenXML.find('email')
-						user, created = User.objects.get_or_create(username = useremail)
+						useremail = userTokenXML.findtext('email')
+						firstname = userTokenXML.findtext('firstname')
+						lastname = userTokenXML.findtext('lastname')
+						user, created = User.objects.get_or_create(username = firstname, defaults={'email': useremail, 'first_name': firstname, 'last_name': lastname})
 						user.backend = 'django.contrib.auth.backends.ModelBackend'
 						request.user = user
 						login (request, user)
