@@ -77,22 +77,24 @@
 
 {% block content %}
 	<form name="multicv" action="{% url cv_multi %}" method="get">
-		<div id="multicontrols" style="display:none;">
-
-		    <div>
-		        <label class="ldetail" id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all listed e-mails</label><br/>
-	           <a id="emails" href="mailto:" class="butt" style="display:none"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
-    			<a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>
-		    </div>
-
-			Format:&nbsp;<select name="format" id="format">
-				<option value="doc">Microsoft Word (.doc)</option>
-				<option value="pdf">Adobe Reader (.pdf)</option>
-				<option value="odt">OpenDocument Text (.odt)</option>
-			</select>
-			<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
-            
-		</div>
+		<table id="multiresults" class="responsivetable" style="display:none">
+			<tr>
+				<th colspan="3">
+			        <label class="ldetail" id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all listed e-mails</label><br/>
+		           	<a id="emails" href="mailto:" class="butt" style="display:none"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
+	    			<a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>
+	    		</th>
+				<th>
+					Format:&nbsp;<select name="format" id="format">
+						<option value="doc">Microsoft Word (.doc)</option>
+						<option value="pdf">Adobe Reader (.pdf)</option>
+						<option value="odt">OpenDocument Text (.odt)</option>
+					</select>
+					<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+				</th>
+				<th>Download</th>
+			</tr>
+		</table>
 		<div id="results"></div>
 	</form>
 
@@ -106,14 +108,7 @@
 	  vertical-align: middle;
 	  margin-right: -0.25em; /* Adjusts for spacing */
 	}
-	#nagmail {
-		display: inline-block;
-		background: #fff;
-		vertical-align: middle;
-		text-align: left;
-		padding: 1em;
-	}
-    #multinagmail {
+	.mailbox {
 		display: inline-block;
 		background: #fff;
 		vertical-align: middle;
@@ -124,7 +119,7 @@
     
 		<div id="blanket" style="display: none;">
         {% if user.is_authenticated %}
-		    <div id="nagmail" style="display: none;">
+		    <div id="nagmail" class="mailbox" style="display: none;">
 				{% if user.person.completeness.percent < 100 %}
 					Your own profile is not complete, please fill it out before you nag others.
 					<div style="display:none;">
@@ -149,7 +144,7 @@
 		    </div>
         
         {% endif %}
-            <div id="multinagmail" style="display: none;">
+            <div id="multinagmail" class="mailbox" style="display: none;">
 				<form name="multinagmailform" id="multinagmailformid" style="display:none;">
 		    		{% csrf_token %}
 		    		<input type="hidden" name="receiver_email" value="">
@@ -222,45 +217,41 @@
 		</div>
 	</script> 
 
-	<style> 
-		.multiline {text-align: left; background: #fff; padding:.5em; margin: 0 0 3px .6em; font-size: 0.8em;}
-		.multileft {display: inline-block; min-width: 300px; width: 45%;}
-		.multiright {display: inline-block; min-width: 400px; vertical-align: top;}
-		.multiline h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-		.multiright label {display: inline-block; width: 300px; overflow: hidden; text-overflow: ellipsis;}
-        .testclass label{float:right}
-	</style>
-
 	<script id="multitemplate" type="text/x-dot-template">
-		<div class="multiline" id="p<%=p.id%>">
-			<div class="multileft">                
-				<div style="float: left; width:24px; height:24px; margin-right: .5em; <%?p.image%>background: url(/media/<%=p.image%>) no-repeat center; background-size: cover;<%?%>"></div>
-				<h3><%=p.name%><%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%> <%=p.title%></h4>
-				<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
-			</div>
-
-			<div class="multiright">
-				<%~p.cv :cv:index%>
-					<%? cv.tags != "Empty CV" %>
-						<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
-						<div>
-							<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" >&nbsp;<%=cv.tags%>&nbsp;(<%=cv.status.percent%>%)</label>&nbsp;
-							<a href="{% url cv_detail "999999" %}" class="butt" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
-							Download:&nbsp;
-							<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" class="butt" target="_blank">DOC</a>&nbsp;
-							<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" class="butt" target="_blank">PDF</a>&nbsp;
-							<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" class="butt" target="_blank">ODT</a>&nbsp;                            
-						</div>
-						<%?%>
-					<%?%>                 
-				<%~%>
-                
-			</div>
-            <span class="testclass">
-                <label>Mail<input type="checkbox" name="rowMailCheckbox" RightToLeft="Yes" onchange="addToEmailString(this, '<%=p.mail%>' )"/></label>          
-            </span>
-		</div>
-        
+		<%? p.cv %>
+			<tbody>
+			<%~p.cv :cv:index%>
+				<%? cv.status.percent > 0 %>
+				<tr id="p<%=p.id%>">
+					<%? !personwritten %>
+						<td rowspan="4">
+							<label style="width:24px; height:24px; display: inline-block; <%?p.image%>background: url(/media/<%=p.image%>) no-repeat center; background-size: cover;<%?%>">
+								<input type="checkbox" name="rowMailCheckbox" onchange="addToEmailString(this, '<%=p.mail%>' )" style="display:none"/>
+							</label>
+							</td>
+						<td rowspan="4">
+							<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
+							</td>
+						<td rowspan="4">
+							<h3><%=p.name%> <%=p.title%></h3>
+							<p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
+							</td>
+						<% var personwritten = true %>
+					<%?%>
+					<td data-title="Select CV">
+						<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
+						</td>
+					<td data-title="Download">
+						<a href="{% url cv_detail "999999" %}" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
+						<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" target="_blank">DOC</a>&nbsp;
+						<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" target="_blank">PDF</a>&nbsp;
+						<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" target="_blank">ODT</a>
+						</td>
+				</tr>
+				<%?%>
+			<%~%>
+			</tbody>
+		<%?%>
 	</script> 
 
 	<script id="facettemplate" type="text/x-dot-template">
@@ -288,13 +279,10 @@
 				var self = this;
 				self.multi = t.checked;
 				if(!t.checked){
-					$('#multicontrols').hide();
                     selectAllSetFalseTrigger();
-                    
-				} else {
-					$('#multicontrols').show();
 				}
 				self.renderResults(self.bufferedData);
+				self.updateUrl();
 			},
 			downloadMulti: function() {
 				if(this.multi){
@@ -316,6 +304,7 @@
 				var html = "";
 				var self = this;
 				this.updateNumfound(data.response.numFound);
+				$("#multiresults").children().slice(1).remove();
 				if(data.response.numFound > 0){
 					var ppl = data.response.docs;
 					for(var i=0, ppllength = ppl.length;i<ppllength;i++) {
@@ -326,12 +315,14 @@
 				} else {
 					html = "No people found for search " + data.responseHeader.params.q;
 				}
-				self.displayResults(html);
-				self.showHighlights(data.highlighting);
-			},
-
-			displayResults: function(text) {
-				$("#results").html(text);
+				if(this.multi) {
+					$("#results").empty();
+					$("#multiresults").show().append(html);
+				} else {
+					$("#multiresults").hide();
+					$("#results").html(html);
+					self.showHighlights(data.highlighting);
+				}
 			},
 
 			updateNumfound: function(num){
@@ -415,13 +406,12 @@
 				if(self.filterTxt != '') {
 					self.solrdata.q = self.filterTxt+" "+self.additionalParams;
 					self.solrdata.hl = 'true';
-					self.doSearch();
-					self.updateUrl();
 				} else {
 					self.solrdata.q = self.additionalParams + '*';
 					self.solrdata.hl = 'false';
-					self.doSearch();
 				}
+				self.doSearch();
+				self.updateUrl();
 			},
 
 			doSearch: function(){
@@ -444,10 +434,9 @@
 				var urlData = [
 					"exprange=[" + fq.exprange + "]",
 					"fq=" + JSON.stringify(fq.facets),
-					"q=" + self.filterTxt
+					"q=" + self.filterTxt,
+					"list=" + this.multi
 				];
-				if(fq.facets)
-				urlData.push
 				var newurl = "/?" + urlData.join("&");
 				window.history.replaceState({}, "title", newurl);
 			},
@@ -527,6 +516,12 @@
 								for(var x in initData.fq[key]){
 									self.toggleFacet(initData.fq[key][x], key, true, true);
 								}
+							}
+						}
+						// Set Multitoggle
+						if( initData.list !== undefined ){
+							if(initData.list=='true') {
+								$('#multicvcheck').click();
 							}
 						}
 						// Do search
@@ -718,14 +713,13 @@
         function toggle(source) {
           checkboxes = document.getElementsByName('rowMailCheckbox');
           for(var i=0, n=checkboxes.length;i<n;i++) {
-            if(source.checked != checkboxes[i].checked)
-            {
+            if(source.checked != checkboxes[i].checked) {
                 checkboxes[i].click();
             }
           }
         }
         function selectAllSetFalseTrigger() { 
-            if(document.getElementById("selectAllCheckbox").checked == true)
+            if(document.getElementById("selectAllCheckbox").checked)
             	document.getElementById("selectAllCheckbox").click();
         }
         $('#optionsinside').on('change','input', 

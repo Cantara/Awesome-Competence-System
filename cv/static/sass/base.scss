@@ -21,6 +21,12 @@ body {
 
 h1, h2, h3, h4, h5 {color: $text_c;}
 
+small {font-size: 85%;}
+
+a { color: $main_c; }
+a:hover {color: darken($main_c, 20%); }
+a:visited {color: darken($main_c, 40%); }
+
 /* START NAVIGATION */
 
 nav {
@@ -30,7 +36,7 @@ nav {
 	color: #fff;
 
 	a { 
-		color: #fff;
+		color: #fff !important;
 		text-decoration: none;
 		&:hover {
 			text-decoration: underline;
@@ -41,14 +47,15 @@ nav {
 }
 
 /* LOGINFORM */
-
 #loginform { display: block; float: right;}
 
 /* END NAVIGATION */
 
 /* START Content */
 
-#content {padding-bottom: 350px;}
+#content {
+	padding-bottom: 350px;
+}
 #actions {
 	padding: 1em;
 }
@@ -197,7 +204,6 @@ h1 {
 	-webkit-transition: max-height 0.2s; /* Safari and Chrome */
 }
 
-
 .rdetail, .ldetail {
 	font-size: .75em;
 	line-height: 1.5em;
@@ -305,9 +311,6 @@ fieldset.competence {
 /* FORM END*/
 
 
-
-
-
 /* BUTTON */
 button {border:none;}
 input.butt {
@@ -319,7 +322,7 @@ input.butt {
 	cursor: pointer;
 	background-color: #3877A5;
 	border-radius: 2px;
-	color: #fff;
+	color: #fff !important;
 	text-decoration: none;
 	padding: 0.5em;
 	display: inline-block;
@@ -349,3 +352,48 @@ input.butt {
 .remove { position: aboslute; right:0; top:0;}
 .red { background-color: #C21A01;}
 .red:hover { background-color: #F03C02;}
+
+/* Responsive table */
+$breakpoint-small: 720px;
+
+.responsivetable {
+	min-width: 300px;
+	background-color: #fff;
+	
+	tbody {
+		border-top: 1px solid #ddd;
+	}
+	
+	small {
+		color: #aaa;
+	}
+
+	th {
+		display: none;
+		text-transform: uppercase;
+		color: #aaa;
+		padding: .3em;
+	}
+
+	td {
+	display: block;
+	padding: .25em;
+	vertical-align: top;
+		&:before {
+			content: attr(data-th);
+			font-weight: bold;
+			display: inline-block;
+			@media (min-width: $breakpoint-small) {
+				display: none;
+			}
+		}
+	}
+
+	th, td {
+		text-align: left;
+		@media (min-width: $breakpoint-small) {
+			display: table-cell;
+		}
+	}
+
+}

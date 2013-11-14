@@ -2,7 +2,6 @@
 {% load i18n admin_static admin_modify bootstrapped_goodies_tags %}
 {% load url from future %}
 {% load admin_urls %}
- <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}hotfix.css" /><!-- -->
 {% block extrahead %}{{ block.super }}
 {% url 'admin:jsi18n' as jsi18nurl %}
 <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
