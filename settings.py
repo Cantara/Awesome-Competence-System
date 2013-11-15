@@ -7,23 +7,7 @@ WWW_ROOT = '/var/www/'
 
 import localsettings 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': localsettings.DBNAME, # Name of database
-        'USER': 'altranadmin@aeubq2l6zi',
-        'PASSWORD': localsettings.AZURE_DATABASE_PASSWORD,
-        'HOST': 'altrancv01', # Name of connection in settings
-    },
-}
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/cvapp/db/cv.db',                  # Or path to database file if using sqlite3.
-    }
-}
-'''
+DATABASES = localsettings.DATABASES
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

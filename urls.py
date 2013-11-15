@@ -4,14 +4,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-# Haystack
-from haystack.forms import FacetedSearchForm
-from haystack.query import SearchQuerySet
-from haystack.views import FacetedSearchView
-from haystack.views import SearchView, search_view_factory
-
-sqs = SearchQuerySet().facet('name').facet('location').facet('department')
-
 urlpatterns = patterns('cv.views',
 
     url(r'^$', 'cv_list'),
@@ -61,7 +53,5 @@ urlpatterns = patterns('cv.views',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^search/', include('haystack.urls')),
-    url(r'^fsearch/', FacetedSearchView(form_class=FacetedSearchForm, searchqueryset=sqs), name='haystack_search'),
-    url(r'^ajaxsearch/', search_view_factory(view_class=SearchView, template='search/ajaxsearch.html', searchqueryset=sqs, load_all=False), name='ajax_search'),
 
 )
