@@ -1,0 +1,156 @@
+{% extends "./cvbase.html" %}
+
+{% block title %}Edit Matrix{% endblock %}
+
+{% block actions %}
+	{% if user.is_authenticated %}
+		<h1>New Matrix</h1>
+		<a class="butt" onClick="Matrix.save()"><strong>Save</strong> matrix</a>
+		<a class="butt" onClick="Matrix.getJson()">Get JSON</a>
+		<br>
+		<span id="message"></span>
+	{% else %}
+		<h1>You do not have access to this page.</h1>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<form id="matrix">
+	<input type="hidden" name="m_id" id="m_id" value="{{ m.id }}">
+	{% autoescape off %}{{ groupcounter }}{% endautoescape %}
+	<div class="block">
+		<label><span>Matrix title:</span> <input type="text" name="title" data-validation="required" placeholder="Matrix title" value="{{ m.title }}"></label>
+		<label><span>Description:</span> <textarea type="text" name="description">{{ m.description }}</textarea></label>
+		<label><span>Legends:</span> <textarea type="text" name="legend" placeholder="Optional: Write about what each of step">{{ m.legend }}</textarea></label>
+		{% autoescape off %}{{ fields }}{% endautoescape %}
+		<a class="butt" id="addgroupbtn" onClick="addGroup()"><i class="icon-plus-sign"></i> Add <strong>Group</strong> to Matrix</a>
+	</div>
+</form>
+<script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.8.22.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formvalidator.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
+<script>
+
+	function addCompetence(group) {
+		var c = $('#competencecounter'+group);
+		c.val( Number(c.val()) + 1 );
+		$.get('{% url cv.views.addcompetence %}', {'num':c.val(), 'groupnum':group}, function(data){
+			//console.log(data);
+			$('#group'+group+' fieldset:last').after(data);
+			autoCom();
+		});
+	}
+
+	function removeCompetence(t) {
+		if(confirm('Are you sure you want to remove this?')){
+			$(t).parent().remove();
+		}
+	}
+
+	function addGroup() {
+		var g = $('#groupcounter');
+		g.val( Number(g.val()) + 1 );
+		$.get('{% url cv.views.addgroup %}',{'num':g.val()},function(data){
+			$('#addgroupbtn').before(data);
+			autoCom();
+		});
+	}
+
+
+	function msg(msgtxt) {
+		$('#message').html(msgtxt);
+	}
+
+
+	var Matrix = {
+		
+		defaultJson: '',
+
+		save: function() {
+			msg('Saving...');
+
+			if( $('#matrix').validate() ) {
+				console.log('Form valid - Saving');
+			
+				Matrix.defaultJson = Matrix.getJson();
+			
+				$.post('{% url cv.views.matrix_save %}', Matrix.defaultJson, function(data){
+					Matrix[data.action](data.m_id);
+					msg(data.message);
+				}).fail(function() { msg('Error saving!'); });
+			} else {
+				console.log('ERROR: Form invalid!');
+			}
+		},
+
+		saveNew: function(m_id) {
+			console.log('save new : ' + m_id);
+			$('#m_id').val(m_id);
+			Matrix.defaultJson = Matrix.getJson();
+		},
+
+		saveOld: function() {
+		},
+
+		getJson: function() {
+			var formdata = FormatJSON( $('#matrix').serializeObject() );
+			console.log(formdata);
+			return formdata;
+		}
+
+	}
+	
+	Matrix.defaultJson = Matrix.getJson();
+
+	function autoCom(){
+		console.log('Autocomplete activate.');
+		$( ".competence .title" ).autocomplete({
+			source: "{% url cv.views.ajaxcompetencelist %}",
+			minLength: 1,
+			select: function( event, ui ) {
+				autocompleteSelected( event, ui, this );
+			}
+		});
+	}
+
+	autoCom();
+
+	function autocompleteSelected( event, ui, t ) {
+		
+		baseId = '#' + t.id;
+		idId = baseId+'i';
+		descId = baseId+'d';
+
+		$(idId).val(ui.item.data.id);
+		$(descId)
+			.val(ui.item.data.description)
+			.attr('disabled', true);
+		$(t).attr('disabled', true);
+
+	}
+
+	window.onbeforeunload = function(){
+		if ( Matrix.defaultJson != Matrix.getJson() ) {
+			return 'You have unsaved changes, are you sure you want to leave this page?';
+		}
+		return;
+	};
+
+	function lock(t) {
+		if(t.checked) {
+			$(t.id+'icon').addClass('icon-lock').removeClass('icon-unlock');
+		} else {
+			$(t.id+'icon').addClass('icon-unlock').removeClass('icon-lock');
+		}
+		var baseId = '#'+t.id.slice(0,-4);
+		$(baseId).attr('disabled', t.checked);
+		$(baseId+'d').attr('disabled', t.checked);
+	}
+
+</script>
+
+{% endif %}
+
+{% endblock %}

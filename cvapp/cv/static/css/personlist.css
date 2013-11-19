@@ -1,0 +1,122 @@
+* {margin:0; padding:0;}
+
+#content {position: absolute; top: 20px; left: 160px;}
+
+#menu {
+	width: 100px; 
+	padding: 10px; 
+	position:fixed; 
+	left: 20px; 
+	top: 20px; 
+	text-align: center;
+	}
+
+h1 {
+	margin-bottom: 10px; 
+	font-size: 1.3em; 
+	font-weight: normal; 
+	display: block;
+	}
+
+.person {
+	margin: 0 20px 20px 0;
+	padding: 20px; 
+	max-width: 260px;
+	min-width: 260px;
+	height: 110px;
+	float: left; 
+	text-align: left;
+	position: relative;
+			transition-property: min-width, max-width, opacity, top, left, right, bottom;
+		 -o-transition-property: min-width, max-width, opacity, top, left, right, bottom; /* Opera */
+	   -moz-transition-property: min-width, max-width, opacity, top, left, right, bottom; /* Firefox 4 */
+	-webkit-transition-property: min-width, max-width, opacity, top, left, right, bottom; /* Safari and Chrome */
+			transition-duration: 0.5s;
+		 -o-transition-duration: 0.5s; /* Opera */
+	   -moz-transition-duration: 0.5s; /* Firefox 4 */
+	-webkit-transition-duration: 0.5s; /* Safari and Chrome */
+	}
+
+.last {
+	margin-bottom: 15em;
+}	
+	
+.cvset {
+	display: inline-block;
+	background: white;
+	border-radius: 0 0 5px 5px;
+	max-height: 0px;
+	max-width: 0px;
+	overflow: hidden;
+	position: absolute;
+	top:150px;
+	left:20px;
+	z-index: 500;
+	/* onMouseOut: Width waits until height is done before shrinking */
+			transition: max-height 0.3s, max-width 0 ease 0.3s;
+		 -o-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Opera */
+	   -moz-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Firefox 4 */
+	-webkit-transition: max-height 0.3s, max-width 0 ease 0.3s; /* Safari and Chrome */
+}
+
+.person:hover .cvset {
+	max-height: 220px;
+	max-width: 260px;
+	/* onMouseOver: Width expands immediately before height transitions */
+			transition: max-height 0.3s, max-width 0 ease 0;
+		 -o-transition: max-height 0.3s, max-width 0 ease 0; /* Opera */
+	   -moz-transition: max-height 0.3s, max-width 0 ease 0; /* Firefox 4 */
+	-webkit-transition: max-height 0.3s, max-width 0 ease 0; /* Safari and Chrome */
+}
+	
+.photo {
+	max-width: 50px;
+	max-height: 50px;
+	margin-right: 10px; 
+	}
+
+ul {list-style: none;}
+
+.personhead {
+	height: 130px;
+}
+
+
+.edit {float: right;}
+
+#printlogo {width: 60px; margin: 10px auto 20px auto; clear: both;}
+
+.dato {font-size: 0.7em;}
+
+.hidden {
+	max-width: 0px;
+	min-width: 0px;
+	width:0; height:0;
+	opacity: 0;
+	padding:0!important;
+	margin:0!important;
+	overflow: hidden;
+}
+
+.techs {display:none;}
+
+h4 {
+	font-weight: normal;
+	font-size: 1.1em; 
+	margin-bottom: 5px;
+	}
+h3 {
+	font-weight: normal;
+	font-size: 0.8em;
+}
+
+label {
+	font-size: 0.7em;
+}
+
+h5 {color: #777; font-weight: normal; margin-bottom: 15px;}
+
+acronym {
+	cursor: help;
+	border-bottom: 1px dotted #999;
+}

@@ -1,0 +1,747 @@
+{% extends "./cvbase.html" %}
+{% load image_tags %}
+
+{% block title %}CV{% endblock %}
+
+{% block extrastyles %}
+		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/nouislider.fox.css"/>
+{% endblock %}
+
+{% block actions %}
+	<h1>ACS Persons</h1>
+	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search" autofocus/>
+	<p id="numfound" class="small"></p>
+{% endblock %}
+
+{% block options %}
+<div id="optionsbox"{% if not g %} class="hiddenopts"{% endif %}>
+    
+    <div class="option">
+		<h3>View</h3>
+		<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);"><i class="icon-th"></i><i class="icon-list"></i></label>
+    </div>
+    
+    <div class="option animateheight">
+    	<span class="clickable" onClick="$('#optionsbox').toggleClass('hiddenopts');">
+    		<i class="icon-double-angle-right"></i>
+    	</span>
+    	<div id="optionsinside">
+			<div id="facets">
+				<div class="filter">
+					<h3>Years of experience</h3>
+					<div style="text-align: center;">
+						<div id="expslider" class="noUiSlider" style="margin: 1em auto; width: 200px;"></div>
+						<input type="text" id="expfrom" size="3"/> <input type="text" id="expto" size="3"/>
+					</div>
+				</div>
+				<div class="filter">
+					<h3>Has completed CV</h3>
+						<label><input type="radio" checked name="hasfullcv" onChange="additionalParams.toggle('fullcv',0);"/>Show all</label><br/>
+						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',1);"/>Show completed</label><br/>
+						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',-1);"/>Show incomplete</label><br/>
+				</div>
+                
+				<div class="filter">                
+					<h3>Sorting</h3>
+                    <select id="asc_desc_sort" onChange="sortingParams.toggle();">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select></br>
+                    <label><input type="radio" name="sort" value="years_of_experience" onChange="sortingParams.toggle();"/>Years of experience</label><br/>
+                    <label><input type="radio" name="sort" value="name_exact" onChange="sortingParams.toggle();"/>Name</label><br/>
+                    <label><input type="radio" name="sort" value="last_edited" onChange="sortingParams.toggle();"/>Last Edited</label><br/>
+				</div>
+			</div>
+	    </div>
+	</div><!--<label>Search options</label>-->
+
+    <div class="option animateheight">
+    	<span class="clickable" onClick="$('#optionsbox').toggleClass('hiddenopts');">
+    		<i class="icon-double-angle-right"></i>
+    	</span>
+    	<br/>
+		<button id="showJsonBtn" class="butt"><i class="icon-plus-sign"></i> Show as JSON</button><br/>
+		{% if user.is_authenticated %}
+			<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
+		{% endif %}
+    </div>
+
+    <div class="option">
+    	<a class="clickable" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
+    		<i class="icon-question-sign"></i>
+    	</a>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block content %}
+	<form name="multicv" action="{% url cv_multi %}" method="get">
+		<table id="multiresults" class="responsivetable" style="display:none">
+			<tr>
+				<th colspan="3">
+					{% if user.is_authenticated %}
+			        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
+		           	<a id="emails" href="mailto:" class="butt" style="display:none"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
+	    			<a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>
+	    			{%endif%}
+	    		</th>
+				<th>
+					Format:&nbsp;<select name="format" id="format">
+						<option value="doc">.DOC</option>
+						<option value="pdf">PDF</option>
+						<option value="odt">ODT</option>
+					</select>
+					<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+				</th>
+				<th>Download</th>
+			</tr>
+		</table>
+		<div id="results"></div>
+	</form>
+
+        {% if user.is_authenticated %}
+		<div id="blanket" style="display: none;">
+		    <div id="nagmail" class="mailbox" style="display: none;">
+				{% if user.person.completeness.percent < 100 %}
+					Your own profile is not complete, please fill it out before you nag others.
+					<div style="display:none;">
+				{% endif %}
+		    	<form name="nagmailform" id="nagmailformid" style="display:none;">
+		    		{% csrf_token %}
+		    		<h3>Tell <span id="nagname">Name</span> why you need them to update their CV:</h3>
+		    		<input type="hidden" name="receiver_id">
+		    		<input type="hidden" name="sendermail" value="{{ user.email }}">
+		    		<input type="hidden" name="sendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
+		    		<textarea name="message" cols="30" rows="6" placeholder="Message"></textarea>
+		    		<br/>
+		    		<input type="button" class="butt" onClick="nagmail.submit();" value="Nag!">
+		    	</form>
+				{% if user.person.completeness.percent < 100 %}
+					</div>
+				{% endif %}
+		    	<section id="nagresponse">
+		    		<p id="nagresponsemsg"></p>
+		    		<button class="butt" onClick="nagmail.hide();">Close</button>
+		    	</section>
+		    </div>
+        
+            <div id="multinagmail" class="mailbox" style="display: none;">
+				<form name="multinagmailform" id="multinagmailformid" style="display:none;">
+		    		{% csrf_token %}
+		    		<input type="hidden" name="receiver_email" value="">
+		    		<input type="hidden" name="multisendermail" value="{{ user.email }}"><!--  -->
+		    		<input type="hidden" name="multisendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
+                    <h3>Send a message to all of those who you selected.</h3>
+		    		<textarea name="message" cols="30" rows="6" placeholder="Message"></textarea>
+                    <br/>
+                    <!--    <label>Send me a copy<input type="checkbox" name="checkboxcopy" value="false">                 
+                    <br/> -->
+                    <br/>
+                    <a onClick="multinagmail.submit(); return false;" class="butt"><i class="icon-mail-reply"></i> Send message</a>                    
+		    	</form>
+		    	<section id="multinagresponse">
+		    		<p id="multinagresponsemsg"></p>
+                    <a onClick="multinagmail.hide(); return false;" class="butt">Close</a>
+		    	</section>
+		    </div>
+		</div>
+        {% endif %}
+    
+
+	<script src="//code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
+
+	<script id="persontemplate" type="text/x-dot-template">
+		<div class="block tiled" id="p<%=p.id%>">
+			<header>
+				<h3><%=p.name%></h3>
+				<h4><%=p.title%></h4>
+			</header>
+			<%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
+
+			<div class="completeness">
+				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
+			</div>
+			<section>
+				{% if user.is_authenticated %}<a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt" style="float: right;">Nag</a>{% endif %}
+				<p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
+				<%=p.mail%></p>
+			</section>
+			<div class="cvset">
+				{% if user.is_authenticated %}
+					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
+					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
+					<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
+						<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+					<%?%>
+				{% endif %}
+				<table>
+				<%~p.cv :cv:index%>
+					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
+					<tr>
+						<td>
+							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
+							<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>
+								<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>
+							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
+						</td>
+						{% if user.is_authenticated %}
+							<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
+								<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
+								<span class="dato">CV</span></a></td>
+							<%?%>
+						{% endif %}
+					</tr>
+					<%?%>
+				<%~%>
+				</table>
+			</div>
+		</div>
+	</script> 
+
+	<script id="multitemplate" type="text/x-dot-template">
+		<%? p.cv %>
+			<tbody>
+			<%~p.cv :cv:index%>
+				<%? cv.status.percent > 0 %>
+				<tr id="p<%=p.id%>">
+					<%? !personwritten %>
+						<td rowspan="4">
+							<label class="imgcheckbox" id="p<%=p.id%>imgcheckbox" style="<%?p.image%>background-image: url(/media/<%=p.image%>); <%?%>">
+								<input type="checkbox" id="p<%=p.id%>checkbox" name="rowMailCheckbox" onchange="addToEmailString(this, '<%=p.mail%>' )" style="display:none"/>
+							</label>
+							</td>
+						<td rowspan="4">
+							<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
+							</td>
+						<td rowspan="4">
+							<label for="p<%=p.id%>checkbox" class="textcheckbox">
+							<h3><%=p.name%> <%=p.title%></h3>
+							<p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
+							</label>
+							</td>
+						<% var personwritten = true %>
+					<%?%>
+					<td data-title="Select CV">
+						<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
+						</td>
+					<td data-title="Download">
+						<a href="{% url cv_detail "999999" %}" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
+						<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" target="_blank">DOC</a>&nbsp;
+						<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" target="_blank">PDF</a>&nbsp;
+						<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" target="_blank">ODT</a>
+						</td>
+				</tr>
+				<%?%>
+			<%~%>
+			</tbody>
+		<%?%>
+	</script> 
+
+	<script id="facettemplate" type="text/x-dot-template">
+		<label><input type="checkbox" name="<%=p.name%>" id="<%=p.id%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this.checked);"/><%=p.name%></label><br/>
+	</script>
+
+	<script id="init_data" type="application/json">
+		{{ g|safe }}
+	</script>
+	<script src="{{ STATIC_URL }}js/jquery.nouislider.min.js"></script>
+	<script>
+		var cvlist = {
+
+			facetTemplate: $('#facettemplate').text(),
+			facetRenderer: '',
+
+			personStandardTemplate: $('#persontemplate').text().replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>'),
+			personStandardRenderer: '',
+
+			personMultiTemplate: $('#multitemplate').text().replace('XXXcvidXXX','<%=cv.id%>').replace('XXXpidXXX','<%=p.id%>').replace('999999','<%=cv.id%>'),
+			personMultiRenderer: '',
+
+			multi: false,
+			toggleMulti: function(t) {                
+				var self = this;
+				self.multi = t.checked;
+				if(!t.checked){
+                    selectAllSetFalseTrigger();
+				}
+				self.renderResults(self.bufferedData);
+				self.updateUrl();
+			},
+			downloadMulti: function() {
+				if(this.multi){
+					document.forms['multicv'].submit();
+				} else {
+					alert('No soup for you.');
+				}
+			},
+
+			personRenderer: function(data) {
+				if(!this.multi){
+					return this.personStandardRenderer(data);
+				} else {
+					return this.personMultiRenderer(data);
+				}
+			},
+
+			renderResults: function(data) {
+				var html = "";
+				var self = this;
+				this.updateNumfound(data.response.numFound);
+				$("#multiresults").children().slice(1).remove();
+				if(data.response.numFound > 0){
+					var ppl = data.response.docs;
+					for(var i=0, ppllength = ppl.length;i<ppllength;i++) {
+						var person = jQuery.parseJSON( data.response.docs[i].rendered );
+						person.image = person.image.replace(/(.jpg|.png)/gi,'_scale_110x110.jpg');
+						html += this.personRenderer(person);
+					}
+				} else {
+					html = "No people found for search " + data.responseHeader.params.q;
+				}
+				if(this.multi) {
+					$("#results").empty();
+					$("#multiresults").show().append(html);
+				} else {
+					$("#multiresults").hide();
+					$("#results").html(html);
+					self.showHighlights(data.highlighting);
+				}
+			},
+
+			updateNumfound: function(num){
+				document.getElementById('numfound').innerHTML = num + " matches from " + this.totalCount;
+			},
+
+			showFacets: function(facets){
+				var facethtml = "";
+				for( var facet in facets ){
+					var content = "";
+					if(facet == 'years_of_experience_exact') {
+						var maxValue = 0;
+						var curValue = 0;
+						for (var j=0;j<facets[facet].length;j+=2){
+							curValue = parseInt(facets[facet][j]);
+							if( curValue > maxValue ) {
+								maxValue = curValue;
+							}
+						}
+						$("#expslider").noUiSlider({
+						    range: [0, maxValue]
+						   ,start: [0, maxValue]
+						   ,step: 1
+						   ,slide: function(){
+						   		fq.updateExprange( $(this).val() );
+						   }
+						   ,serialization: {
+						      to: [$("#expfrom"),$("#expto")]
+						     ,resolution: 1
+						   }
+						});
+					} else {
+						for (var i=0;i<facets[facet].length;i+=2){
+							var facetdata = {
+								facet: facet,
+								name: facets[facet][i],
+								count: facets[facet][i+1],
+								id: facets[facet][i].replace(' ','')
+							}
+							content += this.facetRenderer(facetdata);
+						}
+						facethtml += '<div class="filter"><h3>'+facet.replace('_exact','')+'</h3>'+content+'</div>';
+					}
+				}
+				$("#facets").append( facethtml );	
+			},
+
+			toggleFacet: function(facet,facetname,t,checkit){
+				// fq:['location:(oslo OR gothenburg)','department:software engineering']
+				var facetentry = facetname+":"+facet;
+				if(t){
+					fq.addFacet(facet, facetname);
+				} else {
+					fq.removeFacet(facet, facetname);
+				}
+				if(checkit){
+					document.getElementById( facet.replace(' ','') ).checked = true;
+				}
+			},
+
+			showHighlights: function(highlights){
+				for( var person in highlights ){
+					var pid = person.replace(/cv.person./, 'p');
+					for( var highlight in highlights[person] ) {
+						$('#'+pid + ' .cvset').prepend('<div class="highlight">...'+highlights[person][highlight]+'...</div>');
+					}
+				}
+			},
+
+			additionalParams: '',
+
+			prepSearch: function(t){
+				var self = this;
+			    if(typeof self.searchrequest !== 'undefined'){
+			        self.searchrequest.abort();
+			        console.log('aboerted');
+			    }
+			    if(t){
+					self.filterTxt = $(t).val();
+			    }
+				if(self.filterTxt != '') {
+					self.solrdata.q = self.filterTxt+" "+self.additionalParams;
+					self.solrdata.hl = 'true';
+				} else {
+					self.solrdata.q = self.additionalParams + '*';
+					self.solrdata.hl = 'false';
+				}
+				self.doSearch();
+				self.updateUrl();
+			},
+
+			doSearch: function(){
+				var self = this;
+				self.searchrequest = $.ajax({
+					type:"get",
+					url: self.solrurl,
+					data: self.solrdata,
+					traditional: true,
+					cache: false
+				}).done(function( data ) {
+					data = jQuery.parseJSON( data );
+					self.bufferedData = data;
+					self.renderResults(data);
+				});
+			},
+
+			updateUrl: function(){
+				if( window.history.replaceState ) {
+					var self = this;
+					var urlData = [
+						"exprange=[" + fq.exprange + "]",
+						"fq=" + JSON.stringify(fq.facets),
+						"q=" + self.filterTxt,
+						"list=" + this.multi
+					];
+					var newurl = "/?" + urlData.join("&");
+					window.history.replaceState({}, "title", newurl);
+				}
+			},
+
+			solrurl: "/solr/collection1/select",
+		 	solrdata: {
+		 		'q':'*',
+		 		'wt':'json',
+		 		'indent':'true',
+		 		'sort':'name_exact asc',
+		 		'rows':50,
+		 		'hl': 'false',
+		 		'fl': 'rendered',
+		 		'facet': 'true',
+		 		'facet.field': [
+		 			'location_exact', 
+		 			'department_exact',
+		 			'years_of_experience_exact'
+		 			], 
+		 		'fq':[]
+		 	},
+		 	bufferedData: '',
+		 	totalCount: 0,
+		 	filterTxt: '',
+		 	hasParameters: {% if g %}true{% else %}false{% endif %},
+			init: function() {
+				var self = this;
+
+				doT.templateSettings = {
+				  evaluate:    /\<\%([\s\S]+?)\%\>/g,
+				  interpolate: /\<\%=([\s\S]+?)\%\>/g,
+				  encode:      /\<\%!([\s\S]+?)\%\>/g,
+				  use:         /\<\%#([\s\S]+?)\%\>/g,
+				  define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
+				  conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
+				  iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
+				  varname: 'p',
+				  strip: true,
+				  append: true,
+				  selfcontained: false
+				};
+
+				self.personStandardRenderer = doT.template(self.personStandardTemplate);
+				self.personMultiRenderer = doT.template(self.personMultiTemplate);
+				self.facetRenderer = doT.template(self.facetTemplate);
+
+				self.searchrequest = $.ajax({
+					type:"get",
+					url: self.solrurl,
+					data: self.solrdata,
+					traditional: true,
+					cache: false
+				}).done(function( data ) {
+					data = jQuery.parseJSON( data );
+					self.totalCount = data.response.numFound;
+					self.bufferedData = data;
+					self.renderResults(data);
+					self.showFacets(data.facet_counts.facet_fields);
+					if(self.hasParameters) {
+						var jsonText = document.getElementById('init_data').innerHTML;
+						var initData = JSON.parse(jsonText);
+						// Set Querystring
+						if( initData.q !== undefined ){
+							self.filterTxt = initData.q;
+							document.getElementById('filter').value = self.filterTxt;
+						}
+						// Set Experience Range
+						if( initData.exprange !== undefined){
+							var range = jQuery.parseJSON( initData.exprange );
+							$("#expslider").val(range);
+							fq.updateExprange(range);
+						}
+						// Set Facets
+						if( initData.fq !== undefined ){
+							initData.fq = jQuery.parseJSON( initData.fq );
+							for(var key in initData.fq){
+								for(var x in initData.fq[key]){
+									self.toggleFacet(initData.fq[key][x], key, true, true);
+								}
+							}
+						}
+						// Set Multitoggle
+						if( initData.list !== undefined ){
+							if(initData.list=='true') {
+								$('#multicvcheck').click();
+							}
+						}
+						// Do search
+						self.prepSearch();
+					}
+				});
+
+			}
+
+		};
+
+		cvlist.init();
+
+		$('#filter').keyup( function(event) {
+			cvlist.prepSearch(this);
+		});
+
+		var fq = {
+			// facets: { facetname1: [facet1, facet2, facet3], facetname2: [facet4, facet5] }
+			facets: {},
+			exprange: [0,100],
+			addFacet: function(facet, facetname) {
+				if(this.facets[facetname] === undefined)
+					this.facets[facetname] = [];
+				this.facets[facetname].push(facet);
+				this.updateFq();
+			},
+			removeFacet: function(facet, facetname) {
+				var i = this.facets[facetname].indexOf(facet);
+				if(i >= 0) {
+					this.facets[facetname].splice(i, 1);
+				}
+				this.updateFq();
+			},
+			updateFq: function(){
+				var results = [];
+				var result = "";
+				for( var f in this.facets ) {
+					if( this.facets[f].length > 0 ) {
+						result = f + ":(";
+						for(i=0;i<this.facets[f].length;i++) {
+							result += '"'+this.facets[f][i]+'"';
+							if(this.facets[f][+i+1] !== undefined) 
+								result+=" OR ";
+						}
+						result += ")";
+					}
+					results.push(result);
+				}
+				results.push('years_of_experience_exact:['+this.exprange[0]+' TO '+this.exprange[1]+']');
+				cvlist.solrdata.fq = results;
+				cvlist.doSearch();
+				cvlist.updateUrl();
+			},
+			updateExprange: function(vals){
+		   		this.exprange = vals;
+		   		this.updateFq();
+			}
+		}
+
+		var additionalParams = {
+			params: {
+				'fullcv':[0, 'fulljson:"completeness+percent+100"~1']
+			},
+			toggle: function(param, t) {
+				var self = this;
+				self.params[param][0] = t;
+				var allparams = "";
+				for (var k in self.params) {
+					if(self.params[k][0]!=0) {
+						var neg = "";
+						if(self.params[k][0]<0) { neg = "-" }
+						allparams += " " + neg + self.params[k][1];
+					}
+				}
+				cvlist.additionalParams = allparams;
+				cvlist.prepSearch();
+			}
+		}
+
+		var sortingParams = {
+			toggle: function() {
+				var self = this;
+                var sort = "";
+                var sortInputs = document.getElementsByName('sort');
+                for(var i = 0; i < sortInputs.length; i++) { 
+                	if(sortInputs[i].checked){
+                		sort = sortInputs[i].value;
+                	}
+                }
+                sort += " " + document.getElementById('asc_desc_sort').value;
+				cvlist.solrdata.sort = sort;
+				cvlist.prepSearch();
+			}
+		}
+
+		var nagmail = {
+			dialog: $('#nagmail'),
+			blanket: $('#blanket'),
+			nagname: $('#nagname'),
+			nagform: $('#nagmailformid'),
+			show: function(name, pid) {
+				this.nagform.show();
+				document.forms.nagmailform.receiver_id.value = pid;
+				document.getElementById('nagname').innerHTML = name;
+				this.blanket.show();
+				this.dialog.show();
+			},
+			hide: function() {
+				this.dialog.hide();
+				this.blanket.hide();
+				document.getElementById('nagresponsemsg').innerHTML = '';
+				document.getElementById('nagname').innerHTML = '';
+				document.forms.nagmailform.message.value = '';
+			},
+			submit: function() {
+				var self = this;
+				var formdata = self.nagform.serialize();
+				$.ajax({
+					type: "POST",
+					url: "{% url cv_nagmail %}",
+					data: formdata
+				}).done(function( msg ) {
+					self.nagform.hide();
+					document.getElementById('nagresponsemsg').innerHTML = msg;
+				}).fail(function( response ) {
+					document.getElementById('nagresponsemsg').innerHTML = response.responseText;
+				});
+			}
+		}
+        
+        var multinagmail = {
+			dialog: $('#multinagmail'),
+			blanket: $('#blanket'),
+			nagform: $('#multinagmailformid'),
+			show: function() {
+				this.nagform.show();
+                var emails = document.getElementById("emails").href;
+                emails = emails.replace("mailto:", "");
+				document.forms.multinagmailform.receiver_email.value = emails;
+				this.blanket.show();
+				this.dialog.show();
+			},
+			hide: function() {
+				this.dialog.hide();
+				this.blanket.hide();
+				document.getElementById('multinagresponsemsg').innerHTML = '';
+				document.forms.multinagmailform.message.value = '';
+			},
+			submit: function() {
+				var self = this;
+				var formdata = self.nagform.serialize();
+				$.ajax({
+					type: "POST",
+					url: "{% url cv_multinagmail %}",
+					data: formdata
+				}).done(function( msg ) {
+					self.nagform.hide();
+					document.getElementById('multinagresponsemsg').innerHTML = msg;
+				}).fail(function( response ) {
+					document.getElementById('multinagresponsemsg').innerHTML = response.responseText;
+				});
+			}
+		}
+
+        function addToEmailString(obj, email) {
+
+            var mailAndSemi = email + ";";
+
+            if(obj.checked) {
+            	$(obj).parents().eq(3).addClass('selectedtbody');
+                document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
+            }else{
+            	$(obj).parents().eq(3).removeClass('selectedtbody');
+                document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
+            }
+
+            if(document.getElementById("emails").href == "mailto:") {
+                $("#emails").hide();
+                document.getElementById("createMail").style.display = "none";
+            } else {
+                $("#emails").show();
+                $("#emailsText").html("Get e-mails");
+                document.getElementById("createMail").style.display = "";                
+            }
+
+        }
+        function toggle(source) {
+          checkboxes = document.getElementsByName('rowMailCheckbox');
+          for(var i=0, n=checkboxes.length;i<n;i++) {
+            if(source.checked != checkboxes[i].checked) {
+                checkboxes[i].click();
+            }
+          }
+        }
+        function selectAllSetFalseTrigger() { 
+            if(document.getElementById("selectAllCheckbox").checked)
+            	document.getElementById("selectAllCheckbox").click();
+        }
+        $('#optionsinside').on('change','input', 
+            selectAllSetFalseTrigger
+        );
+
+		function downloadJson() {
+			var tempRows = cvlist.solrdata.rows;
+			var tempFl = cvlist.solrdata.fl;
+			cvlist.solrdata.fl = '*';
+			cvlist.solrdata.rows = 1000000;
+			jsonRequest = $.ajax({
+					type:"get",
+					url: cvlist.solrurl,
+					data: cvlist.solrdata,
+					traditional: true,
+					cache: false,
+					beforeSend: function(jqXHR, settings) {
+		            	jqXHR.url = settings.url;
+					}
+				});
+			window.open(jsonRequest.url);
+			cvlist.solrdata.fl = tempFl;
+			cvlist.solrdata.rows = tempRows;
+		}
+
+        $('#showJsonBtn').click(downloadJson);
+        $('#multiresults').on('mouseenter mouseleave', '.textcheckbox', function(e) {
+		    var id = '#'+$(this).attr('for').replace('checkbox','imgcheckbox');
+		    if(e.type=='mouseenter'){
+		    	$(id).addClass('imgcheckboxhover');
+		    } else {
+		    	$(id).removeClass('imgcheckboxhover');
+		    }
+		});
+    </script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
+
+{% endblock %}

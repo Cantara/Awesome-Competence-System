@@ -1,0 +1,28 @@
+<fieldset id="{{ fieldtype }}{{ num }}" class="{{ fieldtype }}">
+	{% if fieldtype = "competence" %}
+		<label>
+			<span>{{ fieldtype|capfirst }} title: </span>
+			<input type="text" class="title" data-validation="required" name="group[{{ groupnum }}][competence][{{ num }}][title]" id="g{{ groupnum }}c{{ num }}" placeholder="{{ fieldtype|capfirst }} title" value="{{ title }}" {{ readonly }}>
+		</label><!--
+		--><label>
+			<span>Description: </span>
+			<textarea name="group[{{ groupnum }}][competence][{{ num }}][description]" id="g{{ groupnum }}c{{ num }}d" {{ readonly }}>{{ description }}</textarea>
+		</label>
+		<input type="hidden" name="group[{{ groupnum }}][competence][{{ num }}][existing_id]" id="g{{ groupnum }}c{{ num }}i" value="{{ existing_id }}">
+		<label class="lock red"><i class="icon-lock" id="g{{ groupnum }}c{{ num }}lockicon"></i> Lock <input type="checkbox"{% if readonly %} checked{% endif %} onClick="lock(this)" id="g{{ groupnum }}c{{ num }}lock"></label>
+		<a onClick="removeCompetence(this);" class="butt remove red"><i class="icon-trash"></i></a>
+	{% elif fieldtype = "group" %}
+		<label>
+			<span>Group title: </span>
+			<textarea class="title" data-validation="required" name="group[{{ num }}][title]" placeholder="Group title">{{ title }}</textarea>
+		</label><!--
+		--><label>
+			<span>Description: </span>
+			<textarea name="group[{{ num }}][description]">{{ description }}</textarea>
+		</label>
+		{% autoescape off %}{{ nestedfields.fields }}{% endautoescape %}
+		<a class="butt" onclick="addCompetence({{ num }})"><i class="icon-plus-sign"></i> Add Competence to Group</a>
+		<input type="hidden" name="competencecounter{{ num }}" id="competencecounter{{ num }}" value="{{ nestedfields.count }}">
+		<input type="hidden" name="group[{{ num }}][existing_id]" value="{{ existing_id }}">
+	{% endif %}
+</fieldset>

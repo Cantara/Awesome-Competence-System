@@ -1,0 +1,306 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans 'Altran CV' %}{% endblock %}
+
+{% block extrastyle %}
+<!--<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/buttons.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom/flat.css"/>
+-->
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/admin_custom.css"/>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/flick/jquery-ui-1.8.21.custom.css" />
+{% endblock %}
+
+
+{% block branding %}
+
+	<nav>
+        <ul class="wide">
+            <li><a href="{% url cv.views.cv_list %}" class="butt red">Employee List</a></li>
+            <li><a href="{% url cv.views.matrix_list %}" class="butt red">Competence Matrix list</a></li>
+			{% if user.is_authenticated %}
+            <li><a href="{% url admin:index %}" class="butt red">Admin</a></li>
+			{% endif %}
+        </ul>
+
+    </nav>
+<div>
+
+</div>
+	<style>
+		body {font-size: 12px;}
+		._inline-group h2 { font-size: 1.2em;}
+		textarea, input[type=text], select {width: auto; font-size: 1em; line-height: 1em; padding: 2px;}
+		label {font-size: 1em;}
+		.form-actions {position: fixed; bottom:0;left:0;right:0; margin-bottom:0; z-index: 1050;}
+		.form-horizontal .control-group {
+			margin-bottom: 6px;
+		}
+		legend {font-size: 1.1em; line-height: 1.1em;}
+		legend small {font-size: 1em;}
+
+		.well-small {
+		padding: 4px !important;
+		}
+
+		.well {
+		margin-bottom: 10px !important;
+		}
+	</style>
+
+<!--
+	<h1 id="site-name">{% trans 'Altran CV' %}</h1>
+-->
+{% endblock %}
+
+
+{% block sidebar %}
+<script>
+
+	$(document).ready( function() {
+		// Add back-button
+		$('input[name=_continue]').val('Save').addClass('btn-primary').before('<button class="btn" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="' + document.referrer + '">Exit</button> ');
+
+		$('input[name=_save]').val('Save and exit').removeClass('btn-primary');
+
+		// Remove Save and add another
+		$('input[name=_addanother]').remove();
+	});
+
+</script>
+{% if 'person' in request.path %}
+<style>
+	#DragDiv { 
+		position: fixed; 
+		right: -320px; top:0; bottom: 0;
+		width: 300px;
+		padding: 5em 10px 5em 10px;
+		border-left: 1px solid #ccc;
+		background: #fff;
+    	-moz-transition: right .3s;
+    	-webkit-transition: right .3s;
+    	-o-transition: right .3s;
+    	transition: right .3s;
+	}
+	.DragDivShown {
+		right: 0 !important;
+	}
+	#content-main {
+    	-moz-transition: padding .3s;
+    	-webkit-transition: padding .3s;
+    	-o-transition: padding .3s;
+    	transition: padding .3s;
+    }
+	.addSpace {
+		padding-right: 350px;
+	}
+	#DragHandle {
+		cursor: pointer;
+		position: absolute;
+		background: #eee;
+		border: 1px solid #ccc;
+		border-right: none;
+		border-radius: 4px 0 0 4px;
+		left: -31px;
+		top: 50%;
+		margin-top:-81px;
+		height: 160px;
+		width: 30px;
+		background-image: linear-gradient(to left,#fff,#e6e6e6);
+		background-repeat: repeat-x;
+	}
+	#DragHandle:hover {
+		background-image: linear-gradient(to left,#fff,#f2f2f2);
+	}
+	#DragHandle div {
+		width: 160px;
+		text-align: center;
+		text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+	    -webkit-transform-origin: .8em 50%;
+	    -moz-transform-origin:    .8em 50%;
+	    -ms-transform-origin:     .8em 50%;
+	    -o-transform-origin:      .8em 50%;
+		-webkit-transform: rotate(90deg);
+		-moz-transform: rotate(90deg);
+		-ms-transform: rotate(90deg);
+		-o-transform: rotate(90deg);
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+		}
+	#DragText { width: 100%;}
+	#DragWordList {list-style: none; margin:5px; max-height: 80%; overflow-y: scroll; overflow-x: hidden;}
+	.ui-draggable {border: 1px solid #cc9; background: #ffe; cursor: move; display: inline-block; padding: .2em; margin: .2em;width: 250px; position: relative;}
+	.ui-draggable div {width: 14px; height: 14px; background: #fdd; border: 1px solid #f55; position: absolute; top:4px; right: 4px; cursor: pointer;}
+	.ui-draggable div:hover {background-color: red;}
+	.ui-draggable-dragging {}
+</style>
+
+<div id="DragDiv">
+	<div id="DragHandle" onClick="$('#DragDiv').toggleClass('DragDivShown');$('#content-main').toggleClass('addSpace');"><div>Tools</div></div>
+	<h4>Tools</h4>
+	<button class="btn" onClick="collapseAll()" id="collapseBtn">Collapse all sections</button>
+	<button class="btn" onClick="expandAll()" id="expandBtn">Expand all sections</button>
+	<h4>Copy-Paste-Helper</h4>
+	<textarea id="DragText" rows="5" placeholder="Paste CV-text here"></textarea>
+	<a class="btn" id="MakeDrag">Turn it into draggable text-bits</a>
+    <ul id="DragWordList">
+      <li>Example: Drag me to a text-field!<div></div></li>
+    </ul>
+	<ol>
+		<li>Paste text into the textarea</li>
+		<li>Click "Make draggable text"</li>
+		<li>Drag the text to the input-fields to paste the text</li>
+		<li>To remove a bit of unwanted text, click the red button</li>
+	</ol>
+</div>
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/expautocomplete.js"></script>
+		
+	<script language="JavaScript" type="text/javascript">
+	$(document).ready( function() {
+		// Activate drag upon load
+		activateDrag();
+		
+		// Make draggable elements on click
+		$('#MakeDrag').click(function() {
+			if($("#DragText").val()!="") {
+				$.each(
+					$("#DragText").val().split("\n"),
+					function(i, o){
+						if(/\S/.test(o)){
+							$("#DragWordList").append('<li>'+o+"<div></div></li>");
+						}
+					}
+				);
+				$("#DragText").val("");
+				activateDrag();
+			} else {
+				alert("You should paste some text first...");
+			}
+			return false
+		});
+		
+		// Reactivate drag when new element is added
+		$('.add-row a').click(function() {
+			activateDrag();
+		});
+		
+		// Toggle subsections
+		$('._inline-group h2').click(function() {
+			if( $(this).hasClass("closed") ) {
+				$(this).removeClass("closed");
+				$(this).parent().children("div:not(.empty-form)").show(200);
+			} else {
+				$(this).addClass("closed");
+				$(this).parent().children("div").hide(200);
+			}
+		});
+
+	    function isRowEmpty( textarea , row ){
+	        return textarea.value.split("\n")[row-1] == "";
+	    }
+	    function isLessThanHalfEmpty(textarea){
+	        var rows = textarea.value.split("\n").length;
+	        var height = textarea.rows;
+	        if(rows < height/2) {
+	            return true;
+	        }
+	        return false;
+	    }
+	    function resizeTextArea(){
+	        if(isLessThanHalfEmpty(this)){
+	            $(this).attr('rows', this.rows / 2);
+	        }
+	        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+	            $(this).attr('rows', this.rows + 1);
+	        }
+	    }
+	    $("textarea").keyup(resizeTextArea);
+	    $("textarea").click(resizeTextArea);     
+
+		/*// Append stuff to Technologies
+		var popTechs = 
+		'<div id="popTechs"><h4>Popular technologies! Drag and drop it!</h4>' +
+			{% for t in techlist %}
+			'<span>{{ t }}</span> ' +{% endfor %}
+		'</div>';
+		$('#technology_set-group .empty-form').after(popTechs);
+		$("#popTechs span").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });*/
+		
+		// Tooltip for textarea
+		$('#workplace_set-group textarea').after('<span class="tooltip"></span>');
+		
+	});
+
+	function activateDrag() {
+		$("#DragWordList li").draggable({helper: 'clone', cursorAt: {left:5, top: 5}, appendTo: "body", zIndex: 999 });
+		$("#DragWordList li div").click(function(){
+			$(this).parent().remove();
+		});
+		$("textarea, input[type=text]").droppable({
+			accept: "#DragWordList li, #popTechs span",
+			hoverClass: "dropHover",
+			tolerance: "pointer",
+			drop: function(ev, ui) {
+				var comma = "";
+				var $t = $(this);
+				var val = $t.val();
+				if(ui.draggable.is("span")) {
+					if(val!= "") { 
+						comma = ", ";
+					}
+					$t.val(val + comma + ui.draggable.text());
+				} else {
+					$t.val(val + ui.draggable.text() );
+					// $(this).insertAtCaret(ui.draggable.text());
+				}
+				ui.draggable.remove(); // remove original item
+			}
+		});
+	}
+
+	function expandAll() {
+	    $("h2.closed").click();
+	    $("a.collapsed").click();
+	}
+
+	function collapseAll() {
+	    $(".icon-resize-full").each( function() {
+	    	var $t = $(this);
+	    	if( !$t.parent().parent().hasClass('collapsed') ){
+		    	$t.click();	
+	    	}
+	    });
+	    $("h2").each( function() {
+	    	var $t = $(this);
+	    	if( !$t.hasClass('closed') ){
+		    	$t.click();	
+	    	}
+	    });
+	}
+	</script>
+{% endif %}
+
+{% if 'admin/cv' in request.path %}
+<script>
+	$(document).ready( function() {
+		// Add "SELECT_ALL"-button to CV-edit
+		var set = ['technology','experience','workplace','education','other'];
+		for(var i=0;i<set.length;i++){
+			$('#id_'+set[i]).after('<button class="btn" id="deselectall' + set[i] + '">Deselect all in ' + set[i] + '</button>');
+			$('#id_'+set[i]).after('<br/><button class="btn" id="selectall' + set[i] + '">Select all in ' + set[i] + '</button>');
+			$('#selectall'+set[i]).click(function(){
+				$(this).prev().prev().children().prop('selected', true);
+				return false;
+			});
+			$('#deselectall'+set[i]).click(function(){
+				$(this).prev().prev().prev().children().prop('selected', false);
+				return false;
+			});
+		}
+	});
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,240 @@
+			* {margin:0;padding:0;}
+			body {
+				font-family: arial; 
+				font-color: #555; 
+				font-size: 1em; 
+				background: #ddd url(../img/sky.jpg) fixed; 
+				background-size: cover;
+				}
+			
+			
+			
+		/* Content block positioning */
+			
+			#doc			{position:fixed; left: 20px; top: 25px;}
+			#content 		{margin: 25px 20% 25px 130px; 	float: left;	}
+			
+		/*Stuff with thin shadow*/
+			
+			#doc, 
+			.infogroup, 
+			input[type=checkbox] + label {
+				-moz-box-shadow: 	0px 1px 0px #444, 0px 2px 2px rgba(0,0,0,0.2);
+				-webkit-box-shadow: 0px 1px 0px #444, 0px 2px 2px rgba(0,0,0,0.2);
+				box-shadow: 		0px 1px 0px #444, 0px 2px 2px rgba(0,0,0,0.2);
+				}
+
+			
+			
+		/* Menu items */
+			
+			#doc {
+				background: #fff; 
+				border-radius:5px; 
+				width: 80px; 
+				padding: 10px; 
+				text-align: center;
+				}
+			
+			#printlogo {width: 60px; margin: 10px auto 10px auto; clear: both;}
+			
+			h1 {margin-bottom: 5px; font-size: 0.8em; color: #999; }
+			
+			select {border:none; width: 80%;}
+			
+		/* Preview frame styling in MENU */
+			.popup{
+				width:0;
+				height:0;
+				position:relative;
+				}
+			#preview_frame, #save_frame, #cvlist, #clearcv {
+				position: absolute;
+				top:-95px;
+				left:92px;
+				padding: 10px;
+				border-radius:5px;
+				background:white;
+				z-index:9001;
+				-moz-box-shadow: 	0px 1px 10px #444;
+				-webkit-box-shadow: 0px 1px 10px #444;
+				box-shadow: 		0px 1px 10px #444;
+				}
+			iframe {
+				border:none;
+				}
+			#preview_frame iframe {
+				width: 600px;
+				height: 600px;
+			}
+			#save_frame iframe {
+				width: 400px;
+			}
+			#cvlist, #clearcv {
+				width: 400px;
+				height: 170px;
+				padding-top:30px;
+			}
+			
+			#save_frame:after, #preview_frame:after, #cvlist:after, #clearcv:after {
+				content:"";
+				position:absolute;
+				top:50px;
+				left:-7px;
+				background: white;
+				width: 15px;
+				height: 15px;
+				z-index: 8000;
+				transform: rotate( 45deg );
+				-moz-transform: rotate( 45deg );
+				-webkit-transform: rotate( 45deg );
+				-o-transform: rotate( 45deg );
+				-moz-box-shadow: 	-2px 2px 3px rgba(0,0,0,0.3);
+				-webkit-box-shadow: -2px 2px 3px rgba(0,0,0,0.3);
+				box-shadow: 		-2px 2px 3px rgba(0,0,0,0.3);
+			}
+			
+		/* Content styling */
+			
+			/*#content { background: none; border-radius:5px; padding: 20px;}*/
+			
+			.left, .right {float:left; margin-right: 10px; padding:5px;}
+			.left {text-align: right;}
+			.right {text-align: left;}
+			
+			h3 {
+				color: white; 
+				background:#39e;
+				padding:3px;
+				border-radius: 3px;
+				text-transform:uppercase;
+				font-size: 0.75em;
+				cursor: pointer;
+				}
+			h3:before {
+				content: "- ";
+				font-family: fixedsys, courier new, sans-serif;
+			}
+			.closed {
+				
+			}
+			h3.closed:before {
+				content: "+ ";
+			}
+			
+			.infogroup {clear:both; margin-bottom: 0px; overflow: hidden;padding:5px; border-radius: 5px;margin-bottom:10px; background:#fff;}
+			
+			
+			
+		/* Tech-set styling */
+			
+			h4 {clear:both; margin-top: 0px; font-size:0.8em; color: #555; margin-bottom: 3px;}
+			input[type=checkbox] {display:none;}
+			input[type=checkbox] + label {border:1px solid #39e; opacity:0.3; background: #cef; border-radius: 3px; padding:2px; white-space: nowrap; display: block;}
+			input[type=checkbox] + label:hover {opacity:0.6;}
+			input[type=checkbox]:checked + label {opacity:1;
+			}
+			#technologies li {list-style: none; display: inline-block;}
+			
+			
+			
+		/* Form styling */
+			
+			label {font-size: 0.8em; color:#39e; font-weight: bold; -moz-user-select: none;-webkit-user-select: none; cursor: pointer; margin:0 5px 0 0}
+			textarea, input, .butt {border-radius: 3px; border: 1px solid #ccc; padding: 2px; font-family: arial, sans-serif; cursor: pointer;}
+			input:focus {border-color: #888;}
+			input[type=text] {width: 300px;margin:5px 5px 0 0;}
+			fieldset {padding: 5px; border: none; border: 1px solid #ddd; border-radius: 3px; background:white; margin-top:5px;}
+			/*.ui-menu-item {background: silver;border-radius: 2px; border: 1px solid #39e;}*/
+			pre {max-width:500px;}
+			
+		/* Button styling (note that some is styled in input) */
+			
+			input[type=button], input[type=submit], .butt {
+				background: #39e;
+				color: white; 
+				border-color: #333; 
+				padding: 5px; 
+				font-weight: bold;
+				}
+			
+			input[type=button], input[type=submit], .butt {
+				margin-top:3px;
+				margin-bottom:3px;
+				-moz-box-shadow: 	0px 3px 0px #444, 0px 5px 3px rgba(0,0,0,0.2);
+				-webkit-box-shadow: 0px 3px 0px #444, 0px 5px 3px rgba(0,0,0,0.2);
+				box-shadow: 		0px 3px 0px #444, 0px 5px 3px rgba(0,0,0,0.2);
+				}
+			input[type=button]:hover, input[type=submit]:hover, .butt:hover {
+				margin-top:2px;
+				margin-bottom:4px;
+				-moz-box-shadow: 	0px 4px 0px #444, 0px 6px 5px rgba(0,0,0,0.2), 0 6px 15px #fff;
+				-webkit-box-shadow: 0px 4px 0px #444, 0px 6px 5px rgba(0,0,0,0.2), 0 6px 15px #fff;
+				box-shadow: 		0px 4px 0px #444, 0px 6px 5px rgba(0,0,0,0.2), 0 6px 15px #fff;
+				}
+			input[type=button]:active, input[type=submit]:active, .butt:active {
+				margin-top:5px;
+				margin-bottom:1px;
+				-moz-box-shadow: 	0px 1px 0px #444, 0px 2px 2px rgba(0,0,0,0.2);
+				-webkit-box-shadow: 0px 1px 0px #444, 0px 2px 2px rgba(0,0,0,0.2);
+				box-shadow: 		0px 1px 0px #444, 0px 2px 2px rgba(0,0,0,0.2);
+				}
+			#content input[type=button], #content input[type=submit] {width: 200px;}
+			.butt {width: 80%; font-size: 0.6em; display: inline-block; -moz-user-select: none;-webkit-user-select: none;}
+			
+			
+			
+		/* Styling for button to delete list items */
+			
+			/* Note to self - Having a float: right; in this class made Chrome unable to append an element with this class */
+			.x {
+				border-radius: 3px;
+				border: 1px solid #d43;
+				padding: 0 4px 1px 4px;
+				font-size: 0.7em;
+				cursor: pointer;
+				color: #d43;
+				font-weight: bold;
+				-moz-user-select: none;-webkit-user-select: none; 
+				}
+			
+			.x:hover {background:#d43;color:white;}
+			
+			.floatright {float: right;}
+			
+				
+		/* Animation for fieldset 
+		
+			@keyframes myfirst
+			{
+			from {max-height: 0px;}
+			to {max-height: 999px;}
+			}
+
+			@-moz-keyframes myfirst
+			{
+			from {max-height: 0px;}
+			to {max-height: 999px;}
+			}
+
+			@-webkit-keyframes myfirst
+			{
+			from {max-height: 0px;}
+			to {max-height: 999px;}
+			}
+
+			@-o-keyframes myfirst 
+			{
+			from {max-height: 0px;}
+			to {max-height: 999px;}
+			}
+			
+			fieldset {
+			overflow:hidden;
+			animation: 			myfirst 1.5s;
+			-moz-animation: 	myfirst 1.5s;
+			-webkit-animation: 	myfirst 1.5s;
+			-o-animation: 		myfirst 1.5s;
+			}*/
+			
+			.dragplaceholder {background: #9df;}

@@ -1,0 +1,10 @@
+<ul class="exppicker description {{ hidden }}">
+	{% if p.experience_set %}
+		<li>In which projects did {{ p.name }} use this competence?</li>
+	{% endif %}
+	{% for e in p.experience_set.all %}
+		<li><label><input type="checkbox" name="compexp[{{ c_id }}][{{ e.id }}]" value="{{ e.id }}"/> <span> {{ e.title }}</span></label><div style="display:none;">{{ e.description }}</div></li>
+	{% empty %}
+		<li>{{ p.name }} doesn't have any <em>experience</em> that can be linked to this <em>competence</em>.</li>
+	{% endfor %}
+</ul>
