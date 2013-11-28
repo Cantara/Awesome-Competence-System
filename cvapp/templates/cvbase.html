@@ -15,9 +15,9 @@
 	</head>
 	<body>
 
-    <nav>
+    <nav style="padding: .2em">
         {% block nav %}
-		<form method="post" action="{% url cv.views.myRemoteLogin %}" id="loginform" style="margin:.3em">
+		<form method="post" action="{% url cv.views.myRemoteLogin %}" id="loginform" style="margin:.2em">
 			{% csrf_token %}
 			<input type="hidden" value="{{ request.path }}" name="path">
 			{% if user.is_authenticated %}
@@ -32,7 +32,9 @@
 				<input type="submit" value="Log in" class="butt">
 			{% endif %}
 		</form>
-        <ul class="wide">
+
+		<button id="menutoggle" href="#" class="butt">Menu</button>
+        <ul class="wide" id="menulist">
             <li><a href="{% url cv.views.cv_list %}" class="">Employee List</a></li>
             <li><a href="{% url cv.views.matrix_list %}" class="">Competence Matrix list</a></li>
             <!--<li><a href="{% url haystack_search %}" class="">Advanced Search</a></li>-->
@@ -164,36 +166,68 @@
 			display: inline-block;
 		}
 
-@media (max-width: 600px) {
-	#content {
-		position: static !important;
-		width: 100%;
-		text-align: center !important;
-	}
-	.hiddenopts {
-		width: 100% !important;
-	}
-		.hiddenopts:hover {
+					#menutoggle {
+						display: none;
+					}
+
+	@media (max-width: 600px) {
+
+					#menutoggle {
+						display: block;
+					}
+
+					#menulist {
+						position: absolute;
+						display: none;
+						z-index: 999;
+						text-align: left;
+					}
+
+					#menulist li {
+						display: block;
+					}
+
+					#menulist a {
+						padding: .5em !important;
+						display: block !important;
+					}
+
+					.menulistactive {
+						background: #269;
+						display: block !important;
+					}
+
+		#content {
+			position: static !important;
+			width: 100%;
+			text-align: center !important;
+		}
+		.hiddenopts {
 			width: 100% !important;
 		}
-	.clickable {
-		width: 100%;
+			.hiddenopts:hover {
+				width: 100% !important;
+			}
+		.clickable {
+			width: 100%;
+		}
+		#optionsbox {
+			position: static;
+			width: 100%;
+			margin-bottom: 1em;
+		}
+		#optionsbox + label {
+			display: none
+		}
+		#optionsinside {
+			width: 100% ;
+		}
 	}
-	#optionsbox {
-		position: static;
-		width: 100%;
-		margin-bottom: 1em;
-	}
-	#optionsbox + label {
-		display: none
-	}
-	#optionsinside {
-		width: 100% ;
-	}
-}
     </style>
 <script>
-	
+	$('#menutoggle').click(function(){
+		$('#menulist').toggleClass('menulistactive');
+	});
     function createCookie(name,value,days) {
         if (days) {
             var date = new Date();

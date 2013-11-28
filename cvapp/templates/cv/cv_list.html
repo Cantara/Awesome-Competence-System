@@ -82,8 +82,8 @@
 				<th colspan="3">
 					{% if user.is_authenticated %}
 			        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
-		           	<a id="emails" href="mailto:" class="butt" style="display:none"><i class="icon-download"></i> <span id="emailsText"> No e-mails selected.</span></a>
-	    			<a id="createMail" style="display: none" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Create message</a>
+		           	<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>
+	    			<a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
 	    			{%endif%}
 	    		</th>
 				<th>
@@ -115,7 +115,8 @@
 		    		<input type="hidden" name="sendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
 		    		<textarea name="message" cols="30" rows="6" placeholder="Message"></textarea>
 		    		<br/>
-		    		<input type="button" class="butt" onClick="nagmail.submit();" value="Nag!">
+		    		<!--<input type="button" class="butt" onClick="nagmail.submit();" value="Send Message"> -->
+                    <a onClick="nagmail.submit(); return false;" class="butt"><i class="icon-mail-reply"></i> Send message</a>                    
 		    	</form>
 				{% if user.person.completeness.percent < 100 %}
 					</div>
@@ -164,7 +165,11 @@
 				<div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
 			</div>
 			<section>
-				{% if user.is_authenticated %}<a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt" style="float: right;">Nag</a>{% endif %}
+				<span>                    
+                    {% if user.is_authenticated %}<a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt" style="float: right;"><i class="icon-envelope"></i></a>{% endif %}
+                    {% if user.is_authenticated %}<a href="mailto:<%=p.mail%>" class="butt" style="float: right;"><i class="icon-download"></i></a>{% endif %}
+                </span>
+                
 				<p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
 				<%=p.mail%></p>
 			</section>
@@ -686,14 +691,14 @@
                 document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
             }
 
-            if(document.getElementById("emails").href == "mailto:") {
+            /*if(document.getElementById("emails").href == "mailto:") {
                 $("#emails").hide();
                 document.getElementById("createMail").style.display = "none";
             } else {
                 $("#emails").show();
-                $("#emailsText").html("Get e-mails");
+                $("#emailsText").html("Get selected e-mails");
                 document.getElementById("createMail").style.display = "";                
-            }
+            }*/
 
         }
         function toggle(source) {
