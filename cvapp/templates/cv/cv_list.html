@@ -275,10 +275,18 @@
 				self.updateUrl();
 			},
 			downloadMulti: function() {
-				if(this.multi){
+				var cvids = document.forms['multicv']['cvid'];
+				var cvchecked = false;
+				for(var i = 0; i<cvids.length; i++) {
+					if(cvids[i].checked){
+						cvchecked = true;
+						break;
+					}
+				}
+				if(this.multi && cvchecked){
 					document.forms['multicv'].submit();
 				} else {
-					alert('No soup for you.');
+					alert('You have not selected any CVs yet, please select the desired CVs from the list.');
 				}
 			},
 

@@ -231,7 +231,11 @@ def multicv(request):
 		
 		format = request.GET['format']
 
-		cvids = request.GET.getlist('cvid')
+		cvids = request.GET.getlist('cvid', False)
+
+		if not cvids:
+			return HttpResponseBadRequest('No CVs selected.')
+
 		for cvid in cvids:
 			cvdict = getCvDictionary(cvid)
 			renderedFile = renderOdt(cvdict, cvid)
