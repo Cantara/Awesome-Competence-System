@@ -71,7 +71,7 @@ class Person(models.Model):
 	def country(self):
 		if self.location in ['Oslo']:
 			return 'no'
-		elif self.location in ['Stockholm', 'Gothenburg']:
+		elif self.location in ['Stockholm', 'Gothenburg', 'Borlänge', 'Karlstad', 'Malmö' ]:
 			return 'se'
 		else:
 			return False
