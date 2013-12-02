@@ -62,7 +62,7 @@
     	<br/>
 		<button id="showJsonBtn" class="butt"><i class="icon-plus-sign"></i> Show as JSON</button><br/>
 		{% if user.is_authenticated %}
-			<a href="{% url admin:cv_person_add %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
+			<a href="{% url 'admin:cv_person_add' %}" class="butt"><i class="icon-plus-sign"></i> Add new person</a><br/>
 		{% endif %}
     </div>
 
@@ -76,7 +76,7 @@
 {% endblock %}
 
 {% block content %}
-	<form name="multicv" action="{% url cv_multi %}" method="get">
+	<form name="multicv" action="{% url 'cv_multi' %}" method="get">
 		<table id="multiresults" class="responsivetable" style="display:none">
 			<tr>
 				<th colspan="3">
@@ -178,7 +178,7 @@
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
 					<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
-						<a href="{% url admin:cv_person_change "XXXpidXXX" %}" class="butt">Edit person</a>
+						<a href="{% url 'admin:cv_person_change' "XXXpidXXX" %}" class="butt">Edit person</a>
 					<%?%>
 				{% endif %}
 				<table>
@@ -186,14 +186,14 @@
 					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
 					<tr>
 						<td>
-							<a href="{% url cv_detail "999999" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
+							<a href="{% url 'cv_detail' "999999" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
 							<span class="dato"><%? cv.tags != "Empty CV" %><%=cv.last_edited%>
 								<span class="completeness"><span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span></span>
 							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
 						</td>
 						{% if user.is_authenticated %}
 							<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
-								<td><a href="{% url admin:cv_cv_change "XXXcvidXXX" %}" class="butt">Edit<br/>
+								<td><a href="{% url 'admin:cv_cv_change' "XXXcvidXXX" %}" class="butt">Edit<br/>
 								<span class="dato">CV</span></a></td>
 							<%?%>
 						{% endif %}
@@ -232,10 +232,10 @@
 						<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
 						</td>
 					<td data-title="Download">
-						<a href="{% url cv_detail "999999" %}" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
-						<a href="{% url cv_download_format 'doc' %}?cvid=<%=cv.id%>" target="_blank">DOC</a>&nbsp;
-						<a href="{% url cv_download_format 'pdf' %}?cvid=<%=cv.id%>" target="_blank">PDF</a>&nbsp;
-						<a href="{% url cv_download_format 'odt' %}?cvid=<%=cv.id%>" target="_blank">ODT</a>
+						<a href="{% url 'cv_detail' "999999" %}" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
+						<a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank">DOC</a>&nbsp;
+						<a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank">PDF</a>&nbsp;
+						<a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank">ODT</a>
 						</td>
 				</tr>
 				<%?%>
@@ -642,7 +642,7 @@
 				var formdata = self.nagform.serialize();
 				$.ajax({
 					type: "POST",
-					url: "{% url cv_nagmail %}",
+					url: "{% url 'cv_nagmail' %}",
 					data: formdata
 				}).done(function( msg ) {
 					self.nagform.hide();
@@ -676,7 +676,7 @@
 				var formdata = self.nagform.serialize();
 				$.ajax({
 					type: "POST",
-					url: "{% url cv_multinagmail %}",
+					url: "{% url 'cv_multinagmail' %}",
 					data: formdata
 				}).done(function( msg ) {
 					self.nagform.hide();

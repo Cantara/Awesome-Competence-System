@@ -17,15 +17,15 @@
 
 		{% if user.is_authenticated %}
 			<h1>{{ p.name }} CV</h1>
-			{% if lang != 'eng' %}<a href="{% url cv_detail_en cv.id 'eng' %}" class="butt">Show in English</a>
-			{% else %}<a href="{% url cv_detail cv.id %}" class="butt">Show in original language</a>{% endif %}
-			<a href="{% url admin:cv_cv_change cv.id %}" class="butt">Edit CV</a>
-			<a href="{% url admin:cv_person_change p.id %}" class="butt">Edit Person</a>
+			{% if lang != 'eng' %}<a href="{% url 'cv_detail_en' cv.id 'eng' %}" class="butt">Show in English</a>
+			{% else %}<a href="{% url 'cv_detail' cv.id %}" class="butt">Show in original language</a>{% endif %}
+			<a href="{% url 'admin:cv_cv_change' cv.id %}" class="butt">Edit CV</a>
+			<a href="{% url 'admin:cv_person_change' p.id %}" class="butt">Edit Person</a>
 		{% endif %}
 			<script>
 				function dl(format) {
 					document.cvjsonform.cvjson.value=FormatJSON($('#cvform').serializeObject());
-					document.cvjsonform.action = "{% url cv_download %}" + format + "/";
+					document.cvjsonform.action = "{% url 'cv_download' %}" + format + "/";
 					document.cvjsonform.submit();
 				}
 			</script>

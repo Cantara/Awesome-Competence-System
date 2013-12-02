@@ -1,13 +1,14 @@
 # Django settings for cvapp project.
 
+try:
+    from localsettings import *
+except ImportError:
+    pass
+
 import os
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 WWW_ROOT = '/var/www/'
-
-import localsettings 
-
-DATABASES = localsettings.DATABASES
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -110,7 +111,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    #'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'cv',
