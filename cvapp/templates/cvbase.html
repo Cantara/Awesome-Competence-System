@@ -34,7 +34,7 @@
 		<button id="menutoggle" href="#" class="butt">Menu</button>
         <ul class="wide" id="menulist">
             <li><a href="{% url 'cv.views.cv_list' %}" class="">Employee List</a></li>
-            <li><a href="{% url 'cv.views.matrix_list' %}" class="">Competence Matrix list</a></li>
+            {# <li><a href="{% url 'cv.views.matrix_list' %}" class="">Competence Matrix list</a></li> #}
 			{% if user.is_authenticated %}
             <li><a href="{% url 'changelog' %}" class="">Changelog</a></li>
             <li><a href="{% url 'admin:index' %}" class="">Admin</a></li>

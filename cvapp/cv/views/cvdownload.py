@@ -1,3 +1,5 @@
+# coding=UTF-8
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other
@@ -11,6 +13,8 @@ import settings
 import operator
 from xml.sax.saxutils import escape # escape string to valid xml
 import string
+
+from cvhelper import labels, getTranslatedParts
 
 # For Zip
 import os
@@ -136,9 +140,13 @@ def download(request, format):
 	else:
 		return rtr('tempcv.odt', filename='%s.%s' % (filename, format), format=format)
 
-def getCvDictionary(cvid):
-	c = get_object_or_404(Cv, pk=cvid)
-	p = c.person
+def getCvDictionary(cvid, lang='english'):
+	cv = get_object_or_404(Cv, pk=cvid)
+	p = cv.person
+
+	languagecode = p.country()
+	if not languagecode or lang == 'english':
+		languagecode = 'en'
 
 	try:
 		imgUrl = p.image.path.rsplit('.', 1)[0] + '_scale_110x110.jpg'
@@ -148,16 +156,9 @@ def getCvDictionary(cvid):
 	data = f.read()
 	f.close()
 
-	a = {}
-	a['age'] = p.age()
-
-	t = c.technology.all()
-	e = c.experience.all()
-	w = c.workplace.all()
-	d = c.education.all()
-	o = c.other.all()
+	t, e, w, d, o, l = getTranslatedParts(cv, lang)
 	
-	c.profile = c.profile.encode('utf-8')
+	cv.profile = cv.profile.encode('utf-8')
 
 	for ex in e:
 		ex.description	= escape( ex.description.encode("utf-8") )
@@ -188,29 +189,36 @@ def getCvDictionary(cvid):
 	w = sorted( w, key=operator.attrgetter('orderkey'), reverse=True )
 	d = sorted( d, key=operator.attrgetter('orderkey'), reverse=True )
 
+	l = labels[languagecode]
+
 	dictionary = {
-		'l': {
-			'profile': 'Profile',
-			'experience': 'Experience',
-			'workplace': 'Workplaces',
-			'education': 'Education'
-		}, 
-		'a': a,
+		'l': l,
 		'p': p,
-		'c': c,
+		'c': cv,
 		't': t, 
 		'e': e,
 		'w': w, 
 		'd': d, 
 		'o': o,
+		'infoline': getInfoLine(p,l),
 		'img': data,
 	}
 
 	return dictionary
 
+def getInfoLine(p, l):
+	info = []
+	if p.phone:
+		info.append(l['phone']+': '+p.phone)
+	if p.mail:
+		info.append(l['email']+': '+p.mail)
+	if p.age() > 1: 
+		info.append( '%s: %s' % (l['age'], p.age()) )
+	return ' - '.join(info)
+
 def renderOdt(dictionary, tempfilename='tempcv'):
 
-	srcFile = settings.PROJECT_ROOT + '/cv/altrancvmal.odt'
+	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2013-12-03.odt'
 
 	# filename = dictionary['p'].name.encode('ascii', 'ignore') + ' - ' + dictionary['c'].title.encode('ascii', 'ignore').replace(",","").replace('/','') + ".odt"
 
@@ -230,6 +238,7 @@ def multicv(request):
 		filenames = []
 		
 		format = request.GET['format']
+		lang = request.GET['language']
 
 		cvids = request.GET.getlist('cvid', False)
 
@@ -237,7 +246,7 @@ def multicv(request):
 			return HttpResponseBadRequest('No CVs selected.')
 
 		for cvid in cvids:
-			cvdict = getCvDictionary(cvid)
+			cvdict = getCvDictionary(cvid, lang)
 			renderedFile = renderOdt(cvdict, cvid)
 			renderedName = format_filename( "%s-%s.%s" % (cvdict['p'].name, cvdict['c'].title, format) )
 			if( format != 'odt' ):
