@@ -10,7 +10,7 @@ urlpatterns = patterns('cv.views',
     url(r'^cv/$', 'cv_list', name='cv_list'),
     url(r'^cv/multi/$', 'multicv', name='cv_multi'),
     url(r'^cv/(?P<cv_id>\d+)/$', 'detail', name='cv_detail'),
-    url(r'^cv/(?P<cv_id>\d+)/(?P<lang>eng)/$', 'detail', name='cv_detail_en'),
+    url(r'^cv/(?P<cv_id>\d+)/(?P<lang>en)/$', 'detail', name='cv_detail_en'),
     
     url(r'^cv/download/$', 'download', name='cv_download'),
     url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),

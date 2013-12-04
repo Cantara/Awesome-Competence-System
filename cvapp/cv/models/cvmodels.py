@@ -89,7 +89,7 @@ class Person(models.Model):
 			else:
 				return today.year - born.year
 		else:
-			return 0
+			return ""
 	
 	def completeness(self):
 		maxscore = 0
@@ -151,10 +151,9 @@ class Person(models.Model):
 		
 	def has_cv(self):
 		for cv in self.cv_set.all():
-			if cv.tags != "Empty CV":
-				status = cv.status()
-				if status['complete']:
-					return True
+			status = cv.status()
+			if status['complete']:
+				return True
 		return False
 		
 	def save(self, *args, **kwargs):
@@ -169,10 +168,10 @@ class Person(models.Model):
 				pass
 
 		# If there are less than 4 existing CVs, create 4 new CVs for the person.
-		if self.cv_set.count() < 4:
-			for a in range(1, 5-self.cv_set.count()):
-				c = Cv(tags = 'Empty CV', person = self)
-				c.save()
+		# if self.cv_set.count() < 4:
+		# 	for a in range(1, 5-self.cv_set.count()):
+		# 		c = Cv(tags = 'Empty CV', person = self)
+		# 		c.save()
 
 	def natural_key(self):
 		return (self.name, self.mail)

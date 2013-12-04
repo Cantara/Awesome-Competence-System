@@ -70,7 +70,7 @@ def getTranslatedParts(cv, lang, alerts=False):
 		return ""
 	
 	# If they want English, give them English
-	if lang == 'eng':
+	if lang == 'en':
 		cv.profile			= q(cv.profile_en, cv.profile)
 		cv.title			= q(cv.title_en, cv.title)
 		
@@ -129,7 +129,7 @@ def getTranslatedParts(cv, lang, alerts=False):
 		languagecode = cv.person.country()
 		if not languagecode:
 			languagecode = 'en'
-			
+
 		l = labels[languagecode]
 
 	return t, e, w, d, o, l

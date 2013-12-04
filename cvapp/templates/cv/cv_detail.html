@@ -17,7 +17,7 @@
 
 		{% if user.is_authenticated %}
 			<h1>{{ p.name }} CV</h1>
-			{% if lang != 'eng' %}<a href="{% url 'cv_detail_en' cv.id 'eng' %}" class="butt">Show in English</a>
+			{% if lang != 'en' %}<a href="{% url 'cv_detail_en' cv.id 'en' %}" class="butt">Show in English</a>
 			{% else %}<a href="{% url 'cv_detail' cv.id %}" class="butt">Show in original language</a>{% endif %}
 			<a href="{% url 'admin:cv_cv_change' cv.id %}" class="butt">Edit CV</a>
 			<a href="{% url 'admin:cv_person_change' p.id %}" class="butt">Edit Person</a>
@@ -50,15 +50,16 @@
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
 		  <img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="left" id="photo">
-		  <input type="hidden" name="userid" value="{{ p.id }}"/>
+		  <input type="hidden" name="personid" value="{{ p.id }}"/>
+		  <input type="hidden" name="lang" value="{{ lang }}"/>
 		  <input type="hidden" name="photo" value="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}"/>
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
 			  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
 			  <p>
-			  <input type="text" name="phone" value="{{ p.phone }}"/>
-			  <input type="text" name="mail" value="{{ p.mail }}"/>
-			  <input type="text" name="age" value="{{ p.age }}"/>
+			  <input type="text" name="phone" placeholder="Phone" value="{{ p.phone }}"/>
+			  <input type="text" name="mail" placeholder="E-mail" value="{{ p.mail }}"/>
+			  <input type="text" name="age" placeholder="Age" value="{{ p.age }}"/>
 			  </p>
 		  </div>
 		</div>

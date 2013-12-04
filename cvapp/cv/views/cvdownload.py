@@ -33,7 +33,7 @@ def download(request, format):
 			mail = a['mail'],
 		)
 		
-		c = Cv(
+		cv = Cv(
 			title = a['title'],
 			profile = a['profile'].encode( "utf-8" ),
 		)
@@ -108,22 +108,35 @@ def download(request, format):
 						data		= datalist.encode( "utf-8", "ignore" )
 					) 
 				)
+		
+		p = get_object_or_404(Person, pk=a['personid'])
+
+		languagecode = p.country()
+		if not languagecode or a['lang'] == 'en':
+			languagecode = 'en'
 			
+		l = labels[languagecode]
+
+		info = []
+		if a['phone']:
+			info.append(l['phone']+': '+a['phone'])
+		if a['mail']:
+			info.append(l['email']+': '+a['mail'])
+		if a['age']: 
+			info.append( '%s: %s' % (l['age'], a['age']) )
+		infoline = ' - '.join(info)	
+
 		dictionary = {
-			'l': {
-				'profile': 'Profil',
-				'experience': 'Erfaring',
-				'workplace': 'Arbeidsgivere',
-				'education': 'Utdanning'
-			}, 
+			'l': l,
 			'a': a, # Contains age (as it is calculated and don't need special encoding - Also, it doesn't exist in the model :-/ )
 			'p': p, # Person-related data
-			'c': c, # CV-related data
+			'c': cv, # CV-related data
 			't': t_set, 
 			'e': e_set,
 			'w': w_set, 
 			'd': d_set, 
 			'o': o_set,
+			'infoline': infoline,
 			'img': data,
 		}
 
@@ -140,12 +153,12 @@ def download(request, format):
 	else:
 		return rtr('tempcv.odt', filename='%s.%s' % (filename, format), format=format)
 
-def getCvDictionary(cvid, lang='english'):
+def getCvDictionary(cvid, lang=''):
 	cv = get_object_or_404(Cv, pk=cvid)
 	p = cv.person
 
 	languagecode = p.country()
-	if not languagecode or lang == 'english':
+	if not languagecode or lang == 'en':
 		languagecode = 'en'
 
 	try:
@@ -212,7 +225,7 @@ def getInfoLine(p, l):
 		info.append(l['phone']+': '+p.phone)
 	if p.mail:
 		info.append(l['email']+': '+p.mail)
-	if p.age() > 1: 
+	if p.age() != "" and p.age() > 0: 
 		info.append( '%s: %s' % (l['age'], p.age()) )
 	return ' - '.join(info)
 
