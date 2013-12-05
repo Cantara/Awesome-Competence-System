@@ -1,12 +1,11 @@
 from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 import json
 from django.core.mail import send_mail, EmailMessage, BadHeaderError
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.utils.html import escape
 import localsettings
-import logging
 
 from cvhelper import labels, getTranslatedParts
 
@@ -16,7 +15,6 @@ def cvlist(request):
 	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': ''}, context_instance=RequestContext(request))
 
 def cv_list(request):
-	log = logging.getLogger('cv_list')
 	all_persons = [] # Person.objects.all()
 	get_params = False;
 	if(request.GET):
@@ -153,3 +151,25 @@ def expautocomplete(request):
 		es = Experience.objects.filter(company__icontains=term) | Experience.objects.filter(description__icontains=term)
 		jsones = serializers.serialize('json', es, indent=2, use_natural_keys=True)
 	return HttpResponse(jsones)
+
+def add_cv_for_person(request, pid):
+	if request.user.is_superuser or request.user.person.id == pid:
+		p = get_object_or_404(Person, pk=pid)
+		cv = Cv(
+			tags = p.title, 
+			person = p, 
+			profile = '', 
+			profile_en = '',
+			title = p.title,
+			title_en = '',
+			)
+		cv.save()
+		cv.technology.add( *list( p.technology_set.all() ) )
+		cv.experience.add( *list( p.experience_set.all() ) )
+		cv.workplace.add( *list( p.workplace_set.all() ) )
+		cv.education.add( *list( p.education_set.all() ) )
+		cv.other.add( *list( p.other_set.all() ) )
+		cv.save()
+		return redirect('admin:cv_cv_change', cv.pk)
+	else:
+		return HttpResponseForbidden()

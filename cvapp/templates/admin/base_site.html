@@ -55,19 +55,6 @@
 
 
 {% block sidebar %}
-<script>
-
-	$(document).ready( function() {
-		// Add back-button
-		$('input[name=_continue]').val('Save').addClass('btn-primary').before('<button class="btn" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="' + document.referrer + '">Exit</button> ');
-
-		$('input[name=_save]').val('Save and exit').removeClass('btn-primary');
-
-		// Remove Save and add another
-		$('input[name=_addanother]').remove();
-	});
-
-</script>
 {% if 'person' in request.path %}
 <style>
 	#DragDiv { 

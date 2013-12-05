@@ -96,12 +96,19 @@ class PersonAdmin(admin.ModelAdmin):
             return response
         else:
             return redirect("cv_list")
+    
+    def response_add(self, request, obj, post_url_continue=None):
+        response = super(PersonAdmin, self).response_change(request, obj)
+        if request.POST.has_key("_createcv"):
+            return redirect('cv_add_cv_for_person', obj.pk)
+        else:
+            return redirect("cv_list")
+
     def response_delete(self, request, obj, post_url_continue=None):
         return redirect("cv_list")
 
     # Adding the list of popular techs
     def render_change_form(self, request, context, *args, **kwargs):
-        log = logging.getLogger('edit_person')
         techlist = {}
         
         for p in Person.objects.all():
@@ -126,13 +133,16 @@ class PersonAdmin(admin.ModelAdmin):
         extra = {
             'has_file_field': True, # Make your form render as multi-part.
             'techlist': t,
+            'is_add_person_form': False
         }
 
         try:
-            person_key = kwargs['obj'].pk
-            extra['cvs'] = Person.objects.get(pk=person_key).cv_set.all()
+            extra['cvs'] = kwargs['obj'].cv_set.all()
         except:
             pass
+
+        if context['title'] == 'Add person':
+            extra['is_add_person_form'] = True
 
         context.update(extra)
         
@@ -156,8 +166,9 @@ class CvAdmin(admin.ModelAdmin):
     readonly_fields = ['person']
     fields = ('person','tags', ('title', 'title_en'), ('profile', 'profile_en'), 'technology', 'experience', 'workplace', 'education', 'other')
     formfield_overrides = large
-    list_display = ('person', 'tags', 'title', 'last_edited', 'is_recent')
+    list_display = ( 'person', 'completenesspercent', 'tags', 'title', 'last_edited', 'is_recent', )
     #filter_horizontal = ['experience']
+
     def response_change(self, request, obj, post_url_continue=None):
         response = super(CvAdmin, self).response_change(request, obj)
         if request.POST.has_key("_continue"):
@@ -165,7 +176,23 @@ class CvAdmin(admin.ModelAdmin):
         else:
             return redirect("cv_list")
 
+    def render_change_form(self, request, context, *args, **kwargs):
+        try:
+            person_id = kwargs['obj'].person.pk
+        except:
+            pass
+        extra = {
+            'has_file_field': True, # Make your form render as multi-part.
+            'is_cv_form': True,
+            'person_id': person_id,
+        }
+        context.update(extra)
+        superclass = super(CvAdmin, self)
+        return superclass.render_change_form(request, context, *args, **kwargs)
+
     def has_delete_permission(self, request, obj=None):
+        if request.user.is_superuser or request.user.person == obj.person:
+            return True
         return False
 
 admin.site.register(Cv, CvAdmin)

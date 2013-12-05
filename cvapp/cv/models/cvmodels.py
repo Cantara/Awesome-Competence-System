@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from utils import multidelim
 
+import logging
+log = logging.getLogger('cv')
+
 YEAR_CHOICES = [(0,'Year')]
 for r in reversed( range(1969, (datetime.datetime.now().year+1)) ):
 	YEAR_CHOICES.append((r,r))
@@ -151,27 +154,18 @@ class Person(models.Model):
 		
 	def has_cv(self):
 		for cv in self.cv_set.all():
-			status = cv.status()
-			if status['complete']:
+			if cv.status()['complete']:
 				return True
 		return False
 		
 	def save(self, *args, **kwargs):
-		
 		super(Person, self).save(*args, **kwargs)
-
 		if self.image:
 			from cv.templatetags.image_tags import scale
 			try:
 				scale(self.image, '110x110')
 			except:
 				pass
-
-		# If there are less than 4 existing CVs, create 4 new CVs for the person.
-		# if self.cv_set.count() < 4:
-		# 	for a in range(1, 5-self.cv_set.count()):
-		# 		c = Cv(tags = 'Empty CV', person = self)
-		# 		c.save()
 
 	def natural_key(self):
 		return (self.name, self.mail)
@@ -385,8 +379,12 @@ class Cv(models.Model):
 			myscore += 1
 		else:
 			comment.append("Lacks title")
-		if len(self.profile) > 100 or len(self.profile_en) > 100:
-			myscore += 1
+		if self.profile:
+			if len( self.profile ) > 100:
+				myscore += 1
+		elif self.profile_en:
+			if len( self.profile_en ) > 100:
+				myscore += 1
 		else:
 			comment.append("Lacks profile, or profile too short")
 		
@@ -426,6 +424,9 @@ class Cv(models.Model):
 		
 		return completeness
 	
+	def completenesspercent(self):
+		return str( self.status()['percent'] )
+
 	# Custom sorting, returns an older date for all Empty CVs, so they don't get listed first. 
 	def cvsort(self):
 		if self.tags == "Empty CV":

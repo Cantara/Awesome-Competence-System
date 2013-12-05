@@ -1,0 +1,7 @@
+{% load i18n %}
+<div class="pull-right">
+	<button class="btn" onClick="if(!confirm(\'Are you sure? Unsaved changes will be lost.\')) return false;" href="{% url 'cv.views.cv_list' %}">Cancel</button>
+	<input type="submit" value="{% trans 'Save' %}" class="btn btn-primary default" name="_continue" {{ onclick_attrib }}/>
+	<input type="submit" value="{% trans 'Save and exit' %}" class="btn" name="_save" {{ onclick_attrib }}/>
+	{% if is_add_person_form %}<input type="submit" value="{% trans 'Save and create CV' %}" class="btn" name="_createcv"/>{% endif %}
+</div>
