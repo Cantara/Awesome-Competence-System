@@ -206,7 +206,7 @@
 			console.log(formdata);
 			$.ajax({
 			  type: "POST",
-			  url: "{% url cv.views.matrix_entry_save %}",
+			  url: "{% url 'cv.views.matrix_entry_save' %}",
 			  data: formdata
 			}).done(function( msg ) {
 			  console.log( msg );
@@ -217,7 +217,7 @@
 			var formdata = FormatJSON( $('#entry').serializeObject() );
 			$.ajax({
 			  type: "POST",
-			  url: "{% url cv.views.matrix_entry_load %}",
+			  url: "{% url 'cv.views.matrix_entry_load' %}",
 			  data: formdata
 			}).done(function( msg ) {
 			  var j = jQuery.parseJSON( msg );

@@ -5,7 +5,7 @@
 {% block actions %}
 	{% if user.is_authenticated %}
 		<h1>Competence Matrices</h1>
-		<a href="{% url cv.views.matrix_edit %}" class="butt"><i class="icon-plus-sign"></i> Add new Competence Matrix</a>
+		<a href="{% url 'cv.views.matrix_edit' %}" class="butt"><i class="icon-plus-sign"></i> Add new Competence Matrix</a>
 	{% endif %}
 {% endblock %}
 
@@ -16,8 +16,8 @@
 				<header><h3>{{ m.title }}</h3></header>
 				<section>
 					<p class="rdetail">Entries: {{ m.matrixentry_set.count }}<br/>Fields: {{ m.competence_count }}</p>
-					<a href="{% url cv.views.matrix_load m.id %}" class="butt">Edit</a>
-					<a href="{% url cv.views.matrix_entry_get m.id %}" class="butt"><i class="icon-edit"></i> Fill out</a>
+					<a href="{% url 'cv.views.matrix_load' m.id %}" class="butt">Edit</a>
+					<a href="{% url 'cv.views.matrix_entry_get' m.id %}" class="butt"><i class="icon-edit"></i> Fill out</a>
 				</section>
 			</div>
 		{% endfor %}

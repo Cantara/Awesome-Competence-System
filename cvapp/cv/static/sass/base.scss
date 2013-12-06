@@ -30,16 +30,20 @@ a:visited {color: darken($main_c, 40%); }
 /* START NAVIGATION */
 
 nav {
-	background: $main_c;
-	border-bottom: 2px solid #157;
+	background: #111;
+	border-bottom: 1px solid #555;
 	font-size: 0.8em;
 	color: #fff;
+	padding: .6em;
+	text-align: left;
 
 	a { 
-		color: #fff !important;
+		color: #aaa !important;
 		text-decoration: none;
+		padding-left: 1em;
+		padding-right: .5em;
 		&:hover {
-			text-decoration: underline;
+			color: #fff !important;
 		}
 	}
 
@@ -321,6 +325,7 @@ input.butt {
 	position: relative;
 	cursor: pointer;
 	background-color: #3877A5;
+	box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.5);
 	border-radius: 2px;
 	color: #fff !important;
 	text-decoration: none;
@@ -350,6 +355,8 @@ input.butt {
 	background-color: #369;
 	}
 .remove { position: aboslute; right:0; top:0;}
+.grey { background-color: #eee; color: #333 !important; }
+.grey:hover { background-color: #ccc;}
 .red { background-color: #C21A01;}
 .red:hover { background-color: #F03C02;}
 

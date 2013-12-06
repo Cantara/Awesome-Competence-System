@@ -14,19 +14,16 @@
 
 {% block branding %}
 
-	<nav>
-        <ul class="wide">
+    <div class="nav-collapse collapse pull-left">
+        <ul class="nav">
             <li><a href="{% url 'cv.views.cv_list' %}" class="butt red">Employee List</a></li>
             <li><a href="{% url 'cv.views.matrix_list' %}" class="butt red">Competence Matrix list</a></li>
 			{% if user.is_authenticated %}
             <li><a href="{% url 'admin:index' %}" class="butt red">Admin</a></li>
 			{% endif %}
         </ul>
+    </div>
 
-    </nav>
-<div>
-
-</div>
 	<style>
 		body {font-size: 12px;}
 		._inline-group h2 { font-size: 1.2em;}
