@@ -1,3 +1,4 @@
+{% load image_tags %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -11,31 +12,44 @@
 		{% block extrastyles %}{% endblock %}
 		<link rel="icon" type="image/png" href="" />
 	</head>
+
 	<body>
 
     <nav>
         {% block nav %}
-		<form method="post" action="{% url 'cv.views.myRemoteLogin' %}" id="loginform" style="margin:.2em">
+		<form method="get" action="{% if user.is_authenticated %}{% url 'cv.views.myRemoteLogout' %}{% else %}{% url 'cv.views.myRemoteLogin' %}{% endif %}" id="loginform" style="margin:.2em">
 			{% csrf_token %}
 			<input type="hidden" value="{{ request.path }}" name="path">
 			{% if user.is_authenticated %}
 				<span>
-					{% if personpk %}<a class="btn btn-primary" href="https://{{ request.get_host }}/admin/cv/person/{{personpk}}/">My Profile</a> | {% endif %}
-					Welcome <strong>{{ user.username }}</strong>
+						{% if user.person %}
+							<a href="#" class="menutoggle" style="display: inline-block;">
+								Welcome <strong>{{ user.username }}</strong> <i class="icon-caret-down"></i>
+							</a>
+					        <ul class="menulist menulisthidden">
+								{% if user.person.image %}
+									<li style="text-align:center"><img src="{{ user.person.image|scale:'110x110' }}" style="width:5em;height:5em;"></li>
+								{% endif %}
+					            <li><a href="{% url 'admin:cv_person_change' user.person.id %}">Edit Person</a></li>
+					            {% for cv in user.person.cv_set.all %}
+					            <li><a href="{% url 'admin:cv_cv_change' cv.id %}">Edit CV "{{cv.tags}}"</a></li>
+					            {% endfor %}
+					        </ul>
+						{% else %}
+							Welcome <strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong>
+						{% endif %}
 				</span>
 				<input type="submit" value="Log out" class="butt grey" onClick="eraseCookie('whydahusertoken');">
 			{% else %}
-				<!--label for="username">User:</label><input type="text" name="username" value="" id="username" size="10"/>
-				<label for="password">Pass:</label><input type="password" name="password" value="" id="password" size="10"/-->
 				<input type="submit" value="Log in" class="butt grey">
 			{% endif %}
 		</form>
 
-		<button id="menutoggle" href="#" class="butt">Menu</button>
-        <ul id="menulist">
+		<button class="butt menutoggle showonsmall">Menu</button>
+        <ul class="menulist hideonsmall">
             <li><a href="{% url 'cv.views.cv_list' %}" class="">Employee List</a></li>
             <li><a href="{% url 'cv.views.matrix_list' %}" class="">Competence Matrix list</a></li>
-			{% if user.is_authenticated %}
+			{% if user.is_superuser %}
             <li><a href="{% url 'changelog' %}" class="">Changelog</a></li>
             <li><a href="{% url 'admin:index' %}" class="">Admin</a></li>
 			{% endif %}
@@ -186,35 +200,42 @@
 			display: inline-block;
 		}
 
-					#menutoggle {
+					.showonsmall, .menulisthidden {
 						display: none;
 					}
-
-	@media (max-width: 600px) {
-
-					#menutoggle {
-						display: block;
+					.hideonsmall {
+						display: inline-block;
 					}
 
-					#menulist {
+					.menulistactive {
+						background: #555;
+						display: block !important;
+					}
+
+					.menulistactive {
 						position: absolute;
 						display: none;
 						z-index: 999;
 						text-align: left;
 					}
 
-					#menulist li {
+					.menulistactive li {
 						display: block;
 					}
 
-					#menulist a {
+					.menulistactive a {
 						padding: .5em !important;
 						display: block !important;
 					}
 
-					.menulistactive {
-						background: #269;
-						display: block !important;
+	@media (max-width: 600px) {
+
+					.showonsmall {
+						display: block;
+					}
+
+					.hideonsmall {
+						display: none;
 					}
 
 		#content {
@@ -245,8 +266,9 @@
 	}
     </style>
 <script>
-	$('#menutoggle').click(function(){
-		$('#menulist').toggleClass('menulistactive');
+	$('.menutoggle').click(function(e){
+		$(this).next('.menulist').toggleClass('menulistactive');
+		e.preventDefault();
 	});
     function createCookie(name,value,days) {
         if (days) {

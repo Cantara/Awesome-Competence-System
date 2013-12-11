@@ -19,7 +19,7 @@
     <div class="option">
 		<h3>View</h3>
 		<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
-	{% if user.is_authenticated %}
+	{% if user.is_superuser %}
 		<a class="butt grey" href="{% url 'admin:cv_person_add' %}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Add person</a>
 		<a id="showJsonBtn" class="butt grey"><i class="icon-download"></i> Show Json</a>
 	{% endif %}
@@ -173,7 +173,7 @@
 				{% if user.is_authenticated %}
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
-					<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
+					<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
 						<a href="{% url 'admin:cv_person_change' "XXXpidXXX" %}" class="butt">Edit person</a>
 					<%?%>
 				{% endif %}
@@ -188,7 +188,7 @@
 							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
 						</td>
 						{% if user.is_authenticated %}
-							<%? p.mail == "{{ user.email }}" {% if user.is_superuser %}|| true{% endif %} %>
+							<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
 								<td><a href="{% url 'admin:cv_cv_change' "XXXcvidXXX" %}" class="butt grey">Edit<br/>
 								<span class="dato">CV</span></a></td>
 							<%?%>
@@ -197,9 +197,11 @@
 					<%?%>
 				<%~%>
 				{% if user.is_authenticated %}
-				<tr>
-					<td><a href="{% url 'cv_add_cv_for_person' "XXXpidXXX" %}" class="butt grey">Add CV</a></td>
-				</tr>
+					<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+						<tr>
+							<td><a href="{% url 'cv_add_cv_for_person' "XXXpidXXX" %}" class="butt grey">Add CV</a></td>
+						</tr>
+					<%?%>
 				{% endif %}
 				</table>
 			</div>

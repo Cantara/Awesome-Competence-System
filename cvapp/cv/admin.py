@@ -33,12 +33,26 @@ class TechnologyInline(admin.StackedInline):
     formfield_overrides = large
     fields = (('title', 'title_en'), ('data', 'data_en'))
 
+    def has_change_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_delete_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_add_permission(self, request):
+        return True
+
 class WorkplaceInline(admin.StackedInline):
     model = Workplace
     extra = 0
     ordering = order
     formfield_overrides = large
     fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'))
+
+    def has_change_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_delete_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_add_permission(self, request):
+        return True
 
 class ExperienceInline(admin.StackedInline):
     model = Experience
@@ -48,6 +62,13 @@ class ExperienceInline(admin.StackedInline):
     formfield_overrides = large
     fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('company', 'company_en'), ('description', 'description_en'), ('techs','techs_en'))
 
+    def has_change_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_delete_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_add_permission(self, request):
+        return True
+
 class EducationInline(admin.StackedInline):
     model = Education
     verbose_name_plural = "Education"
@@ -55,11 +76,28 @@ class EducationInline(admin.StackedInline):
     ordering = order
     formfield_overrides = large
     fields = (('from_year', 'from_month', 'to_year', 'to_month'), ('title', 'title_en'), ('school', 'school_en'), ('description', 'description_en'))
-    
+
+    def has_change_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_delete_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_add_permission(self, request):
+        return True
+
     class Media:
         css = {
             'all': ('/static/css/hotfix.css',)
         }
+
+def has_permission_for_person(request, obj):
+    user_is_person = False
+    try: 
+        user_is_person = request.user.person == obj
+    except:
+        pass
+    if request.user.is_superuser or user_is_person:
+        return True
+    return False
 
 class OtherInline(admin.StackedInline):
     model = Other
@@ -76,16 +114,10 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
     
     def has_change_permission(self, request, obj=None):
-        has_class_permission = super(PersonAdmin, self).has_change_permission(request, obj)
-        if obj is not None and request.user.email == obj.mail:
-            return True
-        if not has_class_permission:
-            return False
-        if obj is not None and not request.user.is_superuser and request.user.email != obj.mail:
-            return False
-        return True
+        return True #has_permission_for_person(request, obj)
 
     def has_delete_permission(self, request, obj=None):
+        # Only allows deletes from the admin-page for persons, not from the change_form
         if request.path[-7:] == 'person/' and request.user.is_superuser:
             return True
         return False
@@ -190,10 +222,17 @@ class CvAdmin(admin.ModelAdmin):
         superclass = super(CvAdmin, self)
         return superclass.render_change_form(request, context, *args, **kwargs)
 
+    def has_change_permission(self, request, obj=None):
+        try:
+            return has_permission_for_person(request, obj.person)
+        except:
+            return False
+
     def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser or request.user.person == obj.person:
-            return True
-        return False
+        try:
+            return has_permission_for_person(request, obj.person)
+        except:
+            return False
 
 admin.site.register(Cv, CvAdmin)
 

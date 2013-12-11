@@ -9,18 +9,12 @@ import localsettings
 
 from cvhelper import labels, getTranslatedParts
 
-def cvlist(request):
-	all_persons = Person.objects.all()
-	# style = Style.objects.get(id=1)
-	return render_to_response('cv/cvlist.html', {'all_persons': all_persons, 'style': ''}, context_instance=RequestContext(request))
-
 def cv_list(request):
-	all_persons = [] # Person.objects.all()
 	get_params = False;
 	if(request.GET):
 		get_params = json.dumps(request.GET)
 	# style = Style.objects.get(id=1)
-	return render_to_response('cv/cv_list.html', {'all_persons': all_persons, 'g': get_params}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_list.html', {'g': get_params}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
@@ -152,9 +146,13 @@ def expautocomplete(request):
 		jsones = serializers.serialize('json', es, indent=2, use_natural_keys=True)
 	return HttpResponse(jsones)
 
+import logging
+log = logging.getLogger('cv')
+
 def add_cv_for_person(request, pid):
-	if request.user.is_superuser or request.user.person.id == pid:
-		p = get_object_or_404(Person, pk=pid)
+	user_is_person = False
+	p = get_object_or_404(Person, pk=pid)
+	if request.user.is_superuser or request.user.person == p:
 		cv = Cv(
 			tags = p.title, 
 			person = p, 

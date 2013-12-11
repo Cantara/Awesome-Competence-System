@@ -232,3 +232,7 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
 
 # Prevent redirect to localhost because of proxy setup
 USE_X_FORWARDED_HOST = True
+
+#SESSION_COOKIE_SECURE = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+#CSRF_COOKIE_SECURE = True

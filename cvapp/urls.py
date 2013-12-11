@@ -26,6 +26,7 @@ urlpatterns = patterns('cv.views',
     url(r'^multisearch/$', 'multisearch', name='multisearch'),
 
     url(r'^login/$', 'myRemoteLogin'),
+    url(r'^logout/$', 'myRemoteLogout'),
 
     url(r'^matrix/$', 'matrix_list'),
     url(r'^matrix/edit/$', 'matrix_edit'),
@@ -57,3 +58,10 @@ urlpatterns = patterns('cv.views',
     url(r'^search/', include('haystack.urls')),
 
 )
+
+from django.conf import settings
+
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/var/www/media'}),
+    )
