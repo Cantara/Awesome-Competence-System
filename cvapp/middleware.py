@@ -22,7 +22,7 @@ class WhydahMiddleware(object):
 			return None
 		else:
 			if request.method == 'GET':
-				log.info("HOST:%s; FOR:%s; SERVER:%s;" % (request.META['HTTP_X_FORWARDED_HOST'],request.META['HTTP_X_FORWARDED_FOR'],request.META['HTTP_X_FORWARDED_SERVER']) )
+				# log.info("HOST:%s; FOR:%s; SERVER:%s;" % (request.META['HTTP_X_FORWARDED_HOST'],request.META['HTTP_X_FORWARDED_FOR'],request.META['HTTP_X_FORWARDED_SERVER']) )
 				ticket = request.GET.get('userticket', False)
 				# tokenid = request.COOKIES.get('whydahusertoken_sso', False)
 				userToken = False
