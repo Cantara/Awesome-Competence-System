@@ -61,7 +61,7 @@ urlpatterns = patterns('cv.views',
 
 from django.conf import settings
 
-if settings.DEBUG:
+if settings.DEBUG or True:
     urlpatterns += patterns('',
         (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/var/www/media'}),
     )

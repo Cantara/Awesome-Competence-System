@@ -24,7 +24,7 @@ class WhydahMiddleware(object):
 			if request.method == 'GET':
 				log.info("HOST:%s; FOR:%s; SERVER:%s;" % (request.META['HTTP_X_FORWARDED_HOST'],request.META['HTTP_X_FORWARDED_FOR'],request.META['HTTP_X_FORWARDED_SERVER']) )
 				ticket = request.GET.get('userticket', False)
-				tokenid = request.COOKIES.get('whydahusertoken_sso', False)
+				# tokenid = request.COOKIES.get('whydahusertoken_sso', False)
 				userToken = False
 
 				if ticket:
@@ -42,6 +42,7 @@ class WhydahMiddleware(object):
 						log.info('Getting usertoken:')
 						userToken = getUserToken(appToken, ticket, 'ticket')
 						log.info(userToken)
+				'''
 				elif tokenid:
 					log.info('You are not logged in - Attempting log in')
 					log.info('Tokenid:')
@@ -50,6 +51,7 @@ class WhydahMiddleware(object):
 					log.info('Getting usertoken:')
 					userToken = getUserToken(appToken, tokenid, 'tokenid')
 					log.info(userToken)
+				'''
 
 				if userToken:
 					logged_in = loginUserWithToken(userToken, request)
@@ -101,11 +103,11 @@ def loginUserWithToken(token, request):
 		currentgroups = user.groups.values_list('name', flat=True)
 		for groupname in tokengroups:
 			if groupname not in currentgroups:
-				group = Group.objects.get(name=groupname)
+				group, created = Group.objects.get_or_create(name=groupname)
 				user.groups.add(group)
 		for groupname in currentgroups:
 			if groupname not in tokengroups:
-				group = Group.objects.get(name=groupname)
+				group, created = Group.objects.get_or_create(name=groupname)
 				user.groups.remove(group)
 		user.first_name = firstname
 		user.last_name = lastname

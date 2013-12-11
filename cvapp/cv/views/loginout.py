@@ -21,6 +21,10 @@ def myRemoteLogin(request):
 
 def myRemoteLogout(request):
 	logout(request)
+	response = HttpResponseRedirect('https://' + request.get_host())
+	response.delete_cookie(key='whydahusertoken_sso')
+	response.delete_cookie(key='whydahusertoken_sso', path='/', domain=request.get_host() )
+	response.set_cookie('whydahusertoken_sso','')
 	if request.method == 'GET':
 		redirect_url = 'https://' + request.get_host() + request.POST.get('path', '/')
 	else:
