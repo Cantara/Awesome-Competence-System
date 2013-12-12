@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django import forms
 import logging
-log = logging.getLogger('cv')
+log = logging.getLogger('admin.py')
 
 small = {
         models.TextField: { 'widget': Textarea( attrs = {'rows':2, 'cols':30 } ) },
@@ -108,7 +108,6 @@ class OtherInline(admin.StackedInline):
 class PersonAdmin(admin.ModelAdmin):
 
     formfield_overrides = large
-    
     fields = ('user', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
     
     inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
@@ -142,36 +141,15 @@ class PersonAdmin(admin.ModelAdmin):
     # Adding the list of popular techs
     def render_change_form(self, request, context, *args, **kwargs):
 
-        '''if not request.user.is_superuser:
-            fieldslist = list(self.fields)
-            fieldslist.remove('user')
-            self.fields = tuple(fieldslist)'''
+        log.info('Person Render Change Form')
+        log.info(self)
 
-        techlist = {}
-        
-        for p in Person.objects.all():
-            for t_set in p.technology_set.all():
-                for t in t_set.data_as_list():
-                    item = t.replace('\n','').strip()
-                    if len(item) < 20 and len(item) > 0:
-                        if item in techlist:
-                            techlist[item] +=1
-                        else:
-                            techlist[item] = 1
-        
-        sortedtechlist = [x for x in techlist.iteritems()]
-        sortedtechlist.sort(key=lambda x: x[1])
-        sortedtechlist.reverse()
-
-        t = []
-        for i in sortedtechlist:
-            if i[1] > 1:
-                t.append(i[0])
+        if not request.user.is_superuser:
+            self.readonly_fields = ['user']
         
         extra = {
             'has_file_field': True, # Make your form render as multi-part.
-            'techlist': t,
-            'is_add_person_form': False
+            'is_add_person_form': False,
         }
 
         try:
@@ -184,8 +162,7 @@ class PersonAdmin(admin.ModelAdmin):
 
         context.update(extra)
         
-        superclass = super(PersonAdmin, self)
-        return superclass.render_change_form(request, context, *args, **kwargs)
+        return super(PersonAdmin, self).render_change_form(request, context, *args, **kwargs)
     
 admin.site.register(Person, PersonAdmin)
 
