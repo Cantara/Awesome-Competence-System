@@ -114,7 +114,7 @@ class PersonAdmin(admin.ModelAdmin):
     inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
     
     def has_change_permission(self, request, obj=None):
-        return True #has_permission_for_person(request, obj)
+        return has_permission_for_person(request, obj)
 
     def has_delete_permission(self, request, obj=None):
         # Only allows deletes from the admin-page for persons, not from the change_form
@@ -141,6 +141,12 @@ class PersonAdmin(admin.ModelAdmin):
 
     # Adding the list of popular techs
     def render_change_form(self, request, context, *args, **kwargs):
+
+        '''if not request.user.is_superuser:
+            fieldslist = list(self.fields)
+            fieldslist.remove('user')
+            self.fields = tuple(fieldslist)'''
+
         techlist = {}
         
         for p in Person.objects.all():
@@ -226,13 +232,13 @@ class CvAdmin(admin.ModelAdmin):
         try:
             return has_permission_for_person(request, obj.person)
         except:
-            return False
+            return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
         try:
             return has_permission_for_person(request, obj.person)
         except:
-            return False
+            return request.user.is_superuser
 
 admin.site.register(Cv, CvAdmin)
 

@@ -149,6 +149,24 @@ def expautocomplete(request):
 import logging
 log = logging.getLogger('cv')
 
+def add_person_for_user(request):
+	try:
+		p = request.user.person
+		HttpResponseForbidden()
+	except:
+		if request.user.first_name != '':
+			name = "%s %s" % (request.user.first_name, request.user.last_name)
+		else:
+			name = request.user.username
+		mail = request.user.email
+		p = Person(
+			user = request.user,
+			name = name,
+			mail = mail
+			)
+		p.save()
+		return redirect('admin:cv_person_change', p.pk)
+
 def add_cv_for_person(request, pid):
 	user_is_person = False
 	p = get_object_or_404(Person, pk=pid)

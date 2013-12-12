@@ -4,13 +4,25 @@
 {% block title %}CV{% endblock %}
 
 {% block extrastyles %}
-		<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.nouislider.min.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.nouislider.min.css"/>
 {% endblock %}
 
 {% block actions %}
 	<h1>ACS Persons</h1>
 	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search" autofocus/>
 	<p id="numfound" class="small"></p>
+
+	{% if not user.person %}
+		<br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
+			Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You don't seem to have a CV profile. 
+			<a href="{% url 'cv_add_person_for_user' %}" class="butt">Create a profile now!</a>
+		</p>
+	{% elif not user.person.cv_set.all %}
+		<br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
+			Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You have registered a profile, but you don't seem to have any CVs.
+			<a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt">Create a CV now!</a>
+		</p>
+	{% endif %}
 {% endblock %}
 
 {% block options %}
@@ -20,14 +32,14 @@
 		<h3>View</h3>
 		<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
 	{% if user.is_superuser %}
-		<a class="butt grey" href="{% url 'admin:cv_person_add' %}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Add person</a>
-		<a id="showJsonBtn" class="butt grey"><i class="icon-download"></i> Show Json</a>
+		<a class="butt grey" href="{% url 'admin:cv_person_add' %}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
+		<a id="showJsonBtn" class="butt grey"><i class="icon-download"></i> Json</a>
 	{% endif %}
     </div>
     
     <div class="option animateheight">
     	<span class="butt grey" onClick="toggleFilter();">
-    		<i id="togglefiltericon" class="icon-double-angle-right"></i> <span id="togglefiltertext">Show filters</span>
+    		<i id="togglefiltericon" class="icon-double-angle-right"></i> Filters
     	</span>
     	<div id="optionsinside">
 			<div id="facets">
@@ -69,30 +81,46 @@
 {% endblock %}
 
 {% block content %}
+	
+	<style>
+		.lineright {
+			border-right: 1px solid #ddd;
+		}
+		thead th {
+			padding-bottom: .5em;
+		}
+	</style>
+
 	<form name="multicv" action="{% url 'cv_multi' %}" method="get">
 		<table id="multiresults" class="responsivetable" style="display:none">
-			<tr>
-				<th colspan="3">
-					{% if user.is_authenticated %}
-			        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
-		           	<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>
-	    			<a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
-	    			{%endif%}
-	    		</th>
-				<th>
-					Format:&nbsp;<select name="format" id="format">
-						<option value="doc">DOC</option>
-						<option value="pdf">PDF</option>
-						<option value="odt">ODT</option>
-					</select>
-					Language:&nbsp;<select name="language" id="language">
-						<option value="native">Native</option>
-						<option value="en">English</option>
-					</select>
-					<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
-				</th>
-				<th>Download</th>
-			</tr>
+			<thead>
+				<tr>
+					<th colspan="3" class="lineright">Persons</th>
+					<th colspan="2">CVs</th>
+				</tr>
+				<tr>
+					<td colspan="3" class="lineright">
+						{% if user.is_authenticated %}
+				        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
+			           	<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>
+		    			<a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
+		    			{%endif%}
+		    		</td>
+					<td>
+						Format:&nbsp;<select name="format" id="format">
+							<option value="doc">DOC</option>
+							<option value="pdf">PDF</option>
+							<option value="odt">ODT</option>
+						</select>
+						Language:&nbsp;<select name="language" id="language">
+							<option value="native">Native</option>
+							<option value="en">English</option>
+						</select>
+						<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+					</td>
+					<td>Download</td>
+				</tr>
+			</thead>
 		</table>
 		<div id="results"></div>
 	</form>
@@ -179,7 +207,6 @@
 				{% endif %}
 				<table>
 				<%~p.cv :cv:index%>
-					<%? p.completeness.percent > 10 {% if user.is_anonymous %}&& cv.tags != "Empty CV"{% endif %} %> 
 					<tr>
 						<td>
 							<a href="{% url 'cv_detail' "999999" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>"><%=cv.tags%><br/>
@@ -194,7 +221,6 @@
 							<%?%>
 						{% endif %}
 					</tr>
-					<%?%>
 				<%~%>
 				{% if user.is_authenticated %}
 					<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
@@ -223,7 +249,7 @@
 						<td rowspan="4">
 							<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
 							</td>
-						<td rowspan="4">
+						<td rowspan="4" class="lineright">
 							<label for="p<%=p.id%>checkbox" class="textcheckbox">
 							<h3><%=p.name%> ‒ <%=p.title%></h3>
 							<p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
@@ -693,10 +719,8 @@
 		function toggleFilter() {
 			var $obox = $('#optionsbox');
 			if($obox.hasClass('hiddenopts')){
-				$('#togglefiltertext').text('Hide filters');
 				$('#togglefiltericon').removeClass().addClass('icon-double-angle-left');
 			} else {
-				$('#togglefiltertext').text('Show filters');
 				$('#togglefiltericon').removeClass().addClass('icon-double-angle-right');
 			}
 			$obox.toggleClass('hiddenopts');
