@@ -171,12 +171,19 @@ def add_cv_for_person(request, pid):
 	user_is_person = False
 	p = get_object_or_404(Person, pk=pid)
 	if request.user.is_superuser or request.user.person == p:
+		tags = 'NEW CV '
+		title = ''
+		try:
+			tags += p.title
+			title = p.title
+		except:
+			pass
 		cv = Cv(
-			tags = p.title, 
+			tags = tags, 
 			person = p, 
 			profile = '', 
 			profile_en = '',
-			title = p.title,
+			title = title,
 			title_en = '',
 			)
 		cv.save()
