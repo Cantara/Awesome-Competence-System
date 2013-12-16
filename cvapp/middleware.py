@@ -112,6 +112,7 @@ def loginUserWithToken(token, request):
 		user.first_name = firstname
 		user.last_name = lastname
 		user.is_superuser = is_superuser
+		user.is_staff = True
 		user.save()
 		user.backend = 'django.contrib.auth.backends.ModelBackend'
 		request.user = user
