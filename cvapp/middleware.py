@@ -91,9 +91,8 @@ def loginUserWithToken(token, request):
 				log.info(rolename)
 				if rolename in ACCESSROLES:
 					if rolename == 'Employee':
-						useremail = role.get('value')
-						log.info('useremail:')
-						log.info(useremail)
+						if role.get('value') not in ['none', 'None', '']:
+							useremail = role.get('value')
 					if rolename == 'Administrator' or rolename == 'Manager':
 						is_superuser = True
 					tokengroups.append(rolename)
