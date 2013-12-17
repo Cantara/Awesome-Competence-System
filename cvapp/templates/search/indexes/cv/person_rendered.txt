@@ -1,5 +1,6 @@
 {
 	"id": "{{ object.id }}",
+	"username": "{{ object.user.username }}",
 	"name": "{{ object.name }}",
 	"title": "{{ object.title }}",
 	"image": "{{ object.image }}",

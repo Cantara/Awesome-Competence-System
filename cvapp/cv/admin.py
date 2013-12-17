@@ -109,7 +109,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     formfield_overrides = large
     fields = ('user', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
-    
+
     inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
     
     def has_change_permission(self, request, obj=None):
@@ -138,14 +138,14 @@ class PersonAdmin(admin.ModelAdmin):
     def response_delete(self, request, obj, post_url_continue=None):
         return redirect("cv_list")
 
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return []
+        else:
+            return ['user']
+
     # Adding the list of popular techs
     def render_change_form(self, request, context, *args, **kwargs):
-
-        log.info('Person Render Change Form')
-        log.info(self)
-
-        if not request.user.is_superuser:
-            self.readonly_fields = ['user']
         
         extra = {
             'has_file_field': True, # Make your form render as multi-part.

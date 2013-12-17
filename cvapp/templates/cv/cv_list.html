@@ -15,12 +15,12 @@
 	{% if not user.person %}
 		<br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
 			Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You don't seem to have a CV profile. 
-			<a href="{% url 'cv_add_person_for_user' %}" class="butt">Create a profile now!</a>
+			<a href="{% url 'cv_add_person_for_user' %}" class="butt butt-action">Create a profile now!</a>
 		</p>
 	{% elif not user.person.cv_set.all %}
 		<br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
 			Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You have registered a profile, but you don't seem to have any CVs.
-			<a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt">Create a CV now!</a>
+			<a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt butt-action">Create a CV now!</a>
 		</p>
 	{% endif %}
 {% endblock %}
@@ -32,13 +32,13 @@
 		<h3>View</h3>
 		<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
 	{% if user.is_superuser %}
-		<a class="butt grey" href="{% url 'admin:cv_person_add' %}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
-		<a id="showJsonBtn" class="butt grey"><i class="icon-download"></i> Json</a>
+		<a class="butt" href="{% url 'admin:cv_person_add' %}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
+		<a id="showJsonBtn" class="butt"><i class="icon-download"></i> Json</a>
 	{% endif %}
     </div>
     
     <div class="option animateheight">
-    	<span class="butt grey" onClick="toggleFilter();">
+    	<span class="butt" onClick="toggleFilter();">
     		<i id="togglefiltericon" class="icon-double-angle-right"></i> Filters
     	</span>
     	<div id="optionsinside">
@@ -72,7 +72,7 @@
 	</div>
 
     <div class="option">
-    	<a class="butt grey" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
+    	<a class="butt" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
     		<i class="icon-question-sign"></i> Help
     	</a>
     </div>
@@ -191,7 +191,7 @@
 			</div>
 			<section>
 				<span>                    
-                    {% if user.is_authenticated %}<a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt grey" style="float: right;"><i class="icon-envelope"></i></a>{% endif %}
+                    {% if user.is_authenticated %}<a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt" style="float: right;"><i class="icon-envelope"></i></a>{% endif %}
                 </span>
                 
 				<p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
@@ -201,7 +201,7 @@
 				{% if user.is_authenticated %}
 					<p class="ldetail">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
 					<%? p.completeness.comment %><ul class="ldetail"><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
-					<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+					<%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
 						<a href="{% url 'admin:cv_person_change' "XXXpidXXX" %}" class="butt">Edit person</a>
 					<%?%>
 				{% endif %}
@@ -215,17 +215,17 @@
 							 <%=cv.status.percent%>%<%??%>&nbsp;<%?%></span></a>
 						</td>
 						{% if user.is_authenticated %}
-							<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
-								<td><a href="{% url 'admin:cv_cv_change' "XXXcvidXXX" %}" class="butt grey">Edit<br/>
+							<%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+								<td><a href="{% url 'admin:cv_cv_change' "XXXcvidXXX" %}" class="butt">Edit<br/>
 								<span class="dato">CV</span></a></td>
 							<%?%>
 						{% endif %}
 					</tr>
 				<%~%>
 				{% if user.is_authenticated %}
-					<%? p.mail == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+					<%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
 						<tr>
-							<td><a href="{% url 'cv_add_cv_for_person' "XXXpidXXX" %}" class="butt grey">Add CV</a></td>
+							<td><a href="{% url 'cv_add_cv_for_person' "XXXpidXXX" %}" class="butt">Add CV</a></td>
 						</tr>
 					<%?%>
 				{% endif %}
@@ -261,10 +261,10 @@
 						<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
 						</td>
 					<td data-title="Download">
-						<a href="{% url 'cv_detail' "999999" %}" title="<%=cv.status.comment%>" target="_blank">View</a>&nbsp;
-						<a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank">DOC</a>&nbsp;
-						<a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank">PDF</a>&nbsp;
-						<a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank">ODT</a>
+						<a href="{% url 'cv_detail' "999999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
+						<a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
+						<a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>&nbsp;
+						<a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank" class="butt">ODT</a>
 						</td>
 				</tr>
 				<%?%>
