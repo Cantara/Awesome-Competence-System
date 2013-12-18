@@ -350,10 +350,10 @@ class Cv(models.Model):
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
 	
-	profile = models.TextField(null=True, blank=True)
-	profile_en = models.TextField(null=True, blank=True)
+	profile = models.TextField(verbose_name='Profile description', null=True, blank=True)
+	profile_en = models.TextField(verbose_name='Profile description (English)', null=True, blank=True)
 	
-	technology = models.ManyToManyField(Technology, null=True, blank=True)
+	technology = models.ManyToManyField(Technology, verbose_name='Competence', null=True, blank=True)
 	experience = models.ManyToManyField(Experience, null=True, blank=True)
 	workplace = models.ManyToManyField(Workplace, null=True, blank=True)
 	education = models.ManyToManyField(Education, null=True, blank=True)
