@@ -42,16 +42,25 @@ DEPARTMENT_CHOICES = (
 	('Automotive', 'Automotive'),
 	('Business and Quality Management', 'Business and Quality Management, BQM'),
 	('Business Intelligence', 'Business Intelligence, BI'),
+	('Connectivity','Connectivity'),
+	('Digital Electronics','Digital Electronics'),
+	('​Embedded Software','​Embedded Software'),
 	('Enterprise Content Management', 'Enterprise Content Management, ECM'),
+	('ECM SharePoint','ECM SharePoint'),
+	('ECM Documentum​','ECM Documentum​'),
 	('Identity Access Management', 'Identity and Access Management, IAM'),
 	('Intelligent Systems', 'Intelligent Systems, ISY'),
 	('Life Sciences', 'Life Sciences'),
+	('​Model Based Software Engineering','​Model Based Software Engineering'),
+	('Power Electronics','Power Electronics'),
 	('Project and Service Management', 'Project and Service Management, PSM'),
-	('Software Engineering', 'Software Engineering'),
+	('Software Engineering', 'Software Engineering, SE'),
 	('Telecom', 'Telecom'),
+	('Verification and Simulation','Verification and Simulation'),
 
 	('Sales', 'Sales'),
 	('Other', 'Other'),
+
 )
 
 class Person(models.Model):
