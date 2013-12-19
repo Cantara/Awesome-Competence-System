@@ -120,7 +120,7 @@ class Person(models.Model):
 		if self.technology_set.count() >= 1:
 			myscore += 1
 		else:
-			comment.append("Does not have at least one set of technology")
+			comment.append("Does not have at least one set of competences")
 		
 		# Minimum 4 entries in experience and workplace combined
 		maxscore += 4
@@ -402,7 +402,7 @@ class Cv(models.Model):
 		if self.technology.count() >= 1:
 			myscore += 1
 		else:
-			comment.append("Does not have at least one set of technology")
+			comment.append("Does not have at least one set of competences")
 		
 		# Minimum 4 entries in experience and workplace combined
 		maxscore += 4
