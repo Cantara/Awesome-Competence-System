@@ -45,7 +45,7 @@ DEPARTMENT_CHOICES = (
 	('Connectivity','Connectivity'),
 	('Digital Electronics','Digital Electronics'),
 	('​Embedded Software','​Embedded Software'),
-	('Enterprise Content Management', 'Enterprise Content Management, ECM'),
+	# ('Enterprise Content Management', 'Enterprise Content Management, ECM'),
 	('ECM SharePoint','ECM SharePoint'),
 	('ECM Documentum​','ECM Documentum​'),
 	('Identity Access Management', 'Identity and Access Management, IAM'),
