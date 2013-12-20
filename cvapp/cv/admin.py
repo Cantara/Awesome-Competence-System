@@ -212,10 +212,10 @@ class CvAdmin(admin.ModelAdmin):
             return request.user.is_superuser
 
     def has_delete_permission(self, request, obj=None):
-        try:
+        '''try:
             return has_permission_for_person(request, obj.person)
-        except:
-            return request.user.is_superuser
+        except:'''
+        return request.user.is_superuser
 
 admin.site.register(Cv, CvAdmin)
 

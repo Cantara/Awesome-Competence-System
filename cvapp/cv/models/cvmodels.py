@@ -354,7 +354,7 @@ class Cv(models.Model):
 	last_edited = models.DateTimeField(auto_now=True)
 	created = models.DateTimeField(auto_now_add=True)
 	
-	tags = models.CharField(max_length=50)
+	tags = models.CharField(verbose_name='CV description', max_length=50)
 	
 	title = models.CharField(max_length=50, null=True, blank=True)
 	title_en = models.CharField(max_length=50, null=True, blank=True)
