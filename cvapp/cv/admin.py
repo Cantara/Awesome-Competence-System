@@ -89,6 +89,19 @@ class EducationInline(admin.StackedInline):
             'all': ('/static/css/hotfix.css',)
         }
 
+class OtherInline(admin.StackedInline):
+    model = Other
+    extra = 0
+    formfield_overrides = wide
+    fields = ('title', 'data', 'title_en', 'data_en')
+
+    def has_change_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_delete_permission(self, request, obj=None):
+        return True #has_permission_for_person(request, obj)
+    def has_add_permission(self, request):
+        return True
+
 def has_permission_for_person(request, obj):
     user_is_person = False
     try: 
@@ -98,12 +111,6 @@ def has_permission_for_person(request, obj):
     if request.user.is_superuser or user_is_person:
         return True
     return False
-
-class OtherInline(admin.StackedInline):
-    model = Other
-    extra = 0
-    formfield_overrides = wide
-    fields = ('title', 'data', 'title_en', 'data_en')
 
 class PersonAdmin(admin.ModelAdmin):
 
