@@ -29,6 +29,8 @@ urlpatterns = patterns('cv.views',
     url(r'^login/$', 'myRemoteLogin'),
     url(r'^logout/$', 'myRemoteLogout'),
 
+    url(r'^locale/$', 'view_locale'),
+
     url(r'^matrix/$', 'matrix_list'),
     url(r'^matrix/edit/$', 'matrix_edit'),
     url(r'^matrix/edit/(?P<m_id>\d+)/$', 'matrix_load'),
