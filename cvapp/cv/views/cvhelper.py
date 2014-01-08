@@ -58,13 +58,15 @@ def getTranslatedParts(cv, lang, alerts=False):
 	
 	# Returns the a if it exists and isn't empty, or else b
 	def q(a, b):
-		if a.strip(): 
-			return a
-		if b.strip(): 
-			if alerts:
-				return b + " X-MISSING-TRANSLATION-X"
-			else:
-				return b
+		if a is not None:
+			if a.strip(): 
+				return a
+		if b is not None:
+			if b.strip(): 
+				if alerts:
+					return b + " X-MISSING-TRANSLATION-X"
+				else:
+					return b
 		if alerts:
 			return "X-NOT-FILLED-X"
 		return ""
@@ -82,6 +84,7 @@ def getTranslatedParts(cv, lang, alerts=False):
 			ex.title		= q(ex.title_en, ex.title)
 			ex.company		= q(ex.company_en, ex.company)
 			ex.description	= q(ex.description_en, ex.description)
+			ex.techs		= q(ex.techs_en, ex.techs)
 			
 		for wp in w:
 			wp.title		= q(wp.title_en, wp.title)
@@ -111,6 +114,7 @@ def getTranslatedParts(cv, lang, alerts=False):
 			ex.title		= q(ex.title, ex.title_en)
 			ex.company		= q(ex.company, ex.company_en)
 			ex.description	= q(ex.description, ex.description_en)
+			ex.techs		= q(ex.techs, ex.techs_en)
 			
 		for wp in w:
 			wp.title		= q(wp.title, wp.title_en)
