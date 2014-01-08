@@ -30,10 +30,11 @@
 								{% if user.person.image %}
 									<li style="text-align:center"><img src="{{ user.person.image|scale:'110x110' }}" style="width:5em;height:5em;"></li>
 								{% endif %}
-					            <li><a href="{% url 'admin:cv_person_change' user.person.id %}">Edit Person</a></li>
+					            <li><a href="{% url 'admin:cv_person_change' user.person.id %}" class="butt">Edit Person</a></li>
 					            {% for cv in user.person.cv_set.all %}
-					            <li><a href="{% url 'admin:cv_cv_change' cv.id %}">Edit CV "{{cv.tags}}"</a></li>
+					            <li><a href="{% url 'admin:cv_cv_change' cv.id %}" class="butt">Edit CV "{{cv.tags}}"</a></li>
 					            {% endfor %}
+					            <li><a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt">Add CV</a></li>
 					        </ul>
 						{% else %}
 							Welcome <strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong>
