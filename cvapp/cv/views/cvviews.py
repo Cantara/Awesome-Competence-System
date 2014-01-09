@@ -24,6 +24,9 @@ def detail(request, cv_id, lang = ''):
 		
 	# style = Style.objects.get(id=1)
 	
+	if not lang:
+		lang = p.country
+
 	dictionary = {
 		'cv': cv,
 		'p': p, 

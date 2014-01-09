@@ -1,5 +1,6 @@
 {% extends "./cvbase.html" %}
 {% load image_tags %}
+{% load month_trans %}
 
 {% block title %}{{ person.name }} CV{% endblock %}
 {% block extrastyles %}
@@ -97,7 +98,7 @@
 					<section>
 						<div class="toggle"></div>
 						<input type="text" name="experience[{{ forloop.counter }}][title]" value="{{ ex.title }}" class="h4"/>
-						<input type="text" name="experience[{{ forloop.counter }}][years]" value="{{ ex.from_year }}{% if ex.from_month %} {{ ex.from_monthname }}{% endif %}{% if ex.to_year %} - {{ ex.to_year }}{% endif %}{% if ex.to_month %} {{ ex.to_monthname }}{% endif %}" class="year"/>
+						<input type="text" name="experience[{{ forloop.counter }}][years]" value="{{ ex.from_year }}{% if ex.from_month %} {{ ex.from_monthname|month_trans:lang }}{% endif %}{% if ex.to_year %} - {{ ex.to_year }}{% endif %}{% if ex.to_month %} {{ ex.to_monthname|month_trans:lang }}{% endif %}" class="year"/>
 						<input type="text" name="experience[{{ forloop.counter }}][company]" value="{{ ex.company }}" class="workplace"/>
 						<div class="expandingArea"><pre><span></span><br></pre>
 						  <textarea name="experience[{{ forloop.counter }}][description]" id="experience[{{ forloop.counter }}][description]">{{ ex.description }}</textarea>
@@ -115,7 +116,7 @@
 					<section>
 						<div class="toggle"></div>
 						<input type="text" name="workplace[{{ forloop.counter }}][company]" value="{{ wp.company }}" class="h4"/>
-						<input type="text" name="workplace[{{ forloop.counter }}][years]" value="{{ wp.from_year }}{% if wp.from_month %} {{ wp.from_monthname }}{% endif %}{% if wp.to_year %} - {{ wp.to_year }}{% endif %}{% if wp.to_month %} {{ wp.to_monthname }}{% endif %}" class="year"/>
+						<input type="text" name="workplace[{{ forloop.counter }}][years]" value="{{ wp.from_year }}{% if wp.from_month %} {{ wp.from_monthname|month_trans:lang }}{% endif %}{% if wp.to_year %} - {{ wp.to_year }}{% endif %}{% if wp.to_month %} {{ wp.to_monthname|month_trans:lang }}{% endif %}" class="year"/>
 						<input type="text" name="workplace[{{ forloop.counter }}][title]" value="{{ wp.title }}" class="workplace"/>
 						<div class="expandingArea"><pre><span></span><br></pre>
 						  <textarea name="workplace[{{ forloop.counter }}][description]" id="workplace[{{ forloop.counter }}][description]">{{ wp.description }}</textarea>
@@ -132,7 +133,7 @@
 			  <section>
 					<div class="toggle"></div>
 					<input type="text" name="education[{{ forloop.counter }}][title]" value="{{ du.title }}" class="h4"/>
-					<input type="text" name="education[{{ forloop.counter }}][years]" value="{{ du.from_year }}{% if du.from_month %} {{ du.from_monthname }}{% endif %}{% if du.to_year %} - {{ du.to_year }}{% endif %}{% if du.to_month %} {{ du.to_monthname }}{% endif %}" class="year"/>
+					<input type="text" name="education[{{ forloop.counter }}][years]" value="{{ du.from_year }}{% if du.from_month %} {{ du.from_monthname|month_trans:lang }}{% endif %}{% if du.to_year %} - {{ du.to_year }}{% endif %}{% if du.to_month %} {{ du.to_monthname|month_trans:lang }}{% endif %}" class="year"/>
 					<input type="text" name="education[{{ forloop.counter }}][school]" value="{{ du.school }}" class="workplace"/>
 					<div class="expandingArea"><pre><span></span><br></pre>
 					  <textarea name="education[{{ forloop.counter }}][description]" id="education[{{ forloop.counter }}][description]">{{ du.description }}</textarea>
