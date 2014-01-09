@@ -56,10 +56,10 @@
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>
 			  <input type="text" name="title" value="{{ cv.title }}" class="h2"/>
-			  <p>
+			  <p style="text-align: left;">
 			  <input type="text" name="phone" placeholder="Phone" value="{{ p.phone }}"/>
 			  <input type="text" name="mail" placeholder="E-mail" value="{{ p.mail }}"/>
-			  <input type="text" name="age" placeholder="Age" value="{{ p.age }}"/>
+			  {{ l.age }}: <input type="text" name="age" placeholder="Age" value="{{ p.age }}" style="width:3em"/>
 			  </p>
 		  </div>
 		</div>
