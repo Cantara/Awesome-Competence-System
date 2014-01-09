@@ -10,6 +10,7 @@
 {% block actions %}
 	<h1>ACS Persons</h1>
 	<input type="text" name="filter" id="filter" size="30" style="margin:0;" placeholder="Search" autofocus/>
+	<span id="pagenavigation"></span>
 	<p id="numfound" class="small"></p>
 
 	{% if not user.person %}
@@ -335,7 +336,7 @@
 			renderResults: function(data) {
 				var html = "";
 				var self = this;
-				this.updateNumfound(data.response.numFound);
+				// this.updateNumfound(data.response.numFound);
 				$("#multiresults").children().slice(1).remove();
 				if(data.response.numFound > 0){
 					var ppl = data.response.docs;
@@ -442,7 +443,8 @@
 					self.solrdata.q = self.additionalParams + '*';
 					self.solrdata.hl = 'false';
 				}
-				self.doSearch();
+				pagenav.go(1);
+				//self.doSearch();
 				self.updateUrl();
 			},
 
@@ -458,6 +460,7 @@
 					data = jQuery.parseJSON( data );
 					self.bufferedData = data;
 					self.renderResults(data);
+					pagenav.generate(data.response.numFound);
 				});
 			},
 
@@ -607,7 +610,8 @@
 				}
 				results.push('years_of_experience_exact:['+this.exprange[0]+' TO '+this.exprange[1]+']');
 				cvlist.solrdata.fq = results;
-				cvlist.doSearch();
+				//cvlist.doSearch();
+				pagenav.go(1);
 				cvlist.updateUrl();
 			},
 			updateExprange: function(vals){
@@ -798,6 +802,69 @@
 		    	$(id).removeClass('imgcheckboxhover');
 		    }
 		});
+
+		var pagenav = (function(){
+
+			var numberOfPages = 1;
+			var currentPage = 1;
+			var navTemplate =
+				'<button id="prevpagebtn" class="butt"><i class="icon-chevron-left"></i></button>'+
+				'<select id="selectpage">'+
+				'<% for(var i=1;i<=p.numberOfPages;i++) { %><option value="<%=i%>"><%=p.rows*(i-1)+1%> - <%? p.rows*i < p.numfound %><%=p.rows*i%><%??%><%=p.numfound%><%?%> of <%=p.numfound%></option><% } %>'+
+				'</select>'+
+				'<button id="nextpagebtn" class="butt"><i class="icon-chevron-right"></i></button>';
+			var navRenderer = doT.template(navTemplate);
+
+			function generate(numfound) {
+				var rows = cvlist.solrdata.rows;
+				numberOfPages = Math.ceil( numfound / rows );
+				var currentFirst = (currentPage-1) * rows + 1;
+				var currentLast = currentPage * rows;
+				if(currentLast > numfound){ 
+					currentLast = numfound; 
+				}
+				var navdata = {
+					first: currentFirst,
+					last: currentLast,
+					numfound: numfound,
+					rows: rows,
+					numberOfPages: numberOfPages
+				};
+				var html = navRenderer(navdata);
+				$('#pagenavigation').html(html);
+				$("#selectpage").val(currentPage);
+			}
+
+			function go(pageNum) {
+				currentPage = pageNum;
+				cvlist.solrdata.start = (currentPage-1) * cvlist.solrdata.rows;
+				cvlist.doSearch();
+			}
+
+			function prev() {
+				if( currentPage > 1 ) {
+					go(--currentPage);
+				}
+			}
+
+			function next() {
+				if( currentPage < numberOfPages ) {
+					go(++currentPage);
+				}
+			}
+				
+			// Page navigation listeners
+			$('#pagenavigation').on('click','#nextpagebtn', function() { next() } );
+			$('#pagenavigation').on('click','#prevpagebtn', function() { prev() } );
+			$('#pagenavigation').on('change','#selectpage', function() { go(this.value) } );
+
+			return {
+				generate: generate,
+				go: go,
+				prev: prev,
+				next: next
+			}
+		}())
     </script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
 
