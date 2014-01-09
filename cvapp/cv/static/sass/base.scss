@@ -208,6 +208,8 @@ h1 {
 	-webkit-transition: max-height 0.2s; /* Safari and Chrome */
 }
 
+.alertbox { background: #fdd; padding: .5em; margin-bottom:.5em; color: #800 !important; }
+
 .rdetail, .ldetail {
 	font-size: .75em;
 	line-height: 1.5em;
@@ -218,7 +220,7 @@ h1 {
 	clear: right;
 }
 
-ul.ldetail {
+.ldetail ul {
 	margin-left: 1.5em;
 	list-style: circle;
 }
@@ -227,11 +229,10 @@ ul.ldetail {
 	position: absolute;
 	top:0;
 	left:0;
+	right:0;
 	display: inline-block;
-	width: 100%;
-	height: 6px;
-	background: #999;
-	margin-bottom: 2px;
+	height: 4px;
+	background: #C21A01;
 	padding: 0px;
 	overflow: hidden;
 }
@@ -244,18 +245,18 @@ ul.ldetail {
 
 /* Color of incomplete progress bar */
 .redpercent {
-	background: #eee;
+	background: #eaa;
 }
 
 span.completeness {
 	display: inline-block;
 	vertical-align: middle;
-	background: transparent;
+	background: #C21A01;
 	height: 3px;
 }
 
 span.percent {
-	background: rgba(255,255,255,0.3);
+	background: #aaa;
 	display: block;
 }
 
@@ -332,6 +333,7 @@ input.butt {
 	padding: 0.5em;
 	display: inline-block;
 	font-size: 80%;
+	overflow: hidden;
   -webkit-user-select: none;  /* Chrome all / Safari all */
   -moz-user-select: none;     /* Firefox all */
   -ms-user-select: none;      /* IE 10+ */
