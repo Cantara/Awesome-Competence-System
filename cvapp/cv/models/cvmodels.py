@@ -143,7 +143,7 @@ class Person(models.Model):
 		if self.has_cv():
 			myscore += 1
 		else:
-			comment.append("Has not filled in at least one valid CV")
+			comment.append("Does not have at least one complete CV (100%)")
 		
 		# Is recent
 		maxscore += 1
