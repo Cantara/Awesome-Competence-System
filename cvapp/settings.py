@@ -172,7 +172,7 @@ LOGGING = {
         },
         '': {
             'handlers': ['console', 'logfile'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     }
 }
