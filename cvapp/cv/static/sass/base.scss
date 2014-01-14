@@ -196,16 +196,16 @@ h1 {
 }
 
 .block:hover .cvset {
-	max-height: 300px;
+	max-height: 500px;
 	padding: .5em;
 	margin:0;
 	border-bottom: 2px solid #ccc;
 	box-shadow: 0 5px 6px 1px rgba(0,0,0,.3);
 	/* onMouseOver: Width expands immediately before height transitions */
-			transition: max-height 0.2s;
-		 -o-transition: max-height 0.2s; /* Opera */
-	   -moz-transition: max-height 0.2s; /* Firefox 4 */
-	-webkit-transition: max-height 0.2s; /* Safari and Chrome */
+			transition: all .2s .3s;
+		 -o-transition: all .2s .3s; /* Opera */
+	   -moz-transition: all .2s .3s; /* Firefox 4 */
+	-webkit-transition: all .2s .3s; /* Safari and Chrome */
 }
 
 .alertbox { background: #fdd; padding: .5em; margin-bottom:.5em; color: #800 !important; }
