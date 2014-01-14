@@ -60,14 +60,14 @@ Missing elements in your profile include:
 
 - %s
 
-Update your CV here: http://%s%s?q=name:"%s"
+Update your CV here: https://%s?q=name:"%s"
 
 It is of key importance to us that we have consistent and complete information in ACS as we use it on a daily basis to find and allocate the correct people for the tasks. 
 If you have problems accessing or updating ACS, please check https://wiki.cantara.no/display/ACS/User+Manual for FAQ, User Manual and contact information.
 
 Best regards,
 
-The Awesome Competence System''' % ( p.name, sendername, message, '\n- '.join(p.completeness()['comment']), localsettings.HTTP_AUTH, localsettings.APP_URL, p.name.replace(" ","%20") )
+The Awesome Competence System''' % ( p.name, sendername, message, '\n- '.join(p.completeness()['comment']), localsettings.APP_URL, p.name.replace(" ","%20") )
 		try:
 			mail = EmailMessage(subject, mailtext, 'noreply@altran.no', [p.mail], headers = {'Reply-To': sendermail})
 			mail.send()

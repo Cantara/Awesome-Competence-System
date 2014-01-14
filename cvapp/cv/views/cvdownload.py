@@ -157,6 +157,9 @@ def getCvDictionary(cvid, lang=''):
 	cv = get_object_or_404(Cv, pk=cvid)
 	p = cv.person
 
+	# lang only toggles between English or Native
+	# languagecode toggles between Norwegian, Swedish and English for the labels
+	
 	languagecode = p.country()
 	if not languagecode or lang == 'en':
 		languagecode = 'en'
@@ -231,7 +234,7 @@ def getInfoLine(p, l):
 
 def renderOdt(dictionary, tempfilename='tempcv'):
 
-	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2013-12-03.odt'
+	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-01-14.odt'
 
 	# filename = dictionary['p'].name.encode('ascii', 'ignore') + ' - ' + dictionary['c'].title.encode('ascii', 'ignore').replace(",","").replace('/','') + ".odt"
 
