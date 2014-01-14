@@ -116,6 +116,7 @@ class PersonAdmin(admin.ModelAdmin):
 
     formfield_overrides = large
     fields = ('user', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
+    list_display = ( 'name', 'user', 'last_edited' )
 
     inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
     
@@ -129,6 +130,7 @@ class PersonAdmin(admin.ModelAdmin):
         return False
     
     def response_change(self, request, obj, post_url_continue=None):
+        solr_update(obj)
         response = super(PersonAdmin, self).response_change(request, obj)
         if request.POST.has_key("_continue"):
             return response
@@ -136,6 +138,7 @@ class PersonAdmin(admin.ModelAdmin):
             return redirect("cv_list")
     
     def response_add(self, request, obj, post_url_continue=None):
+        solr_update(obj)
         response = super(PersonAdmin, self).response_change(request, obj)
         if request.POST.has_key("_createcv"):
             return redirect('cv_add_cv_for_person', obj.pk)
@@ -143,6 +146,7 @@ class PersonAdmin(admin.ModelAdmin):
             return redirect("cv_list")
 
     def response_delete(self, request, obj, post_url_continue=None):
+        solr_remove(obj)
         return redirect("cv_list")
 
     def get_readonly_fields(self, request, obj=None):
@@ -170,7 +174,11 @@ class PersonAdmin(admin.ModelAdmin):
         context.update(extra)
         
         return super(PersonAdmin, self).render_change_form(request, context, *args, **kwargs)
-    
+
+    def save_related(self, request, form, formsets, change):
+        log.debug('Save related triggered')
+
+
 admin.site.register(Person, PersonAdmin)
 
 class CvForm(ModelForm):
@@ -192,11 +200,16 @@ class CvAdmin(admin.ModelAdmin):
     #filter_horizontal = ['experience']
 
     def response_change(self, request, obj, post_url_continue=None):
+        solr_update(obj.person)
         response = super(CvAdmin, self).response_change(request, obj)
         if request.POST.has_key("_continue"):
             return response
         else:
             return redirect("cv_list")
+
+    def response_delete(self, request, obj, post_url_continue=None):
+        solr_update(obj.person)
+        return super(CvAdmin, self).response_delete(request, obj)
 
     def render_change_form(self, request, context, *args, **kwargs):
         try:
@@ -242,6 +255,27 @@ admin.site.register(MatrixEntry)
 admin.site.register(Competence)
 admin.site.register(CompetenceEntry)
 admin.site.register(Skillgroup)
+
+
+# Solr Indexing functions
+
+from cv.search_indexes import PersonIndex
+
+def solr_update(person):
+    log.debug('CV Reindex Fired')
+    try:
+        PersonIndex().update_object(person)
+    except:
+        log.debug('Unable to update index')
+        pass
+
+def solr_remove(person):
+    try:
+        PersonIndex().remove_object(person)
+    except:
+        log.debug('Unable to remove index')
+        pass
+
 
 
 '''

@@ -391,18 +391,24 @@ class Cv(models.Model):
 		
 		# Has title and profile?
 		maxscore += 2
+
 		if self.title or self.title_en:
 			myscore += 1
 		else:
 			comment.append("Lacks title")
+
 		if self.profile:
 			if len( self.profile ) > 100:
 				myscore += 1
+			else: 
+				comment.append('Profile text to short')
 		elif self.profile_en:
 			if len( self.profile_en ) > 100:
 				myscore += 1
+			else: 
+				comment.append('Profile text to short')
 		else:
-			comment.append("Lacks profile, or profile too short")
+			comment.append("Lacks profile")
 		
 		# Minimum 1 skillset
 		maxscore += 1
@@ -460,12 +466,32 @@ from cv.search_indexes import PersonIndex
 
 # Triggers reindex of Solr on save.
 def cv_reindex_person(sender, **kwargs):
+	log.debug('CV Reindex Fired')
 	try:
 		PersonIndex().update_object(kwargs['instance'].person)
 	except:
 		pass
 
+def person_reindex_person(sender, **kwargs):
+	PersonIndex().update_object(kwargs['instance'])
+
+
+def person_remove_person(sender, **kwargs):
+	try:
+		PersonIndex().remove_object(kwargs['instance'])
+	except:
+		pass
+		
+models.signals.post_save.connect(person_reindex_person, sender=Person)
+models.signals.post_delete.connect(person_remove_person, sender=Person)
+
+'''
 models.signals.post_save.connect(cv_reindex_person, sender=Cv)
+models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.technology.through)
+models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.experience.through)
+models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.workplace.through)
+models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.education.through)
+models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.other.through)
 models.signals.post_save.connect(cv_reindex_person, sender=Technology)
 models.signals.post_save.connect(cv_reindex_person, sender=Experience)
 models.signals.post_save.connect(cv_reindex_person, sender=Workplace)
@@ -478,19 +504,9 @@ models.signals.post_delete.connect(cv_reindex_person, sender=Experience)
 models.signals.post_delete.connect(cv_reindex_person, sender=Workplace)
 models.signals.post_delete.connect(cv_reindex_person, sender=Education)
 models.signals.post_delete.connect(cv_reindex_person, sender=Other)
+'''
 
-def person_reindex_person(sender, **kwargs):
-	PersonIndex().update_object(kwargs['instance'])
-
-models.signals.post_save.connect(person_reindex_person, sender=Person)
-
-def person_remove_person(sender, **kwargs):
-	try:
-		PersonIndex().remove_object(kwargs['instance'])
-	except:
-		pass
 		
-models.signals.post_delete.connect(person_remove_person, sender=Person)
 
 STYLE_CHOICES = (
 	('sky', 'Sky'),
