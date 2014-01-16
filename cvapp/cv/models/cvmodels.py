@@ -51,10 +51,11 @@ DEPARTMENT_CHOICES = (
 	('Identity Access Management', 'Identity and Access Management, IAM'),
 	('Intelligent Systems', 'Intelligent Systems, ISY'),
 	('Life Sciences', 'Life Sciences'),
-	('​Model Based Software Engineering','​Model Based Software Engineering'),
+	#('​Model Based Software Engineering','​Model Based Software Engineering'),
 	('Power Electronics','Power Electronics'),
 	('Project and Service Management', 'Project and Service Management, PSM'),
 	('Software Engineering', 'Software Engineering, SE'),
+	('Systems Engineering', 'Systems Engineering'),
 	('Telecom', 'Telecom'),
 	('Verification and Simulation','Verification and Simulation'),
 
