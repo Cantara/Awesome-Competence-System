@@ -175,9 +175,6 @@ class PersonAdmin(admin.ModelAdmin):
         
         return super(PersonAdmin, self).render_change_form(request, context, *args, **kwargs)
 
-    def save_related(self, request, form, formsets, change):
-        log.debug('Save related triggered')
-
 
 admin.site.register(Person, PersonAdmin)
 
