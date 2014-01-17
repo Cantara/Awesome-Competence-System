@@ -33,7 +33,7 @@ $.fn.serializeObject = function() {
 		if ( orderindex >= 0 ) {
 			
 			// Assign the value to the object 
-			tempobj[ named[cap] ] = legalize( $(this).val() );
+			tempobj[ named[cap] ] = getLegalValIfTextarea( $(this) );
 			
 			// If it's the last of a set, push the previous set and reset the temporary object container
 			if( named[cap] == "techs" || (orderindex > 0 && named[cap] == "description") ) {
@@ -56,9 +56,9 @@ $.fn.serializeObject = function() {
 
 		  // at the end, psuh or assign the value
 		  if ( lookup.length != undefined ) {
-			   lookup.push( legalize( $(this).val()) );
-		  }else {
-				lookup[ named[ cap ] ]  = legalize( $(this).val() );
+			   lookup.push( getLegalValIfTextarea( $(this) ) );
+		  } else {
+				lookup[ named[ cap ] ] = getLegalValIfTextarea( $(this) );
 		  }
 
 		  // assign the reference back to root
@@ -71,9 +71,13 @@ $.fn.serializeObject = function() {
 };
 
 //Remove illegal characters from word
-function legalize(word) {
+function getLegalValIfTextarea($t) {
+    var word = $t.val();
+    if($t.nodeName == "TEXTAREA") {
+        word = word.replace(/&/g, "&amp;");
+    }
 	// Remove double quotes and line breaks
-	return word.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/\n/g, "<br/>");
+	return word.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/\n/g, "<br/>");
 }
 
 // Formats the JSON to be more readable - http://joncom.be/code/javascript-json-formatter/
