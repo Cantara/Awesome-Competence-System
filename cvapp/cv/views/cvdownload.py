@@ -26,29 +26,11 @@ def download(request, format):
 	if(request.method == 'POST' and request.POST['cvjson']):
 	
 		a = json.loads(request.POST['cvjson'], object_pairs_hook = OrderedDict, strict=False)
-			
-		p = Person(
-			name = a['name'],
-			phone = a['phone'],
-			mail = a['mail'],
-		)
-		
+					
 		cv = Cv(
 			title = a['title'],
 			profile = a['profile'].encode( "utf-8" ),
 		)
-		
-		try:
-			imgUrl = settings.WWW_ROOT + a['photo']
-		except:
-			imgUrl = settings.WWW_ROOT + 'static/media/photos/blank.jpg'
-		f = open(imgUrl, 'r')
-		data = f.read()
-		f.close()
-
-			#imgUrl = "http://www.freecode.no/wp-content/uploads/2012/03/FreeCode-black-300px.jpg"
-			#re = requests.get(imgUrl)
-			#data = re.content
 		
 		t_set = []
 		e_set = []
@@ -110,6 +92,21 @@ def download(request, format):
 				)
 		
 		p = get_object_or_404(Person, pk=a['personid'])
+
+		# In case this has changed in the detailview, we change this temporarily (this is not saved)
+		# Use case might be if someone wants a different phone number or contact number because the CV is sent via an agency
+		p.name = a['name']
+		p.phone = a['phone']
+		p.mail = a['mail']
+		
+		try:
+			imgUrl = settings.WWW_ROOT + p.photo
+		except:
+			imgUrl = settings.WWW_ROOT + 'static/media/photos/blank.jpg'
+		f = open(imgUrl, 'r')
+		data = f.read()
+		f.close()
+
 
 		languagecode = p.country()
 		if not languagecode or a['lang'] == 'en':
