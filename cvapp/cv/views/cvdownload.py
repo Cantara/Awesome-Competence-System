@@ -100,7 +100,7 @@ def download(request, format):
 		p.mail = a['mail']
 		
 		try:
-			imgUrl = settings.WWW_ROOT + p.photo
+			imgUrl = p.image.path.rsplit('.', 1)[0] + '_scale_110x110.jpg'
 		except:
 			imgUrl = settings.WWW_ROOT + 'static/media/photos/blank.jpg'
 		f = open(imgUrl, 'r')
