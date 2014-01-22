@@ -73,8 +73,10 @@ $.fn.serializeObject = function() {
 //Remove illegal characters from word
 function getLegalValIfTextarea($t) {
     var word = $t.val();
-    if($t.nodeName == "TEXTAREA") {
+    if( $t[0].tagName == "TEXTAREA" && !$t.hasClass('h5') ) {
         word = word.replace(/&/g, "&amp;");
+        console.log('textarea:');
+        console.log(word);
     }
 	// Remove double quotes and line breaks
 	return word.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/\n/g, "<br/>");
