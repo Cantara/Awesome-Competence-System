@@ -140,13 +140,13 @@ class Person(models.Model):
 			comment.append("Does not have at least one set of competences")
 		
 		# Minimum 4 entries in experience and workplace combined
-		maxscore += 4
+		maxscore += 2
 		workexp = self.experience_set.count() + self.workplace_set.count()
-		if workexp >= 4:
-			myscore +=4
+		if workexp >= 2:
+			myscore += 2
 		else:
 			myscore += workexp
-			comment.append("Does not have at least four entries in experience and workplace combined")
+			comment.append("Does not have at least two entries in experience and workplace combined")
 		
 		# Minimum 1 entry in education
 		maxscore += 1
