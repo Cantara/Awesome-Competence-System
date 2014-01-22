@@ -64,7 +64,23 @@ DEPARTMENT_CHOICES = (
 
 )
 
+# Custom storage to overwrite existing files
+from django.core.files.storage import FileSystemStorage
+class OverwriteStorage(FileSystemStorage):
+	def _save(self, name, content):
+		if self.exists(name):
+			self.delete(name)
+		return super(OverwriteStorage, self)._save(name, content)
+
+	def get_available_name(self, name):
+		return name
+
 class Person(models.Model):
+
+	def get_image_path(self, filename):
+		ext = filename.split('.')[-1]
+		return "photos/%s.%s" % ( self.name.replace(" ","_"), ext )
+
 	user = models.OneToOneField(User, null=True, blank=True)
 	name = models.CharField("Name*", max_length=50)
 	title = models.CharField("Job title", max_length=60, null=True, blank=True)
@@ -72,7 +88,7 @@ class Person(models.Model):
 	phone = models.CharField(max_length=20, null=True, blank=True)
 	mail = models.EmailField("E-mail*")
 	photo = models.URLField("Photo-URL", null=True, blank=True)
-	image = models.ImageField(upload_to="photos", null=True, blank=True)
+	image = models.ImageField(upload_to=get_image_path, storage=OverwriteStorage(), null=True, blank=True)
 	birthdate = models.DateField("Date of birth (yyyy-mm-dd)", null=True, blank=True)
 	last_edited = models.DateTimeField(auto_now=True)
 	location = models.CharField("Location", max_length=50, choices=LOCATION_CHOICES, null=True, blank=True)
