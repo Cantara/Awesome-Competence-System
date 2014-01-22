@@ -418,12 +418,12 @@ class Cv(models.Model):
 			if len( self.profile ) > 100:
 				myscore += 1
 			else: 
-				comment.append('Profile text to short')
+				comment.append('Profile text too short')
 		elif self.profile_en:
 			if len( self.profile_en ) > 100:
 				myscore += 1
 			else: 
-				comment.append('Profile text to short')
+				comment.append('Profile text too short')
 		else:
 			comment.append("Lacks profile")
 		
