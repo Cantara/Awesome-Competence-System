@@ -283,9 +283,6 @@
 		<label><input type="checkbox" name="<%=p.name%>" id="<%=p.id%>" onChange="cvlist.toggleFacet('<%=p.name%>','<%=p.facet%>',this.checked);"/><%=p.name%></label><br/>
 	</script>
 
-	<script id="init_data" type="application/json">
-		{{ g|safe }}
-	</script>
 	<script src="{{ STATIC_URL }}js/jquery.nouislider.min.js"></script>
 	<script>
 		var cvlist = {
@@ -536,8 +533,10 @@
 					self.renderResults(data);
 					self.showFacets(data.facet_counts.facet_fields);
 					if(self.hasParameters) {
-						var jsonText = document.getElementById('init_data').innerHTML;
-						var initData = JSON.parse(jsonText);
+						var	initData = getUrlVars();
+
+						console.log('Initial Data: ', initData);
+
 						// Set Querystring
 						if( initData.q !== undefined ){
 							self.filterTxt = initData.q;
@@ -551,7 +550,7 @@
 						}
 						// Set Facets
 						if( initData.fq !== undefined ){
-							initData.fq = jQuery.parseJSON( initData.fq );
+							initData.fq = jQuery.parseJSON( unescape( initData.fq ) );
 							for(var key in initData.fq){
 								for(var x in initData.fq[key]){
 									self.toggleFacet(initData.fq[key][x], key, true, true);
@@ -573,6 +572,23 @@
 			}
 
 		};
+
+		function getUrlVars() {
+			if(location.href.indexOf('?')>-1) {
+				var vars = {}, hash;
+				var hashes = location.href.slice(location.href.indexOf('?') + 1).split('&');
+				for(var i = 0; i < hashes.length; i++) {
+					hash = hashes[i].split('=');
+					if( vars[hash[0]] ) {
+						vars[hash[0]].push(hash[1]);
+					} else {
+						vars[hash[0]] = [hash[1]];
+					}
+				}
+				return vars;
+			}
+			return false;
+		}
 
 		cvlist.init();
 

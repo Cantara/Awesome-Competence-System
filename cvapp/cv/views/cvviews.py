@@ -10,11 +10,7 @@ import localsettings
 from cvhelper import labels, getTranslatedParts
 
 def cv_list(request):
-	get_params = False;
-	if(request.GET):
-		get_params = json.dumps(request.GET)
-	# style = Style.objects.get(id=1)
-	return render_to_response('cv/cv_list.html', {'g': get_params}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_list.html', context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)
