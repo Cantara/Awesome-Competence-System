@@ -85,7 +85,7 @@ class Person(models.Model):
 	name = models.CharField("Name*", max_length=50)
 	title = models.CharField("Job title", max_length=60, null=True, blank=True)
 	linkedin = models.URLField("Linked-in URL", null=True, blank=True)
-	phone = models.CharField(max_length=20, null=True, blank=True)
+	phone = models.CharField("Phone (+01 23456789)", max_length=20, null=True, blank=True)
 	mail = models.EmailField("E-mail*")
 	photo = models.URLField("Photo-URL", null=True, blank=True)
 	image = models.ImageField(upload_to=get_image_path, storage=OverwriteStorage(), null=True, blank=True)
