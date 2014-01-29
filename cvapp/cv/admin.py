@@ -27,7 +27,7 @@ order = ('-from_year','-from_month',)
 
 class TechnologyInline(admin.StackedInline):
     model = Technology
-    verbose_name = "Compentence category"
+    verbose_name = "Competence category"
     verbose_name_plural = "Competences"
     extra = 0
     formfield_overrides = large
