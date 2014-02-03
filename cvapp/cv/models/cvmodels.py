@@ -514,8 +514,11 @@ models.signals.post_save.connect(cv_reindex_person, sender=Experience)
 models.signals.post_save.connect(cv_reindex_person, sender=Workplace)
 models.signals.post_save.connect(cv_reindex_person, sender=Education)
 models.signals.post_save.connect(cv_reindex_person, sender=Other)
+'''
 
 models.signals.post_delete.connect(cv_reindex_person, sender=Cv)
+
+'''
 models.signals.post_delete.connect(cv_reindex_person, sender=Technology)
 models.signals.post_delete.connect(cv_reindex_person, sender=Experience)
 models.signals.post_delete.connect(cv_reindex_person, sender=Workplace)

@@ -204,9 +204,9 @@ class CvAdmin(admin.ModelAdmin):
         else:
             return redirect("cv_list")
 
-    def response_delete(self, request, obj, post_url_continue=None):
+    '''def response_delete(self, request, obj, post_url_continue=None):
         solr_update(obj.person)
-        return super(CvAdmin, self).response_delete(request, obj)
+        return super(CvAdmin, self).response_delete(request, obj)'''
 
     def render_change_form(self, request, context, *args, **kwargs):
         try:
