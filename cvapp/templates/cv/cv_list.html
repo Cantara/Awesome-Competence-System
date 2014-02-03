@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% block options %}
-<div id="optionsbox"{% if not g %} class="hiddenopts"{% endif %}>
+<div id="optionsbox" class="hiddenopts">
     
     <div class="option">
 		<h3>View</h3>
@@ -498,7 +498,6 @@
 		 	bufferedData: '',
 		 	totalCount: 0,
 		 	filterTxt: '',
-		 	hasParameters: {% if g %}true{% else %}false{% endif %},
 			init: function() {
 				var self = this;
 
@@ -532,11 +531,12 @@
 					self.bufferedData = data;
 					self.renderResults(data);
 					self.showFacets(data.facet_counts.facet_fields);
-					if(self.hasParameters) {
-						var	initData = getUrlVars();
 
-						console.log('Initial Data: ', initData);
+					var	initData = getUrlVars();
 
+					console.log('Initial Data: ', initData);
+
+					if( initData ) {
 						// Set Querystring
 						if( initData.q !== undefined ){
 							self.filterTxt = initData.q;
@@ -563,9 +563,11 @@
 								$('#multicvcheck').click();
 							}
 						}
+						$('#optionsbox').removeClass();
 						// Do search
 						self.prepSearch();
 					}
+
 					pagenav.generate(data.response.numFound);
 				});
 
