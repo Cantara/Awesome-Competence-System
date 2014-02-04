@@ -66,7 +66,6 @@
     {% render_with_template_if_exist opts.app_label|lower|add:"/admin_model_"|add:module_name|add:"_change_form.html" "" %}
 {% endwith %}
 
-
 <form class="form-horizontal" {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">{% csrf_token %}{% block form_top %}{% endblock %}
     <div class="alert alert-warning" align="right">{% blocktrans %}<small><strong>*</strong> required fields</small>{% endblocktrans %}</div>
     {% if errors %}
@@ -82,7 +81,6 @@
         <div id="content-main" class="span12">
             <div>
             {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
-
             {% block field_sets %}
             {% for fieldset in adminform %}
               {% include "admin/includes/fieldset.html" %}

@@ -121,7 +121,7 @@ def download(request, format):
 			info.append(l['email']+': '+a['mail'])
 		if a['age']: 
 			info.append( '%s: %s' % (l['age'], a['age']) )
-		infoline = ' - '.join(info)	
+		infoline = '<text:p text:style-name="P1">' + '<text:line-break></text:line-break>'.join(info) + '</text:p>'
 
 		dictionary = {
 			'l': l,
@@ -227,11 +227,11 @@ def getInfoLine(p, l):
 		info.append(l['email']+': '+p.mail)
 	if p.age() != "" and p.age() > 0: 
 		info.append( '%s: %s' % (l['age'], p.age()) )
-	return ' - '.join(info)
+	return '<text:p text:style-name="P1">' + '<text:line-break></text:line-break>'.join(info) + '</text:p>'
 
 def renderOdt(dictionary, tempfilename='tempcv'):
 
-	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-01-14.odt'
+	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-02-04.odt'
 
 	# filename = dictionary['p'].name.encode('ascii', 'ignore') + ' - ' + dictionary['c'].title.encode('ascii', 'ignore').replace(",","").replace('/','') + ".odt"
 
