@@ -278,8 +278,14 @@
 		// Add "SELECT_ALL"-button to CV-edit
 		var set = ['technology','experience','workplace','education','other'];
 		for(var i=0;i<set.length;i++){
-			$('#id_'+set[i]).after('<button class="btn" id="deselectall' + set[i] + '">Deselect all in ' + set[i] + '</button>');
-			$('#id_'+set[i]).after('<br/><button class="btn" id="selectall' + set[i] + '">Select all in ' + set[i] + '</button>');
+			if(set[i] == 'technology'){
+				$('#id_'+set[i]).after('<button class="btn" id="deselectall' + set[i] + '">Deselect all in ' + 'competence' + '</button>');
+				$('#id_'+set[i]).after('<br/><button class="btn" id="selectall' + set[i] + '">Select all in ' + 'competence' + '</button>');
+			}else{
+				$('#id_'+set[i]).after('<button class="btn" id="deselectall' + set[i] + '">Deselect all in ' + set[i] + '</button>');
+				$('#id_'+set[i]).after('<br/><button class="btn" id="selectall' + set[i] + '">Select all in ' + set[i] + '</button>');
+			}
+			
 			$('#selectall'+set[i]).click(function(){
 				$(this).prev().prev().children().prop('selected', true);
 				return false;
