@@ -1,0 +1,133 @@
+{% extends "./cvbase.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<h1>Reports</h1>
+
+<form action="" id="searchform">
+	<select name="predefined_queries" id="predefined_queries">
+		<option value="(technology:java & technology:maven)^2">Java-developer</option>
+	</select>
+	<input type="text" name="q" id="q" style="width: 80%">
+	<button class="butt" id="searchbtn">Search</button>
+</form>
+
+<table id="results" class="responsivetable">
+	<thead>
+		<tr>
+			<th></th>
+			<th>Name</th>
+			<th>Match</th>
+			<th>Experience</th>
+		</tr>
+	</thead>
+	<tbody id="resultsbody">
+	</tbody>
+</table>
+
+<script id="template" type="text/x-dot-template">
+	<%~ppl :p:jindex%>
+		<tr id="p<%=p.id%>">
+			<td>
+				<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
+				</td>
+			<td>
+				<h3><%=p.name%></h3>
+				</td>
+			<td>
+				<%=Math.round( p.score*1000 )/10 %>
+				</td>
+			<td>
+				<%=p.years_of_experience%>
+				</td>
+		</tr>
+	<%~%>
+</script> 
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
+<script>
+
+var SOLR = (function($, doT){
+
+ 	var ajaxConf = {
+		type: 'get',
+		url: '/solr/collection1/select',
+		data: {
+	 		q: '*',
+	 		wt: 'json',
+	 		indent: 'true',
+	 		sort: 'score desc',
+	 		rows: 10000,
+	 		hl: 'false',
+	 		fl: 'rendered,score,years_of_experience'
+	 	},
+		traditional: true,
+		cache: false
+	};
+
+	function callServer(){
+		ajaxConf.data.q = $('#q').val();
+		$.ajax(ajaxConf).done(function( data ) {
+			data = jQuery.parseJSON( data );
+			parseResults( data );
+		});
+	}
+
+	function parseResults(data){
+		var docs = data.response.docs;
+		var people = [];
+		for( var i = 0; i < docs.length; i++ ) {
+			people.push( JSON.parse( docs[i].rendered ) );
+			people[i].score = docs[i].score; 
+			people[i].years_of_experience = docs[i].years_of_experience; 
+		}
+		console.log('Results:', people);
+		var html = renderer(people);
+		$('#resultsbody').html(html);
+	}
+
+	function searchFormSubmit(e){
+		console.log('Search form sent');
+		callServer();
+		e.preventDefault();
+	}
+
+	function init() {
+
+		doT.templateSettings = {
+			evaluate:    /\<\%([\s\S]+?)\%\>/g,
+			interpolate: /\<\%=([\s\S]+?)\%\>/g,
+			encode:      /\<\%!([\s\S]+?)\%\>/g,
+			use:         /\<\%#([\s\S]+?)\%\>/g,
+			define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
+			conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
+			iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
+			varname: 'ppl',
+			strip: true,
+			append: true,
+			selfcontained: false
+		};
+
+		renderer = doT.template( $('#template').text() );
+
+		var $pq = $('#predefined_queries');
+		$('#q').val( $pq.val() );
+		$pq.change( function(){
+			$('#q').val( $(this).val() );
+		});
+		$('#searchbtn').click(searchFormSubmit);
+		$('#searchform').submit(searchFormSubmit);
+	}
+
+	return {
+		init: init,
+		callServer: callServer
+	}
+
+}($, doT));
+
+SOLR.init();
+
+</script>
+{% endblock %}
