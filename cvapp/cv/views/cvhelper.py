@@ -15,6 +15,7 @@ labels = {
 		'phone': 'Phone',
 		'age': 'Age',
 		'email': 'E-mail',
+		'ongoing': 'ongoing',
 	},
 	'no': {
 		'cvheading': 'Konsulentprofil',
@@ -30,6 +31,7 @@ labels = {
 		'phone': 'Tlf',
 		'age': 'Alder',
 		'email': 'E-post',
+		'ongoing': 'd.d.',
 	},
 	'se': {
 		'cvheading': 'Konsultprofil',
@@ -45,6 +47,7 @@ labels = {
 		'phone': 'Tfn',
 		'age': u'Ålder',
 		'email': 'E-post',
+		'ongoing': 'pågående',
 	}, 
 }
 
@@ -137,3 +140,21 @@ def getTranslatedParts(cv, lang, alerts=False):
 		l = labels[languagecode]
 
 	return t, e, w, d, o, l
+
+from cv.models.cvmodels import MONTH_CHOICES
+from cv.templatetags.month_trans import month_trans
+
+def getPeriod(timedskill, lang):
+	l = labels[lang]
+	period = ''
+	if(timedskill.from_year>0):
+		period = "%d " % timedskill.from_year
+		if(timedskill.from_month>0):
+			period = period + month_trans( MONTH_CHOICES[timedskill.from_month][1], lang )
+	if(timedskill.to_year>0):
+		period = "%s - %d " % (period, timedskill.to_year)
+		if(timedskill.to_month>0):
+			period = period + month_trans( MONTH_CHOICES[timedskill.to_month][1], lang )
+	else:
+		period = period + " - " + l['ongoing']
+	return period

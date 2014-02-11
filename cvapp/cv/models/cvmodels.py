@@ -5,6 +5,7 @@ import django.contrib.auth.models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from utils import multidelim
+from cv.templatetags.image_tags import scale
 
 import logging
 log = logging.getLogger('cv')
@@ -194,7 +195,6 @@ class Person(models.Model):
 	def save(self, *args, **kwargs):
 		super(Person, self).save(*args, **kwargs)
 		if self.image:
-			from cv.templatetags.image_tags import scale
 			try:
 				scale(self.image, '110x110')
 			except:

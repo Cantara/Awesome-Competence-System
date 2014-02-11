@@ -58,6 +58,7 @@
 		<button class="butt menutoggle showonsmall">Menu</button>
         <ul class="menulist hideonsmall">
             <li><a href="{% url 'cv.views.cv_list' %}" class="">Employee List</a></li>
+            <li><a href="{% url 'cv.views.reports' %}" class="">Reports</a></li>
             <li><a href="{% url 'cv.views.matrix_list' %}" class="">Competence Matrix list</a></li>
 			{% if user.is_superuser %}
             <li><a href="{% url 'changelog' %}" class="">Changelog</a></li>
