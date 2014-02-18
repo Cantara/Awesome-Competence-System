@@ -551,7 +551,7 @@
 					if( initData ) {
 						// Set Querystring
 						if( initData.q !== undefined ){
-							self.filterTxt = initData.q;
+							self.filterTxt = decodeURI(initData.q);
 							document.getElementById('filter').value = self.filterTxt;
 						}
 						// Set Experience Range
