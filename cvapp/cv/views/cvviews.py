@@ -45,6 +45,11 @@ def nagmail(request):
 	sendername = request.POST.get('sendername', '')
 	if receiver_id and message and sendermail and sendername:
 		p = get_object_or_404(Person, pk=receiver_id)
+
+		missing = ''
+		if p.completeness()['percent'] < 100:
+			missing = 'Missing elements in your profile include: \n -%s' % '\n- '.join(p.completeness()['comment'])
+
 		subject = "%s has indicated that you should update your data in ACS" % sendername
 		mailtext = '''Hi %s,
 
@@ -52,9 +57,7 @@ A colleague of yours, %s, has indicated that you should update your CV in ACS wi
 
 "%s"
 
-Missing elements in your profile include:
-
-- %s
+%s
 
 Update your CV here: %s?q=name:"%s"
 
@@ -63,7 +66,7 @@ If you have problems accessing or updating ACS, please check https://wiki.cantar
 
 Best regards,
 
-The Awesome Competence System''' % ( p.name, sendername, message, '\n- '.join(p.completeness()['comment']), localsettings.APP_URL, p.name.replace(" ","%20") )
+The Awesome Competence System''' % ( p.name, sendername, message, missing, localsettings.APP_URL, p.name.replace(" ","%20") )
 		try:
 			mail = EmailMessage(subject, mailtext, 'noreply@altran.no', [p.mail], headers = {'Reply-To': sendermail})
 			mail.send()
