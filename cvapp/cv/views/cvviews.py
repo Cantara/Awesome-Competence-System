@@ -59,7 +59,7 @@ A colleague of yours, %s, has indicated that you should update your CV in ACS wi
 
 %s
 
-Update your CV here: %s?q=name:"%s"
+Update your CV here: %s?q=name:%%22%s%%22
 
 It is of key importance to us that we have consistent and complete information in ACS as we use it on a daily basis to find and allocate the correct people for the tasks. 
 If you have problems accessing or updating ACS, please check https://wiki.cantara.no/display/ACS/User+Manual for FAQ, User Manual and contact information.
