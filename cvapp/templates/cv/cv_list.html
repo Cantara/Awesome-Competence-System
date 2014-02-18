@@ -103,8 +103,13 @@
 					<td colspan="3" class="lineright">
 						{% if user.is_authenticated %}
 				        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
-			           	<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>
 		    			<a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
+				        <button class="butt" onClick="$('#emaillistcontainer').toggle(); $('#emaillist').select(); return false;"><i class="icon-copy"></i> Show selected e-mails</button>
+				        <div id="emaillistcontainer" style="display:none;">
+				        	Press CTRL+C to copy.<br>
+				        	<textarea name="emaillist" id="emaillist" cols="30" rows="10" disabled></textarea>
+				        </div>
+			           	<!--<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>-->
 		    			{%endif%}
 		    		</td>
 					<td>
@@ -249,7 +254,7 @@
 					<%? !personwritten %>
 						<td rowspan="10">
 							<label class="imgcheckbox" id="p<%=p.id%>imgcheckbox" style="<%?p.image%>background-image: url(/media/<%=p.image%>); <%?%>">
-								<input type="checkbox" id="p<%=p.id%>checkbox" name="rowMailCheckbox" onchange="addToEmailString(this, '<%=p.mail%>' )" style="display:none"/>
+								<input type="checkbox" id="p<%=p.id%>checkbox" name="rowMailCheckbox" class="personcheckbox" value="<%=p.mail%>" style="display:none"/>
 							</label>
 							</td>
 						<td rowspan="10">
@@ -432,7 +437,7 @@
 				var self = this;
 			    if(typeof self.searchrequest !== 'undefined'){
 			        self.searchrequest.abort();
-			        console.log('aboerted');
+			        console.log('Search aborted.');
 			    }
 			    if(t){
 					self.filterTxt = $(t).val();
@@ -451,10 +456,9 @@
 
 			doSearch: function(){			
 				
-				if(GetURLParameter('list') == 'true')
-				{
+				if( this.multi ) {
 					cvlist.solrdata.rows = 10000;
-				}else{
+				} else {
 					cvlist.solrdata.rows = 50;
 				}
 				var self = this;
@@ -582,18 +586,6 @@
 			}
 
 		};
-		function GetURLParameter(sParam){
-			    var sPageURL = window.location.search.substring(1);
-			    var sURLVariables = sPageURL.split('&');
-			    for (var i = 0; i < sURLVariables.length; i++)
-			    {
-			        var sParameterName = sURLVariables[i].split('=');
-			        if (sParameterName[0] == sParam)
-			        {
-			            return sParameterName[1];
-			        }
-			    }
-			}
 
 		function getUrlVars() {
 			if(location.href.indexOf('?')>-1) {
@@ -777,28 +769,27 @@
 			$obox.toggleClass('hiddenopts');
 		}
 
-        function addToEmailString(obj, email) {
+		$(document).on('change', '.personcheckbox', addToEmailString);
 
-            var mailAndSemi = email + ";";
+        function addToEmailString(e) {
+
+        	var obj = e.currentTarget;
+        	console.log(obj);
+        	var email = obj.value;            
+            var mailAndSemi = email + "; ";
 
             if(obj.checked) {
             	$(obj).parents().eq(3).addClass('selectedtbody');
-                document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
+                // document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
+                document.getElementById("emaillist").value = document.getElementById("emaillist").value + mailAndSemi;
             }else{
             	$(obj).parents().eq(3).removeClass('selectedtbody');
-                document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
+                // document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
+                document.getElementById("emaillist").value = document.getElementById("emaillist").value.replace(mailAndSemi, "");
             }
 
-            /*if(document.getElementById("emails").href == "mailto:") {
-                $("#emails").hide();
-                document.getElementById("createMail").style.display = "none";
-            } else {
-                $("#emails").show();
-                $("#emailsText").html("Get selected e-mails");
-                document.getElementById("createMail").style.display = "";                
-            }*/
-
         }
+
         function toggle(source) {
           checkboxes = document.getElementsByName('rowMailCheckbox');
           for(var i=0, n=checkboxes.length;i<n;i++) {
@@ -811,9 +802,7 @@
             if(document.getElementById("selectAllCheckbox").checked)
             	document.getElementById("selectAllCheckbox").click();
         }
-        $('#optionsinside').on('change','input', 
-            selectAllSetFalseTrigger
-        );
+        $('#optionsinside').on('change','input', selectAllSetFalseTrigger);
 
 		function downloadJson() {
 			var tempRows = cvlist.solrdata.rows;
