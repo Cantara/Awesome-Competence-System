@@ -2,6 +2,28 @@
 
 {% block title %}Reports{% endblock %}
 
+{% block extrastyles %}
+<style>
+	.scorehigh 		{background-color: #cf6;}
+	.scoremedium 	{background-color: #fb3;}
+	.scorelow 		{background-color: #ccc;}
+	table {font-size: 0.8em; position: relative; float: left; width: 45%; background-color: #fff}
+	th { font-weight: 700;}
+	th, td { border-bottom: 1px solid #eee; padding: .5em; max-width: 500px}
+	.sort { text-decoration: underline; cursor: pointer;}
+	.sort:hover { background-color: #eee;}
+	tbody tr:hover { background-color: #f3f3f3;}
+	#persondetails {
+		text-align: left;
+		background-color: #fff;
+		padding: 1em;
+		margin-left: 2em;
+		float: left;
+		width: 45%;
+	}
+</style>
+{% endblock %}
+
 {% block content %}
 <h1>Reports</h1>
 
@@ -13,32 +35,40 @@
 	<button class="butt" id="searchbtn">Search</button>
 </form>
 
-<table id="results" class="responsivetable">
+<table id="results">
 	<thead>
 		<tr>
 			<th></th>
-			<th>Name</th>
-			<th>Match</th>
-			<th>Experience</th>
+			<th class="sort" data-sort="t_name">Name</th>
+			<th class="sort" data-sort="t_mail">Mail</th>
+			<th class="sort" data-sort="t_match">Match</th>
+			<th class="sort" data-sort="t_experience">Experience</th>
 		</tr>
 	</thead>
-	<tbody id="resultsbody">
+	<tbody id="resultsbody" class="list">
 	</tbody>
 </table>
 
+<div id="persondetails">
+	
+</div>
+
 <script id="template" type="text/x-dot-template">
 	<%~ppl :p:jindex%>
-		<tr id="p<%=p.id%>">
+		<tr id="p<%=p.id%>" data-persondetails="<%~p.cv :c:cindex%><%=c.profile%><br/><%~%>">
 			<td>
 				<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
 				</td>
-			<td>
-				<h3><%=p.name%></h3>
+			<td class="t_name">
+				<%=p.name%>
 				</td>
-			<td>
+			<td class="t_mail">
+				<%=p.mail%>
+				</td>
+			<td class="t_match <%=(p.score>0.7)?'scorehigh':(p.score>0.5)?'scoremedium':'scorelow'%>">
 				<%=Math.round( p.score*1000 )/10 %>
 				</td>
-			<td>
+			<td class="t_experience">
 				<%=p.years_of_experience%>
 				</td>
 		</tr>
@@ -46,6 +76,7 @@
 </script> 
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/list.min.js"></script>
 <script>
 
 var SOLR = (function($, doT){
@@ -60,7 +91,7 @@ var SOLR = (function($, doT){
 	 		sort: 'score desc',
 	 		rows: 10000,
 	 		hl: 'false',
-	 		fl: 'rendered,score,years_of_experience'
+	 		fl: 'fulljson,score,years_of_experience'
 	 	},
 		traditional: true,
 		cache: false
@@ -71,6 +102,15 @@ var SOLR = (function($, doT){
 		$.ajax(ajaxConf).done(function( data ) {
 			data = jQuery.parseJSON( data );
 			parseResults( data );
+			var changelist = new List('results', {
+			    valueNames: [ 
+			    	't_name',
+			    	't_mail', 
+			    	't_match', 
+			    	't_experience' 
+			    	],
+			    page: 300
+			});
 		});
 	}
 
@@ -78,9 +118,10 @@ var SOLR = (function($, doT){
 		var docs = data.response.docs;
 		var people = [];
 		for( var i = 0; i < docs.length; i++ ) {
-			people.push( JSON.parse( docs[i].rendered ) );
+			people.push( JSON.parse( docs[i].fulljson.replace(/\s+/g,' ') ) );
 			people[i].score = docs[i].score; 
 			people[i].years_of_experience = docs[i].years_of_experience; 
+			console.log(people[i]);
 		}
 		console.log('Results:', people);
 		var html = renderer(people);
@@ -91,6 +132,10 @@ var SOLR = (function($, doT){
 		console.log('Search form sent');
 		callServer();
 		e.preventDefault();
+	}
+
+	function showPersonDetails(){
+		$('#persondetails').html( $(this).data('persondetails') );
 	}
 
 	function init() {
@@ -118,6 +163,10 @@ var SOLR = (function($, doT){
 		});
 		$('#searchbtn').click(searchFormSubmit);
 		$('#searchform').submit(searchFormSubmit);
+		$('#resultsbody').on('mouseenter','tr',showPersonDetails)
+		// Retrieve initial data
+		callServer();
+
 	}
 
 	return {
