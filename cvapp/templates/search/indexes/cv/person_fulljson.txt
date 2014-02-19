@@ -24,7 +24,7 @@
 			"title": "{{ t.title }}",
 			"title_en": "{{ t.title_en }}",
 			"data": "{{ t.data }}",
-			"data_en": "{{ t.data_en }}",
+			"data_en": "{{ t.data_en }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"experience":[{% for o in object.experience_set.all %}
@@ -41,7 +41,7 @@
 			"company": "{{ o.company }}",
 			"company_en": "{{ o.company_en }}",
 			"techs": "{{ o.techs }}",
-			"techs_en": "{{ o.techs_en }}",
+			"techs_en": "{{ o.techs_en }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"workplace":[{% for o in object.workplace_set.all %}
@@ -56,7 +56,7 @@
 			"description": "{{ o.description }}",
 			"description_en": "{{ o.description_en }}",
 			"company": "{{ o.company }}",
-			"company_en": "{{ o.company_en }}",
+			"company_en": "{{ o.company_en }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"education":[{% for o in object.education_set.all %}
@@ -71,7 +71,7 @@
 			"description": "{{ o.description }}",
 			"description_en": "{{ o.description_en }}",
 			"school": "{{ o.school }}",
-			"school_en": "{{ o.school_en }}",
+			"school_en": "{{ o.school_en }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"other":[{% for t in object.other_set.all %}
@@ -80,7 +80,7 @@
 			"title": "{{ t.title }}",
 			"title_en": "{{ t.title_en }}",
 			"data": "{{ t.data }}",
-			"data_en": "{{ t.data_en }}",
+			"data_en": "{{ t.data_en }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"cv": [{% for cv in object.cv_set.all|dictsortreversed:"cvsort" %}
