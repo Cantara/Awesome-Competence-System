@@ -4,6 +4,7 @@
 
 {% block extrastyles %}
 <style>
+	p {font-size: 80%;} 
 	.scorehigh 		{background-color: #cf6;}
 	.scoremedium 	{background-color: #fb3;}
 	.scorelow 		{background-color: #ccc;}
@@ -12,7 +13,7 @@
 	th, td { border-bottom: 1px solid #eee; padding: .5em; max-width: 500px}
 	.sort { text-decoration: underline; cursor: pointer;}
 	.sort:hover { background-color: #eee;}
-	tbody tr:hover { background-color: #f3f3f3;}
+	tbody tr:hover, .selected { background-color: #f3f3f3; cursor: pointer; }
 	#persondetails {
 		text-align: left;
 		background-color: #fff;
@@ -29,7 +30,11 @@
 
 <form action="" id="searchform">
 	<select name="predefined_queries" id="predefined_queries">
-		<option value="(technology:java & technology:maven)^2">Java-developer</option>
+		<option value="(technology:java)^4 Java (technology:maven)^2 (develop OR utvikle OR utveckla)^2">Java-developer</option>
+		<option value="(technology:java or technology:.net) or (c# or c++) scrum">System developer</option>
+		<option value="scrum^2 OR ('project manager' OR projektledare OR prosjektleder)^3 AND (lead OR lede)">Project manager</option>
+		<option value="(technology:javascript AND technology:html AND technology:css)^3 frontend^5">Frontend developer</option>
+		<option value="(architect OR arkitekt)">Systems architect</option>
 	</select>
 	<input type="text" name="q" id="q" style="width: 80%">
 	<button class="butt" id="searchbtn">Search</button>
@@ -49,13 +54,13 @@
 	</tbody>
 </table>
 
-<div id="persondetails">
+<div id="persondetails" class="block">
 	
 </div>
 
 <script id="template" type="text/x-dot-template">
 	<%~ppl :p:jindex%>
-		<tr id="p<%=p.id%>" data-persondetails="<%~p.cv :c:cindex%><%=c.profile%><br/><%~%>">
+		<tr id="p<%=p.id%>" data-personindex="<%=jindex%>">
 			<td>
 				<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
 				</td>
@@ -74,6 +79,18 @@
 		</tr>
 	<%~%>
 </script> 
+
+<script id="detailtemplate" type="text/x-dot-template">
+	<img src="/media/<%=ppl.image.replace(/(\.png|\.jpg|\.gif|\.jpeg)/i,'_scale_110x110.jpg')%>" alt="<%=ppl.name%>" class="photo" style="float:left; position: relative; right:0;top:0; margin-right: 1em;">
+	<h3><%=ppl.name%></h3>
+	<h4><%=ppl.title%></h4>
+	<br>
+	<%~ppl.cv :c:index%>
+		<h3><%=c.title%></h3>
+		<p class="small"><%=c.profile%></p>
+		<br>
+	<%~%>
+</script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/list.min.js"></script>
@@ -96,6 +113,8 @@ var SOLR = (function($, doT){
 		traditional: true,
 		cache: false
 	};
+	
+	var people = [];
 
 	function callServer(){
 		ajaxConf.data.q = $('#q').val();
@@ -115,15 +134,15 @@ var SOLR = (function($, doT){
 	}
 
 	function parseResults(data){
+		$('#persondetails').html('');
 		var docs = data.response.docs;
-		var people = [];
+		people = [];
 		for( var i = 0; i < docs.length; i++ ) {
 			people.push( JSON.parse( docs[i].fulljson.replace(/\s+/g,' ') ) );
 			people[i].score = docs[i].score; 
-			people[i].years_of_experience = docs[i].years_of_experience; 
-			console.log(people[i]);
+			people[i].years_of_experience = docs[i].years_of_experience;
 		}
-		console.log('Results:', people);
+		console.log('JSON List of People:', people);
 		var html = renderer(people);
 		$('#resultsbody').html(html);
 	}
@@ -135,7 +154,12 @@ var SOLR = (function($, doT){
 	}
 
 	function showPersonDetails(){
-		$('#persondetails').html( $(this).data('persondetails') );
+		$('tr').removeClass('selected');
+		var $t = $(this);
+		$t.addClass('selected');
+		var personindex = $t.data('personindex');
+		console.log('Person click - Index: ', personindex);
+		$('#persondetails').html( detailrenderer(people[personindex]) );
 	}
 
 	function init() {
@@ -155,6 +179,7 @@ var SOLR = (function($, doT){
 		};
 
 		renderer = doT.template( $('#template').text() );
+		detailrenderer = doT.template( $('#detailtemplate').text() );
 
 		var $pq = $('#predefined_queries');
 		$('#q').val( $pq.val() );
@@ -163,7 +188,7 @@ var SOLR = (function($, doT){
 		});
 		$('#searchbtn').click(searchFormSubmit);
 		$('#searchform').submit(searchFormSubmit);
-		$('#resultsbody').on('mouseenter','tr',showPersonDetails)
+		$('#resultsbody').on('click','tr',showPersonDetails)
 		// Retrieve initial data
 		callServer();
 
