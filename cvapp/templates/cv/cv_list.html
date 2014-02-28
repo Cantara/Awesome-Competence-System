@@ -104,7 +104,7 @@
 						{% if user.is_authenticated %}
 				        <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
 		    			<a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
-				        <button class="butt" onClick="$('#emaillistcontainer').toggle(); $('#emaillist').select(); return false;"><i class="icon-copy"></i> Show selected e-mails</button>
+				        <button class="butt" id="showemaillistbtn"><i class="icon-copy"></i> <span>Show</span> selected e-mails</button>
 				        <div id="emaillistcontainer" style="display:none;">
 				        	Press CTRL+C to copy.<br>
 				        	<textarea name="emaillist" id="emaillist" cols="30" rows="10" disabled></textarea>
@@ -780,12 +780,12 @@
 
             if(obj.checked) {
             	$(obj).parents().eq(3).addClass('selectedtbody');
-                // document.getElementById("emails").href = document.getElementById("emails").href + mailAndSemi;
-                document.getElementById("emaillist").value = document.getElementById("emaillist").value + mailAndSemi;
+                var $el = $('#emaillist');
+                $el.val( $el.val()+mailAndSemi ).select();
             }else{
             	$(obj).parents().eq(3).removeClass('selectedtbody');
-                // document.getElementById("emails").href = document.getElementById("emails").href.replace(mailAndSemi, "");
-                document.getElementById("emaillist").value = document.getElementById("emaillist").value.replace(mailAndSemi, "");
+                var $el = $('#emaillist');
+                $el.val( $el.val().replace(mailAndSemi,'') ).select();
             }
 
         }
@@ -825,6 +825,17 @@
 		}
 
         $('#showJsonBtn').click(downloadJson);
+        $('#showemaillistbtn').click(function(e){
+        	e.preventDefault();
+        	$elc = $('#emaillistcontainer');
+        	$elc.toggle();
+        	$('#emaillist').select();
+        	if( $elc.is(':visible') ) {
+        		$(this).find('span').html('Hide');
+        	} else {
+        		$(this).find('span').html('Show');
+        	}
+        });
         $('#multiresults').on('mouseenter mouseleave', '.textcheckbox', function(e) {
 		    var id = '#'+$(this).attr('for').replace('checkbox','imgcheckbox');
 		    if(e.type=='mouseenter'){
