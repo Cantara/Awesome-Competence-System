@@ -1,5 +1,8 @@
 # coding=UTF-8
 
+import operator
+from xml.sax.saxutils import escape # escape string to valid xml
+
 labels = {
 	'en': {
 		'cvheading': 'Consultant profile',
@@ -60,7 +63,7 @@ def getTranslatedParts(cv, lang, alerts=False):
 	o = cv.other.all()
 	
 	# Returns the a if it exists and isn't empty, or else b
-	def q(a, b):
+	def getAorB(a, b):
 		if a is not None:
 			if a.strip(): 
 				return a
@@ -73,71 +76,64 @@ def getTranslatedParts(cv, lang, alerts=False):
 		if alerts:
 			return "X-NOT-FILLED-X"
 		return ""
+
+	def getBorA(a,b):
+		return getAorB(b,a)
 	
 	# If they want English, give them English
 	if lang == 'en':
-		cv.profile			= q(cv.profile_en, cv.profile)
-		cv.title			= q(cv.title_en, cv.title)
-		
-		for te in t:
-			te.title		= q(te.title_en, te.title)
-			te.data			= q(te.data_en, te.data)
-		
-		for ex in e:
-			ex.title		= q(ex.title_en, ex.title)
-			ex.company		= q(ex.company_en, ex.company)
-			ex.description	= q(ex.description_en, ex.description)
-			ex.techs		= q(ex.techs_en, ex.techs)
-			
-		for wp in w:
-			wp.title		= q(wp.title_en, wp.title)
-			wp.company		= q(wp.company_en, wp.title)
-			wp.description	= q(wp.description_en, wp.description)
-			
-		for du in d:
-			du.title		= q(du.title_en, du.title)
-			du.school		= q(du.school_en, du.school)
-			du.description	= q(du.description_en, du.description)
-		
-		for ot in o:
-			ot.title		= q(ot.title_en, ot.title)
-			ot.data			= q(ot.data_en, ot.data)
-		
+		q = getBorA
 		# English subheaders
 		l = labels['en']
+		languagecode = 'en'
 	else:
-		cv.profile			= q(cv.profile, cv.profile_en)
-		cv.title			= q(cv.title, cv.title_en)
-		
-		for te in t:
-			te.title		= q(te.title, te.title_en)
-			te.data			= q(te.data, te.data_en)
-		
-		for ex in e:
-			ex.title		= q(ex.title, ex.title_en)
-			ex.company		= q(ex.company, ex.company_en)
-			ex.description	= q(ex.description, ex.description_en)
-			ex.techs		= q(ex.techs, ex.techs_en)
-			
-		for wp in w:
-			wp.title		= q(wp.title, wp.title_en)
-			wp.company		= q(wp.company, wp.title_en)
-			wp.description	= q(wp.description, wp.description_en)
-			
-		for du in d:
-			du.title		= q(du.title, du.title_en)
-			du.school		= q(du.school, du.school_en)
-			du.description	= q(du.description, du.description_en)
-		
-		for ot in o:
-			ot.title		= q(ot.title, ot.title_en)
-			ot.data			= q(ot.data, ot.data_en)
+		q = getAorB
 		
 		languagecode = cv.person.country()
 		if not languagecode:
 			languagecode = 'en'
 
 		l = labels[languagecode]
+
+	cv.profile			= q(cv.profile, cv.profile_en)
+	cv.title			= q(cv.title, cv.title_en)
+	
+	for te in t:
+		te.title		= q(te.title, te.title_en)
+		te.data			= q(te.data, te.data_en)
+	
+	for ex in e:
+		ex.title		= q(ex.title, ex.title_en)
+		ex.company		= q(ex.company, ex.company_en)
+		ex.description	= q(ex.description, ex.description_en)
+		ex.techs		= q(ex.techs, ex.techs_en)
+		ex.from_year 	= getPeriod(ex, languagecode)
+		ex.description	= escape( ex.description.encode("utf-8") )
+		ex.orderkey 	= ex.from_ym()
+		
+	for wp in w:
+		wp.title		= q(wp.title, wp.title_en)
+		wp.company		= q(wp.company, wp.title_en)
+		wp.description	= q(wp.description, wp.description_en)
+		wp.from_year 	= getPeriod(wp, languagecode)
+		wp.description	= escape( wp.description.encode('utf-8') )
+		wp.orderkey 	= wp.from_ym()
+		
+	for du in d:
+		du.title		= q(du.title, du.title_en)
+		du.school		= q(du.school, du.school_en)
+		du.description	= q(du.description, du.description_en)
+		du.from_year 	= getPeriod(du, languagecode)
+		du.description	= escape( du.description.encode('utf-8') )
+		du.orderkey 	= du.from_ym()
+	
+	for ot in o:
+		ot.title		= q(ot.title, ot.title_en)
+		ot.data			= q(ot.data, ot.data_en)
+
+	e = sorted( e, key=operator.attrgetter('orderkey'), reverse=True )
+	w = sorted( w, key=operator.attrgetter('orderkey'), reverse=True )
+	d = sorted( d, key=operator.attrgetter('orderkey'), reverse=True )
 
 	return t, e, w, d, o, l
 

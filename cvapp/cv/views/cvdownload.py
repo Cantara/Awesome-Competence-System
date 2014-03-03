@@ -10,7 +10,6 @@ from webodt.shortcuts import _ifile, render_to, render_to_response as rtr
 from webodt.converters import converter
 from webodt.helpers import get_mimetype
 import settings
-import operator
 from xml.sax.saxutils import escape # escape string to valid xml
 import string
 
@@ -172,21 +171,6 @@ def getCvDictionary(cvid, lang=''):
 	t, e, w, d, o, l = getTranslatedParts(cv, lang)
 	
 	cv.profile = cv.profile.encode('utf-8')
-
-	for ex in e:
-		ex.description	= escape( ex.description.encode("utf-8") )
-		ex.orderkey = ex.from_ym()
-		ex.from_year = getPeriod(ex, languagecode)
-		
-	for wp in w:
-		wp.description	= escape( wp.description.encode('utf-8') )
-		wp.orderkey = wp.from_ym()
-		wp.from_year = getPeriod(wp, languagecode)
-		
-	for du in d:
-		du.description	= escape( du.description.encode('utf-8') )
-		du.orderkey = du.from_ym()
-		du.from_year = getPeriod(du, languagecode)
 	
 	for ot in o:
 		ot.data = escape( ot.data.encode('utf-8') )
@@ -194,10 +178,6 @@ def getCvDictionary(cvid, lang=''):
 
 	for te in t:
 		te.data = escape( te.data.encode('utf-8') )
-
-	e = sorted( e, key=operator.attrgetter('orderkey'), reverse=True )
-	w = sorted( w, key=operator.attrgetter('orderkey'), reverse=True )
-	d = sorted( d, key=operator.attrgetter('orderkey'), reverse=True )
 
 	l = labels[languagecode]
 
