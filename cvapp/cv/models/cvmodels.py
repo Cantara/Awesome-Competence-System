@@ -5,7 +5,7 @@ import django.contrib.auth.models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from utils import multidelim
-from cv.templatetags.image_tags import scale
+from cv.templatetags.image_tags import scale, resized_path
 
 import logging
 log = logging.getLogger('cv')
@@ -71,6 +71,10 @@ class OverwriteStorage(FileSystemStorage):
 	def _save(self, name, content):
 		if self.exists(name):
 			self.delete(name)
+			try:
+				self.delete( resized_path(name, '110x110', 'scale') )
+			except:
+				pass
 		return super(OverwriteStorage, self)._save(name, content)
 
 	def get_available_name(self, name):
