@@ -177,19 +177,16 @@ def getCvDictionary(cvid, lang=''):
 		ex.description	= escape( ex.description.encode("utf-8") )
 		ex.orderkey = ex.from_ym()
 		ex.from_year = getPeriod(ex, languagecode)
-		# ex.from_year = "%i %i - %i %i" % (ex.from_year, ex.from_month, ex.to_year, ex.to_month)
 		
 	for wp in w:
 		wp.description	= escape( wp.description.encode('utf-8') )
 		wp.orderkey = wp.from_ym()
 		wp.from_year = getPeriod(wp, languagecode)
-		# wp.from_year = "%i %i - %i %i" % (wp.from_year, wp.from_month, wp.to_year, wp.to_month)
 		
 	for du in d:
 		du.description	= escape( du.description.encode('utf-8') )
 		du.orderkey = du.from_ym()
 		du.from_year = getPeriod(du, languagecode)
-		# du.from_year = "%i %i - %i %i" % (du.from_year, du.from_month, du.to_year, du.to_month)
 	
 	for ot in o:
 		ot.data = escape( ot.data.encode('utf-8') )
