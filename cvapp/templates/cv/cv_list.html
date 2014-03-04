@@ -315,11 +315,15 @@
 			downloadMulti: function() {
 				var cvids = document.forms['multicv']['cvid'];
 				var cvchecked = false;
-				for(var i = 0; i<cvids.length; i++) {
-					if(cvids[i].checked){
-						cvchecked = true;
-						break;
+				if(typeof cvids.length !== 'undefined'){
+					for(var i = 0; i<cvids.length; i++) {
+						if(cvids[i].checked){
+							cvchecked = true;
+							break;
+						}
 					}
+				} else {
+					cvchecked = cvids.checked;
 				}
 				if(this.multi && cvchecked){
 					document.forms['multicv'].submit();
