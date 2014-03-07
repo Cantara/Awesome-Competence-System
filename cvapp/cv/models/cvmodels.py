@@ -34,6 +34,7 @@ LOCATION_CHOICES = (
 	(u'Borlänge',	'Borlänge'),
 	('Gothenburg', 	'Gothenburg'),
 	('Karlstad',	'Karlstad'),
+	('Lund',		'Lund'),
 	(u'Malmö',		'Malmö'),
 	('Oslo', 		'Oslo'),
 	('Stockholm',	'Stockholm'),
