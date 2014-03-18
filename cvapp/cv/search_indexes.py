@@ -1,4 +1,4 @@
-import datetime
+from datetime import date
 from haystack import indexes
 from cv.models.cvmodels import Person
 from itertools import chain
@@ -38,10 +38,18 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
         return result
     def prepare_years_of_experience(self, obj):
         years = 0
+        now = date.today()
         exp_and_work = list( chain( obj.experience_set.all(), obj.workplace_set.all() ) )
         for i in exp_and_work:
             if( i.from_year > 1969):
-                yearspan = datetime.date.today().year - i.from_year
+                i_year = i.from_year
+                if( i.from_month > 0 ):
+                    i_month = i.from_month
+                else:
+                    i_month = 1
+                i_date = date(i_year, i_month, 1)
+                delta = now - i_date
+                yearspan = delta.days / 365
                 if( years < yearspan and yearspan < 80):
                     years = yearspan
         return years
