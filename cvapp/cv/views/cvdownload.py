@@ -12,6 +12,7 @@ from webodt.helpers import get_mimetype
 import settings
 from xml.sax.saxutils import escape # escape string to valid xml
 import string
+from datetime import date
 
 from cvhelper import labels, getTranslatedParts, getPeriod
 
@@ -134,6 +135,7 @@ def download(request, format):
 			'o': o_set,
 			'infoline': infoline,
 			'img': data,
+			'acs_datestamp': date.today().isoformat(),
 		}
 
 	elif(request.GET['cvid']):
@@ -192,6 +194,7 @@ def getCvDictionary(cvid, lang=''):
 		'o': o,
 		'infoline': getInfoLine(p,l),
 		'img': data,
+		'acs_datestamp': date.today().isoformat(),
 	}
 
 	return dictionary
@@ -208,7 +211,7 @@ def getInfoLine(p, l):
 
 def renderOdt(dictionary, tempfilename='tempcv'):
 
-	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-02-04.odt'
+	srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-03-18.odt'
 
 	# filename = dictionary['p'].name.encode('ascii', 'ignore') + ' - ' + dictionary['c'].title.encode('ascii', 'ignore').replace(",","").replace('/','') + ".odt"
 
