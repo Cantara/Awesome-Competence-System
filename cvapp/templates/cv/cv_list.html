@@ -246,42 +246,44 @@
 	</script> 
 
 	<script id="multitemplate" type="text/x-dot-template">
-		<%? p.cv %>
-			<tbody>
-			<%~p.cv :cv:index%>
-				<%? cv.status.percent > 0 %>
-				<tr id="p<%=p.id%>">
-					<%? !personwritten %>
-						<td rowspan="10">
-							<label class="imgcheckbox" id="p<%=p.id%>imgcheckbox" style="<%?p.image%>background-image: url(/media/<%=p.image%>); <%?%>">
-								<input type="checkbox" id="p<%=p.id%>checkbox" name="rowMailCheckbox" class="personcheckbox" value="<%=p.mail%>" style="display:none"/>
-							</label>
-							</td>
-						<td rowspan="10">
-							<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
-							</td>
-						<td rowspan="10" class="lineright">
-							<label for="p<%=p.id%>checkbox" class="textcheckbox">
-							<h3><%=p.name%> ‒ <%=p.title%></h3>
-							<p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
-							</label>
-							</td>
-						<% var personwritten = true %>
-					<%?%>
-					<td data-title="Select CV">
-						<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
+		<% if (p.cv.length < 1) { p.cv.push({}); var nocvs = true; } %>
+		<tbody>
+		<%~p.cv :cv:index%>
+			<tr id="p<%=p.id%>">
+				<%? !personwritten %>
+					<td rowspan="10">
+						<label class="imgcheckbox" id="p<%=p.id%>imgcheckbox" style="<%?p.image%>background-image: url(/media/<%=p.image%>); <%?%>">
+							<input type="checkbox" id="p<%=p.id%>checkbox" name="rowMailCheckbox" class="personcheckbox" value="<%=p.mail%>" style="display:none"/>
+						</label>
 						</td>
-					<td data-title="Download">
-						<a href="{% url 'cv_detail' "999999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
-						<a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
-						<a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>&nbsp;
-						<a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank" class="butt">ODT</a>
+					<td rowspan="10">
+						<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
 						</td>
-				</tr>
+					<td rowspan="10" class="lineright">
+						<label for="p<%=p.id%>checkbox" class="textcheckbox">
+						<h3><%=p.name%> ‒ <%=p.title%></h3>
+						<p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
+						</label>
+						</td>
+					<% var personwritten = true %>
 				<%?%>
-			<%~%>
-			</tbody>
-		<%?%>
+				<%? !nocvs %>
+				<td data-title="Select CV">
+					<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
+					</td>
+				<td data-title="Download">
+					<a href="{% url 'cv_detail' "999999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
+					<a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
+					<a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>&nbsp;
+					<a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank" class="butt">ODT</a>
+					</td>
+				<%??%>
+					<td></td>
+					<td></td>
+				<%?%>
+			</tr>
+		<%~%>
+		</tbody>
 	</script> 
 
 	<script id="facettemplate" type="text/x-dot-template">
