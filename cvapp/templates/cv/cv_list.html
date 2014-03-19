@@ -448,7 +448,7 @@
 			    if(t){
 					self.filterTxt = $(t).val();
 			    }
-				if(self.filterTxt != '' && self.filterTxt.length > 1) {
+				if(self.filterTxt != '') {
 					self.solrdata.q = self.filterTxt+" "+self.additionalParams;
 					self.solrdata.hl = 'true';
 				} else {
