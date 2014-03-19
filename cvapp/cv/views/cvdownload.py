@@ -12,7 +12,7 @@ from webodt.helpers import get_mimetype
 import settings
 from xml.sax.saxutils import escape # escape string to valid xml
 import string
-from datetime import date
+from datetime import datetime
 
 from cvhelper import labels, getTranslatedParts, getPeriod
 
@@ -135,7 +135,7 @@ def download(request, format):
 			'o': o_set,
 			'infoline': infoline,
 			'img': data,
-			'acs_datestamp': date.today().isoformat(),
+			'acs_datestamp': datetime.today().strftime('%Y-%m-%d %T'),
 		}
 
 	elif(request.GET['cvid']):
@@ -194,7 +194,7 @@ def getCvDictionary(cvid, lang=''):
 		'o': o,
 		'infoline': getInfoLine(p,l),
 		'img': data,
-		'acs_datestamp': date.today().isoformat(),
+		'acs_datestamp': datetime.today().strftime('%Y-%m-%d %T'),
 	}
 
 	return dictionary
