@@ -98,7 +98,7 @@ def loginUserWithToken(token, request):
 					tokengroups.append(rolename)
 
 	if useremail:
-		user, created = User.objects.get_or_create(username__iexact = useremail, defaults={'email': useremail, 'first_name': firstname, 'last_name': lastname, 'is_staff': True})
+		user, created = User.objects.get_or_create(username__iexact = useremail, defaults={'username': useremail, 'email': useremail, 'first_name': firstname, 'last_name': lastname, 'is_staff': True})
 		currentgroups = user.groups.values_list('name', flat=True)
 		for groupname in tokengroups:
 			if groupname not in currentgroups:
