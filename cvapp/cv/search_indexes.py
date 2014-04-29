@@ -25,6 +25,7 @@ class PersonIndex(indexes.SearchIndex, indexes.Indexable):
     location = indexes.CharField(model_attr='location', null=True, faceted=True)
     department = indexes.CharField(model_attr='department', null=True, faceted=True)
     years_of_experience = indexes.IntegerField(faceted=True)
+    status = indexes.CharField(model_attr='status', null=True, faceted=True)
 
     def get_model(self):
         return Person

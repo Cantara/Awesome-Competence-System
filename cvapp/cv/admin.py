@@ -115,10 +115,21 @@ def has_permission_for_person(request, obj):
 class PersonAdmin(admin.ModelAdmin):
 
     formfield_overrides = large
-    fields = ('user', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
-    list_display = ( 'name', 'user', 'last_edited' )
+    fields = ('user', 'status', 'name', 'title', 'location', 'department', 'phone', 'mail', 'image', 'birthdate', 'linkedin')
+    list_display = ('name', 'user', 'status', 'last_edited')
+    search_fields = ['name']
 
     inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
+
+    actions = ['deactivate_person', 'activate_person']
+
+    def deactivate_person(self, request, queryset):
+        queryset.update(status='inactive')
+    deactivate_person.short_description = "Deactivate selected persons"
+
+    def activate_person(self, request, queryset):
+        queryset.update(status='active')
+    activate_person.short_description = "Activate selected persons"
     
     def has_change_permission(self, request, obj=None):
         return has_permission_for_person(request, obj)
@@ -153,7 +164,7 @@ class PersonAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return []
         else:
-            return ['user']
+            return ['user', 'status']
 
     # Adding the list of popular techs
     def render_change_form(self, request, context, *args, **kwargs):
@@ -174,6 +185,8 @@ class PersonAdmin(admin.ModelAdmin):
         context.update(extra)
         
         return super(PersonAdmin, self).render_change_form(request, context, *args, **kwargs)
+
+
 
 
 admin.site.register(Person, PersonAdmin)

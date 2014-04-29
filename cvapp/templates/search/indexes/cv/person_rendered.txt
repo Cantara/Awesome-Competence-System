@@ -8,6 +8,7 @@
 	"mail": "{{ object.mail }}",
 	"location": "{{ object.location }}",
 	"department": "{{ object.department }}",
+	"status": "{{ object.status }}",
 	"country": "{% if object.country %}{{ object.country }}{% endif %}",
 	"last_edited": "{{ object.last_edited|date:'SHORT_DATE_FORMAT' }}",
 	"completeness": {

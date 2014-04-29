@@ -72,6 +72,11 @@ DEPARTMENT_CHOICES = (
 
 )
 
+STATUS_CHOICES = (
+	('active', 'Active'),
+	('inactive', 'Inactive'),
+)
+
 # Custom storage to overwrite existing files
 from django.core.files.storage import FileSystemStorage
 class OverwriteStorage(FileSystemStorage):
@@ -105,6 +110,7 @@ class Person(models.Model):
 	last_edited = models.DateTimeField(auto_now=True)
 	location = models.CharField("Location", max_length=50, choices=LOCATION_CHOICES, null=True, blank=True)
 	department = models.CharField("Practice", max_length=50, choices=DEPARTMENT_CHOICES, null=True, blank=True)
+	status = models.CharField("Status", max_length=50, choices=STATUS_CHOICES)
 	
 	def __unicode__(self):
 		return self.name

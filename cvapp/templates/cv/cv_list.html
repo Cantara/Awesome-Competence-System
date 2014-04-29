@@ -437,7 +437,7 @@
 				}
 			},
 
-			additionalParams: '',
+			additionalParams: '-status_exact:inactive',
 
 			prepSearch: function(t){
 				var self = this;
@@ -498,7 +498,7 @@
 
 			solrurl: '{{solrurl}}',
 		 	solrdata: {
-		 		'q':'*',
+		 		'q':'* -status:inactive',
 		 		'wt':'json',
 		 		'indent':'true',
 		 		'sort':'name_exact asc',
@@ -663,7 +663,8 @@
 
 		var additionalParams = {
 			params: {
-				'fullcv':[0, 'fulljson:"completeness+percent+100"~1']
+				'fullcv':[0, 'fulljson:"completeness+percent+100"~1'],
+				'status':[-1,'status_exact:inactive']
 			},
 			toggle: function(param, t) {
 				var self = this;
