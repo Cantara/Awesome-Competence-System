@@ -85,6 +85,7 @@ class OverwriteStorage(FileSystemStorage):
 			self.delete(name)
 			try:
 				self.delete( resized_path(name, '110x110', 'scale') )
+				self.delete( resized_path(name, '300x300', 'scale') )
 			except:
 				pass
 		return super(OverwriteStorage, self)._save(name, content)
@@ -214,6 +215,7 @@ class Person(models.Model):
 		if self.image:
 			try:
 				scale(self.image, '110x110')
+				scale(self.image, '300x300', dpi=(300,300))
 			except:
 				pass
 

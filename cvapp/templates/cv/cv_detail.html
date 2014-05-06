@@ -50,7 +50,7 @@
 
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
-		  <img src="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}" class="left" id="photo">
+		  <img src="{% if p.image %}{{ p.image|scale:"300x300" }}{% endif %}" class="left" id="photo">
 		  <input type="hidden" name="personid" value="{{ p.id }}"/>
 		  <input type="hidden" name="lang" value="{{ lang }}"/>
 		  <input type="hidden" name="photo" value="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}"/>

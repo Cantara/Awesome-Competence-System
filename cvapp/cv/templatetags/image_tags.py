@@ -18,7 +18,7 @@ def resized_path(path, size, method):
     return os.path.join(dir, '%s_%s_%s.%s' % (image_name, method, size, EXT))
 
 
-def scale(imagefield, size, method='scale'):
+def scale(imagefield, size, method='scale', dpi=(72,72)):
     """ 
     Template filter used to scale an image
     that will fit inside the defined area.
@@ -56,7 +56,7 @@ def scale(imagefield, size, method='scale'):
         # use PIL methods to edit images
         if method == 'scale':
             image.thumbnail((width, height), Image.ANTIALIAS)
-            image.save(image_path, FMT, quality=QUAL)
+            image.save(image_path, FMT, quality=QUAL, dpi=dpi)
 
         elif method == 'crop':
             try:
@@ -64,8 +64,7 @@ def scale(imagefield, size, method='scale'):
             except ImportError:
                 from PIL import ImageOps
 
-            ImageOps.fit(image, (width, height), Image.ANTIALIAS
-                        ).save(image_path, FMT, quality=QUAL)
+            ImageOps.fit(image, (width, height), Image.ANTIALIAS).save(image_path, FMT, quality=QUAL, dpi=dpi)
 
     return resized_path(imagefield.url, size, method)
 
