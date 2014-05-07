@@ -18,7 +18,7 @@ def resized_path(path, size, method):
     return os.path.join(dir, '%s_%s_%s.%s' % (image_name, method, size, EXT))
 
 
-def scale(imagefield, size, method='scale', dpi=(72,72)):
+def scale(imagefield, size, method='scale', dpi=(300,300)):
     """ 
     Template filter used to scale an image
     that will fit inside the defined area.
