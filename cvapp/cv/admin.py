@@ -131,10 +131,14 @@ class PersonAdmin(admin.ModelAdmin):
 
     def deactivate_person(self, request, queryset):
         queryset.update(status='inactive')
+        for item in queryset:
+            item.save()
     deactivate_person.short_description = "Deactivate selected persons"
 
     def activate_person(self, request, queryset):
         queryset.update(status='active')
+        for item in queryset:
+            item.save()
     activate_person.short_description = "Activate selected persons"
     
     def has_change_permission(self, request, obj=None):
