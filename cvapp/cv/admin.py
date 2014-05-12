@@ -17,6 +17,12 @@ large = {
         models.URLField: { 'widget': TextInput( attrs = {'size':45} ) },
         models.ManyToManyField: { 'widget': forms.SelectMultiple( attrs = {'size':16, 'style':'min-width: 200px;'} ) }
     }
+xlarge = {
+        models.TextField: { 'widget': Textarea( attrs = {'rows':22, 'cols':120 } ) },
+        models.CharField: { 'widget': TextInput( attrs = {'size':45} ) },
+        models.URLField: { 'widget': TextInput( attrs = {'size':45} ) },
+        models.ManyToManyField: { 'widget': forms.SelectMultiple( attrs = {'size':16, 'style':'min-width: 200px;'} ) }
+    }
 wide = {
         models.TextField: { 'widget': Textarea( attrs = {'rows':5, 'cols':80 } ) },
         models.CharField: { 'widget': TextInput( attrs = {'size':51} ) }
@@ -204,8 +210,8 @@ class CvForm(ModelForm):
 class CvAdmin(admin.ModelAdmin):
     form = CvForm
     readonly_fields = ['person']
-    fields = ('person','tags', ('title', 'title_en'), ('profile', 'profile_en'), 'technology', 'experience', 'workplace', 'education', 'other')
-    formfield_overrides = large
+    fields = ('person','tags', ('title', 'title_en'), 'profile', 'profile_en', 'technology', 'experience', 'workplace', 'education', 'other')
+    formfield_overrides = xlarge
     list_display = ( 'person', 'completenesspercent', 'tags', 'title', 'last_edited', 'is_recent', )
     #filter_horizontal = ['experience']
 
