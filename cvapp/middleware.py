@@ -70,7 +70,12 @@ class WhydahMiddleware(object):
 		viewFunctionName = view_func.__name__
 		if not request.user.is_authenticated() and not viewFunctionName in ['myRemoteLogin','myRemoteLogout']:
 			log.info('User not authenticated, redirecting to login-page...')
-			return redirect('cv.views.myRemoteLogin')
+			log.info('Escaped path:')
+			escaped_path = urllib.quote(request.get_full_path())
+			log.info(escaped_path)
+			escaped_path = urllib.quote(escaped_path)
+			log.info(escaped_path)
+			return redirect( '/login/?path='+escaped_path )
 
 def loginUserWithToken(token, request):
 

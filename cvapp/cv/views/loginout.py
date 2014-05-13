@@ -11,7 +11,7 @@ SSO_URL = 'sso.altran.se'
 
 def myRemoteLogin(request):
 	if request.method == 'GET':
-		redirect_url = 'https://' + request.get_host() + request.POST.get('path', '/')
+		redirect_url = 'https://' + request.get_host() + request.GET.get('path', '/')
 		if request.user.is_authenticated():
 			return HttpResponseRedirect("https://" + SSO_URL + "/sso/logoutaction?redirectURI=" + redirect_url)
 		else:
