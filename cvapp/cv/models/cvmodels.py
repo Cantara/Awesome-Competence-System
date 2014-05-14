@@ -112,7 +112,7 @@ class Person(models.Model):
 	last_edited = models.DateTimeField(auto_now=True)
 	location = models.CharField("Location", max_length=50, choices=LOCATION_CHOICES, null=True, blank=True)
 	department = models.CharField("Practice", max_length=50, choices=DEPARTMENT_CHOICES, null=True, blank=True)
-	status = models.CharField("Status", max_length=50, choices=STATUS_CHOICES)
+	status = models.CharField("Status", max_length=50, choices=STATUS_CHOICES, null=True, blank=True)
 	
 	def __unicode__(self):
 		return self.name
@@ -512,7 +512,6 @@ def cv_reindex_person(sender, **kwargs):
 def person_reindex_person(sender, **kwargs):
 	PersonIndex().update_object(kwargs['instance'])
 
-
 def person_remove_person(sender, **kwargs):
 	try:
 		PersonIndex().remove_object(kwargs['instance'])
@@ -521,40 +520,20 @@ def person_remove_person(sender, **kwargs):
 		
 models.signals.post_save.connect(person_reindex_person, sender=Person)
 models.signals.post_delete.connect(person_remove_person, sender=Person)
-
-'''
-models.signals.post_save.connect(cv_reindex_person, sender=Cv)
-models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.technology.through)
-models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.experience.through)
-models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.workplace.through)
-models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.education.through)
-models.signals.m2m_changed.connect(cv_reindex_person, sender=Cv.other.through)
-models.signals.post_save.connect(cv_reindex_person, sender=Technology)
-models.signals.post_save.connect(cv_reindex_person, sender=Experience)
-models.signals.post_save.connect(cv_reindex_person, sender=Workplace)
-models.signals.post_save.connect(cv_reindex_person, sender=Education)
-models.signals.post_save.connect(cv_reindex_person, sender=Other)
-'''
-
 models.signals.post_delete.connect(cv_reindex_person, sender=Cv)
-
-'''
-models.signals.post_delete.connect(cv_reindex_person, sender=Technology)
-models.signals.post_delete.connect(cv_reindex_person, sender=Experience)
-models.signals.post_delete.connect(cv_reindex_person, sender=Workplace)
-models.signals.post_delete.connect(cv_reindex_person, sender=Education)
-models.signals.post_delete.connect(cv_reindex_person, sender=Other)
-'''
-
-		
 
 STYLE_CHOICES = (
 	('sky', 'Sky'),
 	('flat', 'Flat'),
 	('sharp', 'Sharp'),
 	('win8', 'Windows 8'),
-)		
+)
 		
 class Style(models.Model):
 	logo = models.ImageField(upload_to="photos", null=True, blank=True)
 	stylesheet = models.CharField(max_length=10, choices=STYLE_CHOICES, default='sky')
+
+class CvTemplate(models.Model):
+	template = models.FileField(upload_to='templates')
+	title = models.TextField('Title', max_length=64)
+	description = models.TextField(null=True, blank=True)
