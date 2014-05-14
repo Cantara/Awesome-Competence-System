@@ -2,7 +2,7 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other
+from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other, Template
 import json
 from collections import OrderedDict
 from appy.pod.renderer import Renderer
@@ -21,6 +21,9 @@ from cv.templatetags.image_tags import scale
 import os
 import zipfile
 import StringIO
+
+# Default template
+DEFAULT_TEMPLATE = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-05-05.odt' 
 
 # Downloading a CV as ODT/DOC/PDF using the JSON submitted from the CVpreview
 def download(request, format):
@@ -133,10 +136,19 @@ def download(request, format):
             'acs_datestamp': datetime.today().strftime('%Y-%m-%d'),
         }
 
+        templateId = a.get('template', 'default')
+
     elif(request.GET['cvid']):
         dictionary = getCvDictionary(request.GET['cvid'])
+        templateId = request.GET.get('template', 'default')
+
+    if templateId != 'default':
+        template = get_object_or_404(Template, pk=templateId)
+        template = template.template.path
+    else:
+        template = DEFAULT_TEMPLATE
     
-    rsltFile = renderOdt(dictionary)
+    rsltFile = renderOdt(dictionary, template=template)
     filename = dictionary['p'].name.encode('ascii', 'ignore') + ' - ' + dictionary['c'].title.encode('ascii', 'ignore').replace(",","") + "_Altran"
 
     if format == "odt":
@@ -234,14 +246,12 @@ def getImgData(img):
 
     return imgdata, imagesizecm
 
-def renderOdt(dictionary, tempfilename='tempcv'):
-
-    srcFile = settings.PROJECT_ROOT + '/templates/document/altrancvmal-2014-05-05.odt' 
+def renderOdt(dictionary, tempfilename='tempcv', template=DEFAULT_TEMPLATE):
 
     # filename = dictionary['p'].name.encode('ascii', 'ignore') + ' - ' + dictionary['c'].title.encode('ascii', 'ignore').replace(",","").replace('/','') + ".odt"
 
     rsltFile = '/var/tmp/%s.odt' % tempfilename
-    r = Renderer(srcFile, dictionary, rsltFile, overwriteExisting=True)
+    r = Renderer(template, dictionary, rsltFile, overwriteExisting=True)
     r.run()
 
     return rsltFile
@@ -257,6 +267,7 @@ def multicv(request):
         
         format = request.GET['format']
         lang = request.GET['language']
+        template = request.GET.get('template', DEFAULT_TEMPLATE)
 
         cvids = request.GET.getlist('cvid', False)
 
@@ -265,7 +276,7 @@ def multicv(request):
 
         for cvid in cvids:
             cvdict = getCvDictionary(cvid, lang)
-            renderedFile = renderOdt(cvdict, cvid)
+            renderedFile = renderOdt(cvdict, cvid, template)
             renderedName = format_filename( "%s-%s.%s" % (cvdict['p'].name, cvdict['c'].title, format) )
             if( format != 'odt' ):
                 renderedFile = renderDocPdf(renderedFile, format)

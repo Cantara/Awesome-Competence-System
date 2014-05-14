@@ -533,7 +533,10 @@ class Style(models.Model):
 	logo = models.ImageField(upload_to="photos", null=True, blank=True)
 	stylesheet = models.CharField(max_length=10, choices=STYLE_CHOICES, default='sky')
 
-class CvTemplate(models.Model):
+class Template(models.Model):
 	template = models.FileField(upload_to='templates')
-	title = models.TextField('Title', max_length=64)
+	title = models.CharField('Title', max_length=64)
 	description = models.TextField(null=True, blank=True)
+	class Meta:
+		app_label = 'cv'
+		db_table = 'cv_template'

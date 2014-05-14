@@ -1,4 +1,4 @@
-from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup
+from cv.models import Person, Technology, Experience, Workplace, Education, Other, Cv, Matrix, Competence, MatrixEntry, CompetenceEntry, Skillgroup, Template
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm, DateField, DateTimeInput, URLField
 from django.db import models
@@ -297,6 +297,11 @@ def solr_remove(person):
         pass
 
 
+
+class TemplateAdmin(admin.ModelAdmin):
+    model = Template
+
+admin.site.register(Template, TemplateAdmin)
 
 '''
 class StyleAdmin(admin.ModelAdmin):

@@ -36,6 +36,12 @@
 			<a class="butt" onClick="dl('doc');">Word (.doc)</a>
 			<a class="butt" onClick="dl('pdf');">Adobe Reader (.pdf)</a>
 			<a class="butt" onClick="dl('odt');">OpenOffice (.odt)</a>
+			<select name="template" onChange="console.log(this.value);$('#template').val(this.value);">
+				<option value="default">Default Template</option>
+				{% for t in templates %}
+					<option value="{{t.id}}">{{t.title}}</option>
+				{% endfor %}
+			</select>
 		{% if user.is_authenticated %}
 			<br/>
 			<br/>
@@ -53,6 +59,7 @@
 		  <img src="{% if p.image %}{{ p.image|scale:"300x300" }}{% endif %}" class="left" id="photo">
 		  <input type="hidden" name="personid" value="{{ p.id }}"/>
 		  <input type="hidden" name="lang" value="{{ lang }}"/>
+		  <input type="hidden" name="template" value="default" id="template"/>
 		  <input type="hidden" name="photo" value="{% if p.image %}{{ p.image|scale:"110x110" }}{% endif %}"/>
 		  <div class="bigbox">
 			  <input type="text" name="name" value="{{ p.name }}" class="h1"/><br/>

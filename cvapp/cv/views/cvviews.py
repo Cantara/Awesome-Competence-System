@@ -1,4 +1,4 @@
-from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other
+from cv.models.cvmodels import Cv, Person, Technology, Experience, Workplace, Education, Other, Template
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 import json
@@ -23,6 +23,7 @@ def detail(request, cv_id, lang = ''):
 	t, e, w, d, o, l = getTranslatedParts(cv, lang, alerts=True)
 		
 	# style = Style.objects.get(id=1)
+	templates = Template.objects.all()
 	
 	if not lang:
 		lang = p.country
@@ -37,7 +38,8 @@ def detail(request, cv_id, lang = ''):
 		'o': o, 
 		'l': l, 
 		'style': '', 
-		'lang': lang
+		'lang': lang,
+		'templates': templates
 	}
 	
 	return render_to_response('cv/cv_detail.html', dictionary, context_instance=RequestContext(request))
