@@ -86,6 +86,9 @@ class OverwriteStorage(FileSystemStorage):
 			self.delete(name)
 			try:
 				self.delete( resized_path(name, '110x110', 'scale') )
+			except:
+				pass
+			try:
 				self.delete( resized_path(name, '300x300', 'scale') )
 			except:
 				pass
