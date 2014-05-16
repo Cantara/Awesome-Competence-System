@@ -122,6 +122,12 @@
 							<option value="native">Native</option>
 							<option value="en">English</option>
 						</select>
+						Language:&nbsp;<select name="template">
+							<option value="default">Default Template</option>
+							{% for t in templates %}
+								<option value="{{t.id}}">{{t.title}}</option>
+							{% endfor %}
+						</select>
 						<a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
 					</td>
 					<td>Download</td>

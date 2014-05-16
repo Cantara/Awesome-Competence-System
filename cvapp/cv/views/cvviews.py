@@ -10,11 +10,12 @@ import localsettings
 from cvhelper import labels, getTranslatedParts
 
 def cv_list(request):
+	templates = Template.objects.all()
 	try:
 		solrurl = localsettings.SOLRURL
 	except:
 		solrurl = "/solr/collection1/select"
-	return render_to_response('cv/cv_list.html', {'solrurl': solrurl}, context_instance=RequestContext(request))
+	return render_to_response('cv/cv_list.html', {'solrurl': solrurl, 'templates': templates}, context_instance=RequestContext(request))
 	
 def detail(request, cv_id, lang = ''):
 	cv = get_object_or_404(Cv, pk=cv_id)

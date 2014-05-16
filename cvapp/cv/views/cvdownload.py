@@ -267,7 +267,13 @@ def multicv(request):
         
         format = request.GET['format']
         lang = request.GET['language']
-        template = request.GET.get('template', DEFAULT_TEMPLATE)
+        templateId = request.GET.get('template', DEFAULT_TEMPLATE)
+
+        if templateId != 'default':
+            template = get_object_or_404(Template, pk=templateId)
+            template = template.template.path
+        else:
+            template = DEFAULT_TEMPLATE
 
         cvids = request.GET.getlist('cvid', False)
 
