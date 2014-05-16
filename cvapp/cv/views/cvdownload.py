@@ -43,11 +43,11 @@ def download(request, format):
         o_set = []
         
         if 'technology' in a:
-            for x, item in a['technology'].items():
+            for x in a['technology']:
                 t_set.append( 
                     Technology( 
-                        title       = item['title'], 
-                        data        = item['data'].encode( "utf-8", "ignore" )
+                        title       = x['title'], 
+                        data        = x['data'].encode( "utf-8", "ignore" )
                     ) 
                 )
         
@@ -86,11 +86,11 @@ def download(request, format):
                 )
         
         if 'other' in a:
-            for x, item in a['other'].items():
-                datalist = "<ul><li>" + item['data'].replace('<br/>','</li><li>') + "</li></ul>"
+            for x in a['other']:
+                datalist = "<ul><li>" + x['data'].replace('<br/>','</li><li>') + "</li></ul>"
                 o_set.append( 
                     Other( 
-                        title       = item['title'], 
+                        title       = x['title'], 
                         data        = datalist.encode( "utf-8", "ignore" )
                     ) 
                 )

@@ -19,7 +19,7 @@ $.fn.serializeObject = function() {
 	var tempobj = {};
 	
 	// Set of stuff that needs to be in given order.
-	var order = "experience_workplaces_education";
+	var order = "experience_workplaces_education_technology_other";
 	  
 	  $el.find(':input[type!="checkbox"][type!="radio"], input:checked').each(function() {
 		// data[a][b] becomes [ data, a, b ]
@@ -29,14 +29,16 @@ $.fn.serializeObject = function() {
 		
 		// If the current inputfield or textarea is one of the ordered items
 		var orderindex = order.indexOf(named[0]);
-		
 		if ( orderindex >= 0 ) {
 			
 			// Assign the value to the object 
 			tempobj[ named[cap] ] = getLegalValIfTextarea( $(this) );
 			
 			// If it's the last of a set, push the previous set and reset the temporary object container
-			if( named[cap] == "techs" || (orderindex > 0 && named[cap] == "description") ) {
+                // techs is always last of set experience.
+                // if it has orderindex > 0, it means it's not experience, so description is the last field. 
+                // data is last for other and technology
+			if( named[cap] == "techs" || (orderindex > 0 && named[cap] == "description") || named[cap] == "data" ) {
 				// If the we don't have the given array in the data-container object, create it
 				if( !data[named[0]] ) {
 					data[named[0]] = [];
