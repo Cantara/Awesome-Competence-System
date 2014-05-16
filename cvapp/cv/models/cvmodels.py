@@ -398,10 +398,10 @@ class Cv(models.Model):
 	last_edited = models.DateTimeField(auto_now=True)
 	created = models.DateTimeField(auto_now_add=True)
 	
-	tags = models.CharField(verbose_name='CV description', max_length=50)
+	tags = models.CharField(verbose_name='CV description', max_length=70)
 	
-	title = models.CharField(max_length=50, null=True, blank=True)
-	title_en = models.CharField(max_length=50, null=True, blank=True)
+	title = models.CharField(max_length=70, null=True, blank=True)
+	title_en = models.CharField(max_length=70, null=True, blank=True)
 	
 	profile = models.TextField(verbose_name='Profile description', null=True, blank=True)
 	profile_en = models.TextField(verbose_name='Profile description (English)', null=True, blank=True)
