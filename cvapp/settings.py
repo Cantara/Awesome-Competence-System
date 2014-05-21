@@ -224,7 +224,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://localhost:8983/solr'
+        'URL': 'http://localhost:8983/solr/acs'
     },
 }
 
