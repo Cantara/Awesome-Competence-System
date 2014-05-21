@@ -34,7 +34,7 @@
 		<label><input type="checkbox" id="multicvcheck" onChange="cvlist.toggleMulti(this);"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
 	{% if user.is_superuser %}
 		<a class="butt" href="{% url 'admin:cv_person_add' %}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
-		<a id="showJsonBtn" class="butt"><i class="icon-download"></i> Json</a>
+		<a id="showJsonBtn" class="butt" style="margin-bottom:.5em;"><i class="icon-download"></i> Json</a>
 	{% endif %}
     </div>
     
@@ -210,6 +210,7 @@
 			<section>
 				<span>                    
                     <a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt<%? p.completeness.percent < 100 %> butt-red<%?%>" style="float: right;"><i class="icon-envelope"></i></a>
+	                <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time" style="float: right; margin: .3em"></i><%?%>
                 </span>
                 
 				<p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
@@ -218,6 +219,7 @@
 			<div class="cvset">
 				<div class="ldetail<%? p.completeness.percent < 100 %> alertbox<%?%>">
 					<p>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
+	                <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time"></i> More than 4 months since last update.<%?%>
 					<%? p.completeness.comment %><ul><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
 				</div>
 				<%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
