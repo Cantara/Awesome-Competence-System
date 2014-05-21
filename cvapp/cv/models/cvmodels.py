@@ -186,11 +186,11 @@ class Person(models.Model):
 			comment.append("Does not have at least one complete CV (100%)")
 		
 		# Is recent
-		maxscore += 1
-		if self.is_recent():
-			myscore += 1
-		else:
-			comment.append("Has not been updated in the past two months.")
+		#maxscore += 1
+		#if self.is_recent():
+		#	myscore += 1
+		#else:
+		#	comment.append("Has not been updated in the past two months.")
 
 		if len(comment) < 1:
 			pass

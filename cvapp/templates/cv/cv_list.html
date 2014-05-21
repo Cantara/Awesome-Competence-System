@@ -57,6 +57,12 @@
 						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',1);"/>Show completed</label><br/>
 						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',-1);"/>Show incomplete</label><br/>
 				</div>
+				<div class="filter">
+					<h3>Updated in the past 4 months</h3>
+						<label><input type="radio" checked name="hasfullcv" onChange="additionalParams.toggle('recent',0);"/>Show all</label><br/>
+						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('recent',1);"/>Show recently updated</label><br/>
+						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('recent',-1);"/>Show not recently updated</label><br/>
+				</div>
                 
 				<div class="filter">                
 					<h3>Sorting</h3>
@@ -407,6 +413,7 @@
 						});
 					} else {
 						for (var i=0;i<facets[facet].length;i+=2){
+							if(facets[facet][i]==null) facets[facet][i] = 'No '+facet.replace('_exact','');
 							var facetdata = {
 								facet: facet,
 								name: facets[facet][i],
@@ -513,6 +520,7 @@
 		 		'fl': 'rendered',
 		 		'facet': 'true',
 		 		'facet.sort': 'index',
+		 		'facet.missing': 'on',
 		 		'facet.field': [
 		 			'location_exact', 
 		 			'department_exact',
@@ -670,6 +678,7 @@
 		var additionalParams = {
 			params: {
 				'fullcv':[0, 'fulljson:"completeness+percent+100"~1'],
+				'recent':[0, 'last_edited:[NOW-120DAYS TO NOW]'],
 				'status':[-1,'status_exact:inactive']
 			},
 			toggle: function(param, t) {
