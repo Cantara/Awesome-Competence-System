@@ -53,15 +53,15 @@
 				</div>
 				<div class="filter">
 					<h3>Has completed CV</h3>
-						<label><input type="radio" checked name="hasfullcv" onChange="additionalParams.toggle('fullcv',0);"/>Show all</label><br/>
-						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',1);"/>Show completed</label><br/>
-						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('fullcv',-1);"/>Show incomplete</label><br/>
+						<label><input type="radio" checked name="fullcv" onChange="additionalParams.toggle('fullcv',0);"/>Show all</label><br/>
+						<label><input type="radio" id="plusfullcv" name="fullcv" onChange="additionalParams.toggle('fullcv',1);"/>Show completed</label><br/>
+						<label><input type="radio" id="minusfullcv" name="fullcv" onChange="additionalParams.toggle('fullcv',-1);"/>Show incomplete</label><br/>
 				</div>
 				<div class="filter">
 					<h3>Updated in the past 4 months</h3>
-						<label><input type="radio" checked name="hasfullcv" onChange="additionalParams.toggle('recent',0);"/>Show all</label><br/>
-						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('recent',1);"/>Show recently updated</label><br/>
-						<label><input type="radio" name="hasfullcv" onChange="additionalParams.toggle('recent',-1);"/>Show not recently updated</label><br/>
+						<label><input type="radio" checked name="recent" onChange="additionalParams.toggle('recent',0);"/>Show all</label><br/>
+						<label><input type="radio" id="plusrecent" name="recent" onChange="additionalParams.toggle('recent',1);"/>Show recently updated</label><br/>
+						<label><input type="radio" id="minusrecent" name="recent" onChange="additionalParams.toggle('recent',-1);"/>Show not recently updated</label><br/>
 				</div>
                 
 				<div class="filter">                
@@ -504,7 +504,8 @@
 						"exprange=[" + fq.exprange + "]",
 						"fq=" + JSON.stringify(fq.facets),
 						"q=" + self.filterTxt,
-						"list=" + this.multi
+						"list=" + this.multi,
+						"ap=" + additionalParams.getUrlParams()
 					];
 					var newurl = "/?" + urlData.join("&");
 					window.history.replaceState({}, "title", newurl);
@@ -589,6 +590,24 @@
 							for(var key in initData.fq){
 								for(var x in initData.fq[key]){
 									self.toggleFacet(initData.fq[key][x], key, true, true);
+								}
+							}
+						}
+						// Set Additional Parameters
+						if( initData.ap !== undefined ){
+							var ap = initData.ap[0].split(',');
+
+							for(var i=0;i<ap.length;i++){
+								var param = ap[i];
+								console.log(param);
+								if(param[0]=='+') {
+									param=param.replace('+','');
+									additionalParams.toggle(param,1);
+									$('#plus'+param).prop("checked", true);
+								} else if(param[0]=='-') {
+									param=param.replace('-','');
+									additionalParams.toggle(param,-1);
+									$('#minus'+param).prop("checked", true);
 								}
 							}
 						}
@@ -696,6 +715,17 @@
 				}
 				cvlist.additionalParams = allparams;
 				cvlist.prepSearch();
+			},
+			getUrlParams: function() {
+				var p = [];
+				for(var key in this.params) {
+					if(this.params[key][0]>0) {
+						p.push('+'+key);
+					} else if(this.params[key][0]<0) {
+						p.push('-'+key);
+					}
+				}
+				return p.join(',');
 			}
 		}
 
