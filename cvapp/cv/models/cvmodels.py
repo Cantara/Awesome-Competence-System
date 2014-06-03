@@ -39,6 +39,11 @@ LOCATION_CHOICES = (
 	(u'Malmö',		'Malmö'),
 	('Oslo', 		'Oslo'),
 	('Stockholm',	'Stockholm'),
+	('Barcelona',   'Barcelona'),
+	('Brussels',    'Brussels'),
+	('Luxembourg',   'Luxembourg'),
+	('Frankfurt',     'Frankfurt'),
+	('München',       'München'),
 )
 
 DEPARTMENT_CHOICES = (
