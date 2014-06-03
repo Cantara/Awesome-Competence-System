@@ -43,7 +43,7 @@ LOCATION_CHOICES = (
 	('Brussels',    'Brussels'),
 	('Luxembourg',   'Luxembourg'),
 	('Frankfurt',     'Frankfurt'),
-	('München',       'München'),
+	(u'München',       'München'),
 )
 
 DEPARTMENT_CHOICES = (
