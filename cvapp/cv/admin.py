@@ -98,8 +98,8 @@ class EducationInline(admin.StackedInline):
 class OtherInline(admin.StackedInline):
     model = Other
     extra = 0
-    formfield_overrides = wide
-    fields = ('title', 'data', 'title_en', 'data_en')
+    formfield_overrides = large
+    fields = (('title', 'title_en'), ('data_en','data'))
 
     def has_change_permission(self, request, obj=None):
         return True #has_permission_for_person(request, obj)
