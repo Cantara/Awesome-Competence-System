@@ -99,7 +99,7 @@ class OtherInline(admin.StackedInline):
     model = Other
     extra = 0
     formfield_overrides = large
-    fields = (('title', 'title_en'), ('data_en','data'))
+    fields = (('title', 'title_en'), ('data','data_en'))
 
     def has_change_permission(self, request, obj=None):
         return True #has_permission_for_person(request, obj)
