@@ -387,7 +387,7 @@ class Other(models.Model):
 	title_en = models.CharField("Other (En)", max_length=50, null=True, blank=True)
 	
 	data = models.TextField("List your information", null=True, blank=True)
-	data_en = models.TextField("List your inforamtion (En)", null=True, blank=True)
+	data_en = models.TextField("List your information (En)", null=True, blank=True)
 	
 	def data_as_list(self):
 		return self.data.split('\n')
