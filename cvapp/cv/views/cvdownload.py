@@ -33,7 +33,7 @@ def download(request, format):
                     
         cv = Cv(
             title = a['title'],
-            profile = a['profile'].encode( "utf-8" ),
+            profile = escape( a['profile'].encode( "utf-8" ) ).replace("\n","<br/>"),
         )
         
         t_set = []
@@ -47,7 +47,7 @@ def download(request, format):
                 t_set.append( 
                     Technology( 
                         title       = x['title'], 
-                        data        = x['data'].encode( "utf-8", "ignore" )
+                        data        = escape( x['data'].encode( "utf-8", "ignore" ) ).replace("\n","<br/>")
                     ) 
                 )
         
@@ -58,7 +58,7 @@ def download(request, format):
                         title       = x['title'], 
                         from_year   = x['years'], # Must fix this later
                         company     = x['company'],
-                        description = x['description'].encode( "utf-8" ),
+                        description = escape( x['description'].encode( "utf-8" ) ).replace("\n","<br/>"),
                         techs       = x['techs'],
                     ) 
                 )
@@ -70,7 +70,7 @@ def download(request, format):
                         title       = x['title'], 
                         from_year   = x['years'], # Must fix this later
                         company     = x['company'],
-                        description = x['description'].encode( "utf-8" ),
+                        description = escape( x['description'].encode( "utf-8" ) ).replace("\n","<br/>"),
                     ) 
                 )
         
@@ -81,13 +81,13 @@ def download(request, format):
                         title       = x['title'], 
                         from_year   = x['years'], # Must fix this later
                         school      = x['school'],
-                        description = x['description'].encode( "utf-8" ),
+                        description = escape( x['description'].encode( "utf-8" ) ).replace("\n","<br/>"),
                     ) 
                 )
         
         if 'other' in a:
             for x in a['other']:
-                datalist = "<ul><li>" + x['data'].replace('<br/>','</li><li>') + "</li></ul>"
+                datalist = "<ul><li>" + escape(x['data']).replace('&lt;br/&gt;','</li><li>') + "</li></ul>"
                 o_set.append( 
                     Other( 
                         title       = x['title'], 

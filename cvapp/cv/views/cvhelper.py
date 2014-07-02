@@ -111,7 +111,8 @@ def getTranslatedParts(cv, lang, alerts=False):
 		ex.techs		= q(ex.techs, ex.techs_en)
 		ex.from_year 	= getPeriod(ex, languagecode)
 		ex.description	= q(ex.description, ex.description_en)
-		ex.description	= escape( ex.description.encode("utf-8") )
+		if not alerts:
+			ex.description	= escape( ex.description.encode("utf-8") )
 		ex.orderkey 	= ex.from_ym()
 		
 	for wp in w:
@@ -119,7 +120,8 @@ def getTranslatedParts(cv, lang, alerts=False):
 		wp.company		= q(wp.company, wp.company_en)
 		wp.from_year 	= getPeriod(wp, languagecode)
 		wp.description	= q(wp.description, wp.description_en)
-		wp.description	= escape( wp.description.encode('utf-8') )
+		if not alerts:
+			wp.description	= escape( wp.description.encode('utf-8') )
 		wp.orderkey 	= wp.from_ym()
 		
 	for du in d:
@@ -127,7 +129,8 @@ def getTranslatedParts(cv, lang, alerts=False):
 		du.school		= q(du.school, du.school_en)
 		du.from_year 	= getPeriod(du, languagecode)
 		du.description	= q(du.description, du.description_en)
-		du.description	= escape( du.description.encode('utf-8') )
+		if not alerts:
+			du.description	= escape( du.description.encode('utf-8') )
 		du.orderkey 	= du.from_ym()
 	
 	for ot in o:

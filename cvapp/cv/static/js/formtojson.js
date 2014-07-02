@@ -74,7 +74,10 @@ $.fn.serializeObject = function() {
 
 //Remove illegal characters from word
 function getLegalValIfTextarea($t) {
-    var word = $t.val();
+    console.log('SHOULD REPLACE SOMETHING HERE!!!');
+    var word = $t.val().replace(/"/g,'\\\"');
+    // word.replace(/\n/g, "<br/>"); // TODO: Handle this on backend
+    console.log(word);
     return word;
     /*
     if( $t[0].tagName == "TEXTAREA" && !$t.hasClass('h5') ) {
