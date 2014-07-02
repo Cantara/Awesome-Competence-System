@@ -173,7 +173,7 @@ def getCvDictionary(cvid, lang=''):
 
     t, e, w, d, o, l = getTranslatedParts(cv, lang)
     
-    cv.profile = cv.profile.encode('utf-8')
+    cv.profile = escape( cv.profile.encode('utf-8') )
     
     for ot in o:
         ot.data = escape( ot.data.encode('utf-8') )
