@@ -5,17 +5,16 @@ import xml.etree.ElementTree as ET
 import urllib
 import urllib2
 import logging
+from localsettings import SSO_URL
 log = logging.getLogger("cv")
-
-SSO_URL = 'sso.altran.se'
 
 def myRemoteLogin(request):
 	if request.method == 'GET':
 		redirect_url = 'https://' + request.get_host() + request.GET.get('path', '/')
 		if request.user.is_authenticated():
-			return HttpResponseRedirect("https://" + SSO_URL + "/sso/logoutaction?redirectURI=" + redirect_url)
+			return HttpResponseRedirect( SSO_URL + "sso/logoutaction?redirectURI=" + redirect_url)
 		else:
-			return HttpResponseRedirect("https://" + SSO_URL + "/sso/login?redirectURI=" + redirect_url)
+			return HttpResponseRedirect( SSO_URL + "sso/login?redirectURI=" + redirect_url)
 	else:
 		return HttpResponseRedirect('https://' + request.get_host() )
 
@@ -29,4 +28,4 @@ def myRemoteLogout(request):
 		redirect_url = 'https://' + request.get_host() + request.POST.get('path', '/')
 	else:
 		redirect_url = 'https://' + request.get_host()
-	return HttpResponseRedirect("https://" + SSO_URL + "/sso/logoutaction?redirectURI=" + redirect_url)
+	return HttpResponseRedirect( SSO_URL + "sso/logoutaction?redirectURI=" + redirect_url)
