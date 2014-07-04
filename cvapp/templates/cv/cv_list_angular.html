@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html ng-app="AcsApp">
+  <head>
+    <title>Acs Search</title>
+    <!--link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"-->
+    <link href="css/main.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cv.altran.se/static/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cv.altran.se/static/css/fontawesome.css"/>
+  </head>
+  <body ng-controller="SearchCtrl">
+    <nav>
+        
+    <form method="get" action="/logout/" id="loginform" style="margin:.2em">
+      <input type='hidden' name='csrfmiddlewaretoken' value='' />
+      <input type="hidden" value="/" name="path">
+      
+        <span>
+            
+              <a href="#" class="menutoggle" style="display: inline-block;">
+                Welcome <strong>leon.ho@altran.com</strong>
+                
+                <i class="icon-caret-down"></i>
+              </a>
+                  <ul class="menulist menulisthidden">
+                
+                  <li style="text-align:center"><img src="/media/photos/Leon_Ho_scale_110x110.jpg" style="max-width:5em;max-height:5em;"></li>
+                
+
+                <div class="ldetail">
+                  <p>Profile 100% complete. Updated: May 20, 2014, 2:26 p.m.</p>
+                  <ul></ul>
+                </div>
+                      <li><a href="/admin/cv/person/1/" class="butt">Edit Person</a></li>
+                      
+                      <li><a href="/admin/cv/cv/1382/" class="butt">Edit CV "Interaksjon/Grafisk/Frontend-kombo"</a></li>
+                      
+                      <li><a href="/admin/cv/cv/4/" class="butt">Edit CV "Interaksjonsdesigner / Frontend utvikler"</a></li>
+                      
+                      <li><a href="/cv/addcvforperson/1/" class="butt">Add CV</a></li>
+                  </ul>
+            
+        </span>
+        <input type="submit" value="Log out" class="butt grey" onClick="eraseCookie('whydahusertoken');">
+      
+    </form>
+
+    <button class="butt menutoggle showonsmall">Menu</button>
+        <ul class="menulist hideonsmall">
+            <li><a href="/cv/" class="">Employee List</a></li>
+            <li><a href="/reports/" class="">Reports</a></li>
+            <li><a href="/matrix/" class="">Competence Matrix list</a></li>
+      
+            <li><a href="/changelog/" class="">Changelog</a></li>
+            <li><a href="/admin/" class="">Admin</a></li>
+      
+        </ul>
+        
+    </nav>
+
+    <div id="actions">            
+      <h1>ACS Persons</h1>
+      <input type="text" size="30" style="margin:0;" placeholder="Search" ng-model="searchQuery" ng-change="searchAcs()" autofocus/> {{numFound}}
+    </div>
+
+
+<div id="optionsbox" ng-class="{hiddenopts: hideFilter}">
+    
+    <div class="option">
+    <h3>View</h3>
+    <label><input type="checkbox" id="multicvcheck" ng-model="showListView"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
+  
+    <a class="butt" href="/admin/cv/person/add/" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
+    <a id="showJsonBtn" class="butt" style="margin-bottom:.5em;"><i class="icon-download"></i> Json</a>
+  
+    </div>
+    
+    <div class="option animateheight">
+      <span class="butt" ng-click="hideFilter=!hideFilter">
+        <i id="togglefiltericon" ng-class="{'icon-double-angle-right': hideFilter, 'icon-double-angle-left': !hideFilter}"></i> Filters
+      </span>
+      <div id="optionsinside">
+      <div id="facets">
+
+        <div ng-repeat="facetField in facetFields" class="filter">
+          <h3>{{facetField.name}}</h3>
+          <ul>
+            <li ng-repeat="(facetname, facet) in facetField.facets">
+              <label>
+                <input type="checkbox" ng-model="facet.checked" ng-change="updateAndSearchAcs()">
+                <span ng-if="facetname!='null'">{{facetname}}</span><span ng-if="facetname=='null'">No {{facetField.name}}</span> ({{facet.count}})
+              </label>
+            </li>
+          </ul>
+        </div>
+
+        <div class="filter">
+          <h3>Years of experience</h3>
+          <div style="text-align: center;">
+            <div id="expslider" class="noUiSlider" style="margin: 1em auto; width: 200px;"></div>
+            <input type="text" id="expfrom" size="3"/> <input type="text" id="expto" size="3"/>
+          </div>
+        </div>
+
+        <div class="filter" ng-repeat="cf in customFilter.list">
+          <h3>{{cf.title}}</h3>
+            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="" ng-model="cf.status"/>Show all</label><br/>
+            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="+" ng-model="cf.status"/>Show {{cf.title}}</label><br/>
+            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="-" ng-model="cf.status"/>Show not {{cf.title}}</label><br/>
+        </div>
+                
+        <div class="filter">                
+          <h3>Sorting</h3>
+          <select name="sorting" ng-model="sortSetting" ng-change="updateAndSearchAcs()">
+            <option value="name_exact asc">Name a-z</option>
+            <option value="name_exact desc">Name z-a</option>
+            <option value="years_of_experience asc">Years of experience 0-9</option>
+            <option value="years_of_experience desc">Years of experience 9-0</option>
+            <option value="last_edited desc">Recently edited</option>
+            <option value="last_edited asc">Least recently edited</option>
+          <select>
+        </div>
+
+      </div>
+      </div>
+  </div>
+
+    <div class="option">
+      <a class="butt" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
+        <i class="icon-question-sign"></i> Help
+      </a>
+    </div>
+
+</div>
+
+    <div id="content" class="">
+
+      <div ng-if="!showListView">
+
+        <div class="block tiled" ng-repeat="p in persons" id="p{{p.id}}">
+          <header>
+            <h3>{{p.name}}</h3>
+            <h4>{{p.title}}</h4>
+          </header>
+          <img src="https://cv.altran.se/media/{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
+
+          <div class="completeness">
+            <div class="percent" ng-class="{redpercent: p.completeness.percent < 100}" ng-style="{width: {{p.completeness.percent}}+'%'}"></div>
+          </div>
+
+          <section>
+            <span style="float: right;">
+              <span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i></span>
+              <a class="butt" ng-class="{ 'butt-red': p.completeness.percent<100 }"><i class="icon-envelope"></i></a>
+            </span>
+                    
+            <p class="ldetail">{{p.phone}} <img src="https://cv.altran.se/static/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
+            <a href="mailto:{{p.mail}}">{{p.mail}}</a></p>
+          </section>
+          <div class="cvset">
+            <div class="ldetail" ng-class="{alertbox: p.completeness.percent < 100}">
+              <p>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</p>
+              <p><span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i> More than 4 months since last update.</span></p>
+              <ul ng-if="p.completeness.comment">
+                <li ng-repeat="c in p.completeness.comment">{{c}}</li>
+              </ul>
+            </div>
+              <a href="/admin/cv/person/{{p.id}}/" class="butt">Edit person</a>
+            <table>
+              <tr ng-repeat="cv in p.cv">
+                <td>
+                  <a href="/cv/{{cv.id}}/" class="butt bigbutt>">
+                    {{cv.tags}}<br/>
+                    <span class="dato">
+                      {{cv.last_edited}} {{cv.status.percent}}%
+                      <span class="completeness">
+                        <span class="percent"></span>
+                      </span>
+                    </span>
+                  </a>
+                </td>
+                <td>
+                  <a href="/admin/cv/cv/{{cv.id}}/" class="butt">Edit<br/>
+                  <span class="dato">CV</span></a>
+                </td>
+              </tr>
+          
+              <tr>
+                <td><a href="/cv/addcvforperson/{{p.id}}/" class="butt">Add CV</a></td>
+              </tr>
+            
+            </table>
+          </div>
+        </div>
+
+        <button ng-if="hasMorePersons" class="butt" ng-click="loadMorePeople()">Load more people</button>
+
+      </div>
+
+      <div class="col-md-9" ng-if="showListView">
+        LIST
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Title</th>
+              <th>Department</th>
+            </tr>
+          </thead>
+          <tr ng-repeat="person in persons">
+            <td><!--div style="background-image: url(http://cv.altran.se/media/{{person.image}})" class="photo_small"></div--></td>
+            <td><a href="#/person/{{person.id}}">{{person.name}}</td>
+            <td>{{person.title}}</td>
+            <td>{{person.department}}</td>
+          </tr>
+          <tr>
+            <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
+            <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
+    <script src="js/angular-slider.min.js"></script>
+    <script src="js/ctrl.js"></script>
+  </body>
+</html>
