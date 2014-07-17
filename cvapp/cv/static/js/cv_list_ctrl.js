@@ -1,4 +1,4 @@
-var AcsApp = angular.module('AcsApp', []);
+var AcsApp = angular.module('AcsApp', ['ui.slider']);
 
 AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
 
@@ -8,6 +8,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
   $scope.showListView = false;
 
   $scope.facetFields = [];
+  $scope.yearsOfExperience = {};
   $scope.searchParameters = {};
 
   $scope.hideFilter = false;
@@ -109,8 +110,11 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
     });
   }
 
-  $scope.updateAndSearchAcs = function() {
-    updateSearchParameters();
+  $scope.updateAndSearchAcs = function(facetField, facetname) {
+    facetField = facetField || '';
+    facetname = facetname || '';
+    console.log('UPDATE:', facetField, facetname);
+    updateSearchParameters(facetField, facetname);
     $scope.searchAcs();
   }
 
@@ -120,30 +124,23 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
     var facetFields = {};
     for( var rawFacetField in rawFacetFields ){
       if(rawFacetField == 'years_of_experience_exact') {
-        /*var maxValue = 0;
+        var yof = rawFacetFields[rawFacetField];
+        var maxValue = 0;
         var curValue = 0;
-        for (var j=0;j<facets[facet].length;j+=2){
-          curValue = parseInt(facets[facet][j]);
+        for (var j=0;j<yof.length;j+=2){
+          curValue = parseInt(yof[j]);
           if( curValue > maxValue ) {
             maxValue = curValue;
           }
         }
-        $("#expslider").noUiSlider({
-            range: [0, maxValue]
-           ,start: [0, maxValue]
-           ,step: 1
-           ,slide: function(){
-              fq.updateExprange( $(this).val() );
-           }
-           ,set: function(){
-              fq.updateExprange( $(this).val() );
-           }
-           ,serialization: {
-              to: [$("#expfrom"),$("#expto")]
-             ,resolution: 1
-           }
-        });
-        */
+        $scope.yearsOfExperience = {
+          min: 0,
+          max: maxValue,
+          range: true,
+          step: 1,
+          stop: function (event, ui) { $scope.updateAndSearchAcs(); }
+        };
+        $scope.yearsOfExperienceValue = [0, maxValue];
       } else {
         var facetField = {
           name: rawFacetField.replace('_exact',''),
@@ -174,16 +171,23 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
     }
   }
 
-  function updateSearchParameters() {
+  function updateSearchParameters(ff, fn) {
     console.log('Updating search parameters.');
     $scope.searchParameters = {};
+    // Unchecks other parameters if NULL is selected
+    // Unchecks NULL if other parameters is selected
+    if(ff.length>0){
+      if(fn=='null'){
+        for ( var facet in  ff.facets ){
+          if(facet!='null') ff.facets[facet].checked = false;
+        }
+      } else {
+        ff.facets['null'].checked = false;
+      }
+    }
     for( var facetField in $scope.facetFields ){
       var checkedFacets = [];
       if($scope.facetFields[facetField].facets['null'].checked){
-        console.log('NULL!');
-        for ( var facet in  $scope.facetFields[facetField].facets ){
-          if(facet!='null') $scope.facetFields[facetField].facets[facet].checked = false;
-        }
         $scope.searchParameters.fq = $scope.searchParameters.fq || [];
         $scope.searchParameters.fq.push( '-'+facetField+':[* TO *]' );
       } else {
@@ -198,6 +202,10 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
         }
       }
     }
+    // Years-filter-query
+    $scope.searchParameters.fq = $scope.searchParameters.fq || [];
+    $scope.searchParameters.fq.push( 'years_of_experience_exact:['+$scope.yearsOfExperienceValue.join(' TO ')+']' );
+
     console.log($scope.searchParameters);
   }
 

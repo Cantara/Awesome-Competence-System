@@ -6,6 +6,7 @@
     <link href="css/main.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cv.altran.se/static/css/base.css"/>
     <link rel="stylesheet" type="text/css" href="https://cv.altran.se/static/css/fontawesome.css"/>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
   </head>
   <body ng-controller="SearchCtrl">
     <nav>
@@ -81,24 +82,25 @@
       <div id="optionsinside">
       <div id="facets">
 
+        <div class="filter">
+          <h3>Years of experience</h3>
+          <div style="text-align: center;">
+            <div ui-slider="yearsOfExperience" ng-model="yearsOfExperienceValue"></div>
+            <input type="number" ng-model="yearsOfExperienceValue[0]" size="3" min="0" max="{{yearsOfExperienceValue[1]}}" style="width:3em;" ng-change="updateAndSearchAcs()"/>
+            <input type="number" ng-model="yearsOfExperienceValue[1]" size="3" min="{{yearsOfExperienceValue[0]}}" max="{{yearsOfExperience.max}}"style="width:3em;" ng-change="updateAndSearchAcs()"/>
+          </div>
+        </div>
+
         <div ng-repeat="facetField in facetFields" class="filter">
           <h3>{{facetField.name}}</h3>
           <ul>
             <li ng-repeat="(facetname, facet) in facetField.facets">
               <label>
-                <input type="checkbox" ng-model="facet.checked" ng-change="updateAndSearchAcs()">
-                <span ng-if="facetname!='null'">{{facetname}}</span><span ng-if="facetname=='null'">No {{facetField.name}}</span> ({{facet.count}})
+                <input type="checkbox" ng-model="facet.checked" ng-change="updateAndSearchAcs(facetField, facetname)">
+                <span ng-if="facetname!='null'">{{facetname}}</span><span ng-if="facetname=='null'" style="font-style: italic;">No {{facetField.name}}</span> <span ng-if="facet.count>0">({{facet.count}})</span>
               </label>
             </li>
           </ul>
-        </div>
-
-        <div class="filter">
-          <h3>Years of experience</h3>
-          <div style="text-align: center;">
-            <div id="expslider" class="noUiSlider" style="margin: 1em auto; width: 200px;"></div>
-            <input type="text" id="expfrom" size="3"/> <input type="text" id="expto" size="3"/>
-          </div>
         </div>
 
         <div class="filter" ng-repeat="cf in customFilter.list">
@@ -221,12 +223,12 @@
       </div>
 
     </div>
-
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
-    <script src="js/angular-slider.min.js"></script>
-    <script src="js/ctrl.js"></script>
+    <script src="js/slider.js"></script>
+    <script src="js/cv_list_ctrl.js"></script>
   </body>
 </html>
