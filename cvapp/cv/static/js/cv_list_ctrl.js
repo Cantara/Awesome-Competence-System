@@ -2,6 +2,8 @@ var AcsApp = angular.module('AcsApp', ['ui.slider']);
 
 AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
 
+  $scope.urls = DJANGO_URLS || {};
+
   $scope.persons = [ ];
   $scope.numFound = 0;
 

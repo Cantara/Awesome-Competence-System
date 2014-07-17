@@ -1,76 +1,37 @@
-<!DOCTYPE html>
-<html ng-app="AcsApp">
-  <head>
-    <title>Acs Search</title>
-    <!--link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"-->
-    <link href="css/main.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cv.altran.se/static/css/base.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cv.altran.se/static/css/fontawesome.css"/>
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
-  </head>
-  <body ng-controller="SearchCtrl">
-    <nav>
-        
-    <form method="get" action="/logout/" id="loginform" style="margin:.2em">
-      <input type='hidden' name='csrfmiddlewaretoken' value='' />
-      <input type="hidden" value="/" name="path">
-      
-        <span>
-            
-              <a href="#" class="menutoggle" style="display: inline-block;">
-                Welcome <strong>leon.ho@altran.com</strong>
-                
-                <i class="icon-caret-down"></i>
-              </a>
-                  <ul class="menulist menulisthidden">
-                
-                  <li style="text-align:center"><img src="/media/photos/Leon_Ho_scale_110x110.jpg" style="max-width:5em;max-height:5em;"></li>
-                
+{% extends "./cvbase.html" %}
 
-                <div class="ldetail">
-                  <p>Profile 100% complete. Updated: May 20, 2014, 2:26 p.m.</p>
-                  <ul></ul>
-                </div>
-                      <li><a href="/admin/cv/person/1/" class="butt">Edit Person</a></li>
-                      
-                      <li><a href="/admin/cv/cv/1382/" class="butt">Edit CV "Interaksjon/Grafisk/Frontend-kombo"</a></li>
-                      
-                      <li><a href="/admin/cv/cv/4/" class="butt">Edit CV "Interaksjonsdesigner / Frontend utvikler"</a></li>
-                      
-                      <li><a href="/cv/addcvforperson/1/" class="butt">Add CV</a></li>
-                  </ul>
-            
-        </span>
-        <input type="submit" value="Log out" class="butt grey" onClick="eraseCookie('whydahusertoken');">
-      
-    </form>
+{% block title %}CV{% endblock %}
 
-    <button class="butt menutoggle showonsmall">Menu</button>
-        <ul class="menulist hideonsmall">
-            <li><a href="/cv/" class="">Employee List</a></li>
-            <li><a href="/reports/" class="">Reports</a></li>
-            <li><a href="/matrix/" class="">Competence Matrix list</a></li>
-      
-            <li><a href="/changelog/" class="">Changelog</a></li>
-            <li><a href="/admin/" class="">Admin</a></li>
-      
-        </ul>
-        
-    </nav>
+{% block extrastyles %}
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
+{% endblock %}
 
-    <div id="actions">            
-      <h1>ACS Persons</h1>
-      <input type="text" size="30" style="margin:0;" placeholder="Search" ng-model="searchQuery" ng-change="searchAcs()" autofocus/> {{numFound}}
-    </div>
+{% block actions %}
+  <h1>ACS Persons</h1>
+  <input type="text" size="30" style="margin:0;" placeholder="Search" ng-model="searchQuery" ng-change="searchAcs()" autofocus/> <span class="small" ng-bind="numFound"></span>
 
+  {% if not user.person %}
+    <br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
+      Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You don't seem to have a CV profile. 
+      <a href="{% url 'cv_add_person_for_user' %}" class="butt butt-action">Create a profile now!</a>
+    </p>
+  {% elif not user.person.cv_set.all %}
+    <br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
+      Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You have registered a profile, but you don't seem to have any CVs.
+      <a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt butt-action">Create a CV now!</a>
+    </p>
+  {% endif %}
+{% endblock %}
 
+{% block options %}
+{% verbatim %}
 <div id="optionsbox" ng-class="{hiddenopts: hideFilter}">
     
     <div class="option">
     <h3>View</h3>
     <label><input type="checkbox" id="multicvcheck" ng-model="showListView"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
   
-    <a class="butt" href="/admin/cv/person/add/" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
+    <a class="butt" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
     <a id="showJsonBtn" class="butt" style="margin-bottom:.5em;"><i class="icon-download"></i> Json</a>
   
     </div>
@@ -133,102 +94,117 @@
     </div>
 
 </div>
+{% endverbatim %}
+{% endblock %}
 
-    <div id="content" class="">
 
-      <div ng-if="!showListView">
+{% block content %}
+  {% verbatim %}
+    <div ng-if="!showListView">
 
-        <div class="block tiled" ng-repeat="p in persons" id="p{{p.id}}">
-          <header>
-            <h3>{{p.name}}</h3>
-            <h4>{{p.title}}</h4>
-          </header>
-          <img src="https://cv.altran.se/media/{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
+      <div class="block tiled" ng-repeat="p in persons" id="p{{p.id}}">
+        <header>
+          <h3>{{p.name}}</h3>
+          <h4>{{p.title}}</h4>
+        </header>
+        <img src="https://cv.altran.se/media/{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
 
-          <div class="completeness">
-            <div class="percent" ng-class="{redpercent: p.completeness.percent < 100}" ng-style="{width: {{p.completeness.percent}}+'%'}"></div>
-          </div>
-
-          <section>
-            <span style="float: right;">
-              <span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i></span>
-              <a class="butt" ng-class="{ 'butt-red': p.completeness.percent<100 }"><i class="icon-envelope"></i></a>
-            </span>
-                    
-            <p class="ldetail">{{p.phone}} <img src="https://cv.altran.se/static/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
-            <a href="mailto:{{p.mail}}">{{p.mail}}</a></p>
-          </section>
-          <div class="cvset">
-            <div class="ldetail" ng-class="{alertbox: p.completeness.percent < 100}">
-              <p>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</p>
-              <p><span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i> More than 4 months since last update.</span></p>
-              <ul ng-if="p.completeness.comment">
-                <li ng-repeat="c in p.completeness.comment">{{c}}</li>
-              </ul>
-            </div>
-              <a href="/admin/cv/person/{{p.id}}/" class="butt">Edit person</a>
-            <table>
-              <tr ng-repeat="cv in p.cv">
-                <td>
-                  <a href="/cv/{{cv.id}}/" class="butt bigbutt>">
-                    {{cv.tags}}<br/>
-                    <span class="dato">
-                      {{cv.last_edited}} {{cv.status.percent}}%
-                      <span class="completeness">
-                        <span class="percent"></span>
-                      </span>
-                    </span>
-                  </a>
-                </td>
-                <td>
-                  <a href="/admin/cv/cv/{{cv.id}}/" class="butt">Edit<br/>
-                  <span class="dato">CV</span></a>
-                </td>
-              </tr>
-          
-              <tr>
-                <td><a href="/cv/addcvforperson/{{p.id}}/" class="butt">Add CV</a></td>
-              </tr>
-            
-            </table>
-          </div>
+        <div class="completeness">
+          <div class="percent" ng-class="{redpercent: p.completeness.percent < 100}" ng-style="{width: {{p.completeness.percent}}+'%'}"></div>
         </div>
 
-        <button ng-if="hasMorePersons" class="butt" ng-click="loadMorePeople()">Load more people</button>
-
-      </div>
-
-      <div class="col-md-9" ng-if="showListView">
-        LIST
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Title</th>
-              <th>Department</th>
+        <section>
+          <span style="float: right;">
+            <span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i></span>
+            <a class="butt" ng-class="{ 'butt-red': p.completeness.percent<100 }"><i class="icon-envelope"></i></a>
+          </span>
+                  
+          <p class="ldetail">{{p.phone}} <img src="https://cv.altran.se/static/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
+          <a href="mailto:{{p.mail}}">{{p.mail}}</a></p>
+        </section>
+        <div class="cvset">
+          <div class="ldetail" ng-class="{alertbox: p.completeness.percent < 100}">
+            <p>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</p>
+            <p><span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i> More than 4 months since last update.</span></p>
+            <ul ng-if="p.completeness.comment">
+              <li ng-repeat="c in p.completeness.comment">{{c}}</li>
+            </ul>
+          </div>
+            <a href="{{urls.cv_person_change}}{{p.id}}/" class="butt">Edit person</a>
+          <table>
+            <tr ng-repeat="cv in p.cv">
+              <td>
+                <a href="{{urls.cv_detail}}{{cv.id}}/" class="butt bigbutt>">
+                  {{cv.tags}}<br/>
+                  <span class="dato">
+                    {{cv.last_edited}} {{cv.status.percent}}%
+                    <span class="completeness">
+                      <span class="percent"></span>
+                    </span>
+                  </span>
+                </a>
+              </td>
+              <td>
+                <a href="{{urls.cv_cv_change}}{{cv.id}}/" class="butt">Edit<br/>
+                <span class="dato">CV</span></a>
+              </td>
             </tr>
-          </thead>
-          <tr ng-repeat="person in persons">
-            <td><!--div style="background-image: url(http://cv.altran.se/media/{{person.image}})" class="photo_small"></div--></td>
-            <td><a href="#/person/{{person.id}}">{{person.name}}</td>
-            <td>{{person.title}}</td>
-            <td>{{person.department}}</td>
-          </tr>
-          <tr>
-            <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
-            <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
-          </tr>
-        </table>
+        
+            <tr>
+              <td><a href="{{urls.cv_add_cv_for_person}}{{p.id}}/" class="butt">Add CV</a></td>
+            </tr>
+          
+          </table>
+        </div>
       </div>
+
+      <button ng-if="hasMorePersons" class="butt" ng-click="loadMorePeople()">Load more people</button>
 
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
-    <script src="js/slider.js"></script>
-    <script src="js/cv_list_ctrl.js"></script>
-  </body>
-</html>
+
+    <div class="col-md-9" ng-if="showListView">
+      LIST
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Title</th>
+            <th>Department</th>
+          </tr>
+        </thead>
+        <tr ng-repeat="person in persons">
+          <td><!--div style="background-image: url(http://cv.altran.se/media/{{person.image}})" class="photo_small"></div--></td>
+          <td><a href="#/person/{{person.id}}">{{person.name}}</td>
+          <td>{{person.title}}</td>
+          <td>{{person.department}}</td>
+        </tr>
+        <tr>
+          <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
+          <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
+        </tr>
+      </table>
+    </div>
+  {% endverbatim %}
+  <script type="text/javascript">
+    var DJANGO_URLS = {
+      cv_person_change:       "{% url 'admin:cv_person_change' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
+      cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
+      cv_person_add:          "{% url 'admin:cv_person_add' %}",
+      cv_cv_change:           "{% url 'admin:cv_cv_change' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
+      cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
+      cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
+      cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
+      cv_detail:              "{% url 'cv_detail' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
+      cv_multi:               "{% url 'cv_multi' %}"
+    };
+  </script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
+  <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
+  <script src="{{ STATIC_URL }}js/cv_list_ctrl.js"></script>
+
+{% endblock %}
