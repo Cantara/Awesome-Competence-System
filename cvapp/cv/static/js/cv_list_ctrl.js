@@ -1,6 +1,6 @@
 var AcsApp = angular.module('AcsApp', ['ui.slider']);
 
-AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
+AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
 
   $scope.urls = DJANGO_URLS || {};
 
@@ -15,18 +15,19 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
 
   $scope.hideFilter = false;
 
-  $scope.sortSetting = 'name_exact asc';
+  var defaultSortSetting = 'name_exact asc'
+  $scope.sortSetting = defaultSortSetting;
   $scope.customFilter = {
     list: [
-      {title:'completed',   status: '',  query:'fulljson:"completeness+percent+100"~1'},
-      {title:'recent',      status: '',  query:'last_edited:[NOW-120DAYS TO NOW]'},
-      {title:'inactive',      status: '-', query:'status_exact:inactive'}
+      {title:'completed',   defaultStatus: 'all',  status: 'all',  query:'fulljson:"completeness+percent+100"~1'},
+      {title:'recent',      defaultStatus: 'all',  status: 'all',  query:'last_edited:[NOW-120DAYS TO NOW]'},
+      {title:'inactive',    defaultStatus: '-', status: '-', query:'status_exact:inactive'}
     ],
     getQueryString: function() {
       var queryArray = [];
       for(var i=0; i<this.list.length; i++){
         var cf = this.list[i];
-        if(cf.status.length>0) queryArray.push( cf.status + cf.query );
+        if(cf.status!='all') queryArray.push( cf.status + cf.query );
       }
       return queryArray.join(' ');
     }
@@ -37,8 +38,28 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
   var firstrun = true;
   var rows = 10;
   var start = 0;
-
   var canceler;
+
+  function getSolrParams() {
+    var q = $scope.searchQuery || '*';
+    return { 
+      'json.wrf': 'JSON_CALLBACK',
+      q: $scope.customFilter.getQueryString() + ' ' + q,
+      wt:'json',
+      rows: rows,
+      start: start,
+      sort: $scope.sortSetting,
+      fl: 'rendered',
+      fq: $scope.searchParameters.fq || '',
+      facet: 'true',
+      'facet.missing': 'on',
+      'facet.field': [
+        'location_exact', 
+        'department_exact',
+        'years_of_experience_exact'
+        ]
+    }
+  }
  
   $scope.searchAcs = function(options) {
 
@@ -46,8 +67,6 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
     options.loadMore = options.loadMore || false;
 
     console.log('Searching ACS...');
-
-    var q = $scope.searchQuery || '*';
 
     if (canceler) {
       console.log('Cancelling previous search');
@@ -65,30 +84,18 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
 
     $http({
       method: 'JSONP',
-      url: 'https://acssolr:acssolr@acsdev.altrancloud.com/solr/acs/select',
+      url: $scope.urls.solr,
       timeout: canceler.promise,
-      params: {
-        'json.wrf': 'JSON_CALLBACK',
-        q: $scope.customFilter.getQueryString() + ' ' + q,
-        wt:'json',
-        rows: rows,
-        start: start,
-        sort: $scope.sortSetting,
-        fl: 'rendered',
-        fq: $scope.searchParameters.fq || '',
-        facet: 'true',
-        'facet.missing': 'on',
-        'facet.field': [
-          'location_exact', 
-          'department_exact',
-          'years_of_experience_exact'
-          ]
-      }
-    }).success(function (data) {
+      params: getSolrParams()
+    }).success(function (data, st, he, co, stT) {
       if(!options.loadMore) $scope.persons = [];
       if(firstrun) {
-        $scope.facetFields = processFacetFields( data.facet_counts.facet_fields );
         firstrun = false;
+        // Get parameters from URL
+        var urlParams = Url.getParams();
+        // Process the facetfields for consumption
+        $scope.facetFields = processFacetFields( data.facet_counts.facet_fields, urlParams );
+        $scope.updateAndSearchAcs();
       } else {
         $scope.updateFacetFields( data.facet_counts.facet_fields );
       }
@@ -122,8 +129,9 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
 
   $scope.searchAcs();
 
-  function processFacetFields(rawFacetFields) {
+  function processFacetFields(rawFacetFields, urlParams) {
     var facetFields = {};
+    urlParams = urlParams || {};
     for( var rawFacetField in rawFacetFields ){
       if(rawFacetField == 'years_of_experience_exact') {
         var yof = rawFacetFields[rawFacetField];
@@ -143,20 +151,49 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
           stop: function (event, ui) { $scope.updateAndSearchAcs(); }
         };
         $scope.yearsOfExperienceValue = [0, maxValue];
+        if(urlParams.y && urlParams.y.length == 2){
+          var valA = urlParams.y[0]*1;
+          var valB = urlParams.y[1]*1;
+          var vals = ( valA > valB ) ? [valB,valA] : [valA,valB];
+          $scope.yearsOfExperienceValue = vals;
+        }
       } else {
+        var facetFieldName = rawFacetField.replace('_exact',''); // E.g. department, location
         var facetField = {
-          name: rawFacetField.replace('_exact',''),
+          name: facetFieldName,
           facets: {}
         };
+        var checkedFacets = urlParams[facetFieldName] || false;
         for (var i=0; i<rawFacetFields[rawFacetField].length; i+=2){
-          facetField.facets[ rawFacetFields[rawFacetField][i] ] = {
-            count: rawFacetFields[rawFacetField][i+1],
-            checked: false
+          var value = rawFacetFields[rawFacetField][i];
+          var count = rawFacetFields[rawFacetField][i+1];
+          var checked = false;
+          if(checkedFacets){
+            checked = (checkedFacets.indexOf(value)>=0);
+          }
+          facetField.facets[value] = {
+            count: count,
+            checked: checked
           };
         }
         facetFields[rawFacetField] = facetField;
       }
     }
+
+    // Read customfilter URL-Params
+    for(var x = $scope.customFilter.list.length-1; x>0; x--){
+      var cf = $scope.customFilter.list[x];
+      if(urlParams[cf.title]){
+        $scope.customFilter.list[x].status = urlParams[cf.title][0];
+      }
+    }
+
+    // Reading sorting URL-Params
+    if(urlParams.s) $scope.sortSetting = urlParams.s[0];
+
+    // Reading q URL-Params
+    if(urlParams.q) $scope.searchQuery = urlParams.q[0];
+
     return facetFields;
   }
 
@@ -174,8 +211,19 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
   }
 
   function updateSearchParameters(ff, fn) {
+
     console.log('Updating search parameters.');
+    
     $scope.searchParameters = {};
+    
+    var params = [];
+
+    // Create Q URL-Params
+    if($scope.searchQuery) params.push('q='+$scope.searchQuery);
+
+    // Create Sorting URL-Params
+    if($scope.sortSetting != defaultSortSetting) params.push('s='+$scope.sortSetting);
+
     // Unchecks other parameters if NULL is selected
     // Unchecks NULL if other parameters is selected
     if(ff.length>0){
@@ -189,13 +237,16 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
     }
     for( var facetField in $scope.facetFields ){
       var checkedFacets = [];
+      var facetFieldName = $scope.facetFields[facetField].name;
       if($scope.facetFields[facetField].facets['null'].checked){
         $scope.searchParameters.fq = $scope.searchParameters.fq || [];
         $scope.searchParameters.fq.push( '-'+facetField+':[* TO *]' );
+        params.push(facetFieldName+'=null');
       } else {
         for ( var facet in  $scope.facetFields[facetField].facets ){
           if( $scope.facetFields[facetField].facets[facet].checked ) {
             checkedFacets.push('"'+facet+'"');
+            params.push(facetFieldName+'='+encodeURI(facet));
           }
         }
         if(checkedFacets.length > 0) {
@@ -208,12 +259,41 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http) {
     $scope.searchParameters.fq = $scope.searchParameters.fq || [];
     $scope.searchParameters.fq.push( 'years_of_experience_exact:['+$scope.yearsOfExperienceValue.join(' TO ')+']' );
 
+    // Create URL-Params for years_of_experience
+    if($scope.yearsOfExperienceValue[0]>0 || $scope.yearsOfExperienceValue[1]<$scope.yearsOfExperience.max){
+      params.push('y='+$scope.yearsOfExperienceValue[0]);
+      params.push('y='+$scope.yearsOfExperienceValue[1]);
+    }
+
+    // Create Customfilter URL-Params
+    for(var x = $scope.customFilter.list.length-1; x>=0; x--){
+      var cf = $scope.customFilter.list[x];
+      if(cf.status != cf.defaultStatus) params.push(cf.title+'='+cf.status);
+    }
+
     console.log($scope.searchParameters);
+
+    Url.setParams(params.join('&'));
   }
 
-  $scope.isRecent = function (dateString) {
+  $scope.isRecent = function(dateString) {
     var numberOfDays = 120;
     return ( new Date().getTime() - new Date(dateString).getTime() ) / (1000*60*60*24) > numberOfDays;
+  }
+
+  $scope.getJson = function() {
+    var sp = getSolrParams();
+    var s = [];
+    for(key in sp){
+      if(sp[key] instanceof Array){
+        for(var i = sp[key].length-1; i>=0; i--){
+          s.push(key+'='+encodeURI(sp[key][i]));
+        }
+      } else {
+        s.push(key+'='+encodeURI(sp[key]));
+      }
+    }
+    window.open($scope.urls.solr+'?'+s.join('&'));
   }
  
 });

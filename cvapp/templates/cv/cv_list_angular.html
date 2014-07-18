@@ -8,7 +8,7 @@
 
 {% block actions %}
   <h1>ACS Persons</h1>
-  <input type="text" size="30" style="margin:0;" placeholder="Search" ng-model="searchQuery" ng-change="searchAcs()" autofocus/> <span class="small" ng-bind="numFound"></span>
+  <input type="text" size="30" style="margin:0;" placeholder="Search" ng-model="searchQuery" ng-change="updateAndSearchAcs()" autofocus/> <span class="small" ng-bind="numFound"></span>
 
   {% if not user.person %}
     <br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
@@ -32,7 +32,7 @@
     <label><input type="checkbox" id="multicvcheck" ng-model="showListView"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
   
     <a class="butt" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
-    <a id="showJsonBtn" class="butt" style="margin-bottom:.5em;"><i class="icon-download"></i> Json</a>
+    <a class="butt" style="margin-bottom:.5em;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
   
     </div>
     
@@ -46,7 +46,7 @@
         <div class="filter">
           <h3>Years of experience</h3>
           <div style="text-align: center;">
-            <div ui-slider="yearsOfExperience" ng-model="yearsOfExperienceValue"></div>
+            <div ui-slider="yearsOfExperience" ng-model="yearsOfExperienceValue" style="margin:1em 2em"></div>
             <input type="number" ng-model="yearsOfExperienceValue[0]" size="3" min="0" max="{{yearsOfExperienceValue[1]}}" style="width:3em;" ng-change="updateAndSearchAcs()"/>
             <input type="number" ng-model="yearsOfExperienceValue[1]" size="3" min="{{yearsOfExperienceValue[0]}}" max="{{yearsOfExperience.max}}"style="width:3em;" ng-change="updateAndSearchAcs()"/>
           </div>
@@ -66,7 +66,7 @@
 
         <div class="filter" ng-repeat="cf in customFilter.list">
           <h3>{{cf.title}}</h3>
-            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="" ng-model="cf.status"/>Show all</label><br/>
+            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="all" ng-model="cf.status"/>Show all</label><br/>
             <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="+" ng-model="cf.status"/>Show {{cf.title}}</label><br/>
             <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="-" ng-model="cf.status"/>Show not {{cf.title}}</label><br/>
         </div>
@@ -107,7 +107,7 @@
           <h3>{{p.name}}</h3>
           <h4>{{p.title}}</h4>
         </header>
-        <img src="https://cv.altran.se/media/{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
+        <img src="{{urls.media}}{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
 
         <div class="completeness">
           <div class="percent" ng-class="{redpercent: p.completeness.percent < 100}" ng-style="{width: {{p.completeness.percent}}+'%'}"></div>
@@ -119,7 +119,7 @@
             <a class="butt" ng-class="{ 'butt-red': p.completeness.percent<100 }"><i class="icon-envelope"></i></a>
           </span>
                   
-          <p class="ldetail">{{p.phone}} <img src="https://cv.altran.se/static/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
+          <p class="ldetail">{{p.phone}} <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
           <a href="mailto:{{p.mail}}">{{p.mail}}</a></p>
         </section>
         <div class="cvset">
@@ -136,12 +136,7 @@
               <td>
                 <a href="{{urls.cv_detail}}{{cv.id}}/" class="butt bigbutt>">
                   {{cv.tags}}<br/>
-                  <span class="dato">
-                    {{cv.last_edited}} {{cv.status.percent}}%
-                    <span class="completeness">
-                      <span class="percent"></span>
-                    </span>
-                  </span>
+                  <span class="dato">{{cv.last_edited}} {{cv.status.percent}}% <span class="completeness"><span class="percent"></span></span></span>
                 </a>
               </td>
               <td>
@@ -196,7 +191,10 @@
       cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
       cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
       cv_detail:              "{% url 'cv_detail' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
-      cv_multi:               "{% url 'cv_multi' %}"
+      cv_multi:               "{% url 'cv_multi' %}",
+      media: "{{ MEDIA_URL }}",
+      static: "{{ STATIC_URL }}",
+      solr: "{{solrurl}}"
     };
   </script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -206,5 +204,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
   <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
   <script src="{{ STATIC_URL }}js/cv_list_ctrl.js"></script>
+  <script src="{{ STATIC_URL }}js/url_service.js"></script>
 
 {% endblock %}
