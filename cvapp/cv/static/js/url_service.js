@@ -21,9 +21,10 @@ AcsApp.service('Url', function(){
 
   this.setParams = function(newParams) {
     // Update Window Location
-    if( window.history.replaceState && newParams ) {
+    if( window.history.replaceState ) {
       var l = window.location;
-      var newurl = l.protocol + '//' + l.host + l.pathname + "?" + newParams;
+      if(newParams) newParams = '?'+newParams;
+      var newurl = l.protocol + '//' + l.host + l.pathname + newParams;
       window.history.pushState({}, "title", newurl);
     }
   }
