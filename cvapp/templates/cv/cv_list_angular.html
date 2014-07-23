@@ -4,6 +4,31 @@
 
 {% block extrastyles %}
   <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
+  <script type="text/javascript">
+    var DJANGO_URLS = {
+      cv_person_change:       "{% url 'admin:cv_person_change' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
+      cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
+      cv_person_add:          "{% url 'admin:cv_person_add' %}",
+      cv_cv_change:           "{% url 'admin:cv_cv_change' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
+      cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
+      cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
+      cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
+      cv_detail:              "{% url 'cv_detail' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
+      cv_multi:               "{% url 'cv_multi' %}",
+      media: "{{ MEDIA_URL }}",
+      static: "{{ STATIC_URL }}",
+      solr: "{{solrurl}}"
+    };
+  </script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
+  <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
+  <script src="{{ STATIC_URL }}js/cv_list_ctrl.js"></script>
+  <script src="{{ STATIC_URL }}js/url_service.js"></script>
+  <script src="{{ STATIC_URL }}js/scroller_directive.js"></script>
 {% endblock %}
 
 {% block actions %}
@@ -153,7 +178,12 @@
         </div>
       </div>
 
-      <button ng-if="hasMorePersons" class="butt" ng-click="loadMorePeople()">Load more people</button>
+      <div class="block tiled" ng-if="isLoading">
+        <header>
+          <h3>Loading...</h3>
+        </header>
+        <img src="{{urls.static}}/img/loading.gif" class="photo" style="float: left;">
+      </div>
 
     </div>
 
@@ -181,29 +211,5 @@
       </table>
     </div>
   {% endverbatim %}
-  <script type="text/javascript">
-    var DJANGO_URLS = {
-      cv_person_change:       "{% url 'admin:cv_person_change' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
-      cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
-      cv_person_add:          "{% url 'admin:cv_person_add' %}",
-      cv_cv_change:           "{% url 'admin:cv_cv_change' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
-      cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
-      cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
-      cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
-      cv_detail:              "{% url 'cv_detail' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
-      cv_multi:               "{% url 'cv_multi' %}",
-      media: "{{ MEDIA_URL }}",
-      static: "{{ STATIC_URL }}",
-      solr: "{{solrurl}}"
-    };
-  </script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
-  <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
-  <script src="{{ STATIC_URL }}js/cv_list_ctrl.js"></script>
-  <script src="{{ STATIC_URL }}js/url_service.js"></script>
 
 {% endblock %}

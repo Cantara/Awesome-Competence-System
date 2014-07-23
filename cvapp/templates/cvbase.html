@@ -15,7 +15,9 @@
 		<link rel="icon" type="image/png" href="" />
 	</head>
 
-	<body ng-controller="SearchCtrl">
+	{% verbatim %}
+	<body ng-controller="SearchCtrl" scroller="" on-scroll-bottom="loadMorePeople()" scroller-active="hasMorePersons">
+	{% endverbatim %}
 
     <nav>
         {% block nav %}

@@ -34,9 +34,10 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
   };
 
   $scope.hasMorePersons = false;
+  $scope.isLoading = false;
 
   var firstrun = true;
-  var rows = 10;
+  var rows = 42;
   var start = 0;
   var canceler;
 
@@ -77,7 +78,8 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
     canceler = $q.defer();
 
     if (options.loadMore) {
-      start += rows;
+      $scope.isLoading = true;
+      start = $scope.persons.length;
     } else {
       start = 0;
     }
@@ -109,6 +111,8 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
       }
       $scope.numFound = data.response.numFound;
       $scope.hasMorePersons = $scope.numFound > $scope.persons.length;
+      console.log('Found:', $scope.numFound, 'Shown:', $scope.persons.length, 'Hasmore:', $scope.hasMorePersons);
+      $scope.isLoading = false;
     });
 
   };
