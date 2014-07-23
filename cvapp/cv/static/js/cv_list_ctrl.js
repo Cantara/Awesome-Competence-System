@@ -198,6 +198,9 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
     // Reading q URL-Params
     if(urlParams.q) $scope.searchQuery = urlParams.q[0];
 
+    // Reading view URL-Params
+    if(urlParams.view) $scope.showListView = true;
+
     return facetFields;
   }
 
@@ -274,6 +277,9 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
       var cf = $scope.customFilter.list[x];
       if(cf.status != cf.defaultStatus) params.push(cf.title+'='+cf.status);
     }
+
+    // Create listview URL-Params
+    if($scope.showListView) params.push('view=list');
 
     console.log($scope.searchParameters);
 

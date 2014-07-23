@@ -186,30 +186,85 @@
       </div>
 
     </div>
+  {% endverbatim %}
 
     <div class="col-md-9" ng-if="showListView">
-      LIST
-      <table>
+
+      <table id="multiresults" class="responsivetable">
         <thead>
           <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Title</th>
-            <th>Department</th>
+            <th colspan="3" class="lineright">Persons</th>
+            <th colspan="2">CVs</th>
+          </tr>
+          <tr>
+            <td colspan="3" class="lineright">
+              {% if user.is_authenticated %}
+                  <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
+                <a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
+                  <button class="butt" id="showemaillistbtn"><i class="icon-copy"></i> <span>Show</span> selected e-mails</button>
+                  <div id="emaillistcontainer" style="display:none;">
+                    Press CTRL+C to copy.<br>
+                    <textarea name="emaillist" id="emaillist" cols="30" rows="10" disabled></textarea>
+                  </div>
+                    <!--<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>-->
+                {%endif%}
+              </td>
+            <td>
+              Format:&nbsp;<select name="format" id="format">
+                <option value="doc">DOC</option>
+                <option value="pdf">PDF</option>
+                <option value="odt">ODT</option>
+              </select>
+              Language:&nbsp;<select name="language" id="language">
+                <option value="native">Native</option>
+                <option value="en">English</option>
+              </select>
+              Language:&nbsp;<select name="template">
+                <option value="default">Default Template</option>
+                {% for t in templates %}
+                  <option value="{{t.id}}">{{t.title}}</option>
+                {% endfor %}
+              </select>
+              <a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+            </td>
+            <td>Download</td>
           </tr>
         </thead>
-        <tr ng-repeat="person in persons">
-          <td><!--div style="background-image: url(http://cv.altran.se/media/{{person.image}})" class="photo_small"></div--></td>
-          <td><a href="#/person/{{person.id}}">{{person.name}}</td>
-          <td>{{person.title}}</td>
-          <td>{{person.department}}</td>
+      {% verbatim %}
+        <tbody ng-repeat="p in persons">
+          <tr ng-repeat="cv in p.cv">
+            <td rowspan="p.cv.length">
+              <label class="imgcheckbox" id="" style="">
+                <input type="checkbox" name="rowMailCheckbox" class="personcheckbox" value="p.mail" style="display:none"/>
+              </label>
+              </td>
+            <td rowspan="p.cv.length">
+              <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
+              </td>
+            <td rowspan="p.cv.length" class="lineright">
+              <label for="" class="textcheckbox">
+              <h3>{{p.name}} ‒ {{p.title}}</h3>
+              <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
+              </label>
+              </td>
+            <td data-title="Select CV">
+              <label for="cv.id"><input type="checkbox" name="cvid" value="cv.id" id="cv.id" >{{cv.tags}} ({{cv.status.percent}}%)</label>
+              </td>
+            <td data-title="Download">
+              <a href="{{urls.cv_detail}}{{cv.id}}/" title="{{cv.status.comment}}" target="_blank" class="butt">View</a>&nbsp;
+              <a href="{{urls.cv_download_doc}}?cvid={{cv.id}}" target="_blank" class="butt">DOC</a>&nbsp;
+              <a href="{{urls.cv_download_pdf}}?cvid={{cv.id}}" target="_blank" class="butt">PDF</a>
+              </td>
+          </tr>
+        </tbody>
+
         </tr>
         <tr>
           <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
           <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
         </tr>
+      {% endverbatim %}
       </table>
     </div>
-  {% endverbatim %}
 
 {% endblock %}
