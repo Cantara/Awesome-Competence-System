@@ -37,12 +37,13 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
   $scope.isLoading = false;
 
   var firstrun = true;
-  var rows = 42;
+  var defaultRows = 42;
   var start = 0;
   var canceler;
 
   function getSolrParams() {
     var q = $scope.searchQuery || '*';
+    var rows = $scope.showListView ? 100000 : defaultRows;
     return { 
       'json.wrf': 'JSON_CALLBACK',
       q: $scope.customFilter.getQueryString() + ' ' + q,
@@ -305,5 +306,61 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
     }
     window.open($scope.urls.solr+'?'+s.join('&'));
   }
- 
+
+  // Download Multiple CVs
+  $scope.downloadMulti = function() {
+    var cvids = document.forms['multicv']['cvid'];
+    var cvchecked = false;
+    if(typeof cvids.length !== 'undefined'){
+      for(var i = 0; i<cvids.length; i++) {
+        if(cvids[i].checked){
+          cvchecked = true;
+          break;
+        }
+      }
+    } else {
+      cvchecked = cvids.checked;
+    }
+    if(cvchecked){
+      document.forms['multicv'].submit();
+    } else {
+      alert('You have not selected any CVs yet, please select the desired CVs from the list.');
+    }
+    return false;
+  }
+
+  // Copy consultant e-mails
+  $(function(){
+    ZeroClipboard.config( { swfPath: DJANGO_URLS.static+'flash/ZeroClipboard.swf' } );
+    var client = new ZeroClipboard($("#emailCopyButton"));
+    console.log('CLIENT:',client);
+    client.on( "ready", function( readyEvent ) {
+      // alert( "ZeroClipboard SWF is ready!" );
+      client.on( "aftercopy", function( event ) {
+        var copied = event.data["text/plain"];
+        if( copied ) {
+          alert('Copied '+copied.split(';').length+' emails:\n\n'+copied);
+        } else {
+          alert('Please select persons before copying.');
+        }
+      });
+    });
+  });
+  
+  $scope.hasFlash = FlashDetect.versionAtLeast(9);
+
+  $scope.showSelectedEmails = function() {
+    $scope.selectedEmailsVisible = !$scope.selectedEmailsVisible;
+    $('#selectedemails').select(); 
+  }
+
+  $scope.updateSelectedEmails = function() {
+    var m = [];
+    for(var i=0; i<$scope.persons.length; i++) {
+      if($scope.persons[i].isSelected) m.push($scope.persons[i].mail);
+    }
+    $scope.selectedEmails = m.join('; ');
+    $('#selectedemails').select();
+  }
+
 });

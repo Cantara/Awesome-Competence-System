@@ -25,10 +25,13 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
+  <script src="{{ STATIC_URL }}js/ZeroClipboard.min.js"></script>
+  <script src="{{ STATIC_URL }}js/flash_detect_min.js"></script>
   <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
   <script src="{{ STATIC_URL }}js/cv_list_ctrl.js"></script>
   <script src="{{ STATIC_URL }}js/url_service.js"></script>
   <script src="{{ STATIC_URL }}js/scroller_directive.js"></script>
+  <script src="{{ STATIC_URL }}js/tristatecheckbox_directive.js"></script>
 {% endblock %}
 
 {% block actions %}
@@ -54,7 +57,7 @@
     
     <div class="option">
     <h3>View</h3>
-    <label><input type="checkbox" id="multicvcheck" ng-model="showListView"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
+    <label><input type="checkbox" id="multicvcheck" ng-model="showListView" ng-change="updateAndSearchAcs()"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
   
     <a class="butt" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
     <a class="butt" style="margin-bottom:.5em;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
@@ -188,8 +191,9 @@
     </div>
   {% endverbatim %}
 
-    <div class="col-md-9" ng-if="showListView">
+    <div class="col-md-9" ng-show="showListView">
 
+    <form name="multicv" action="{% url 'cv_multi' %}" method="get">
       <table id="multiresults" class="responsivetable">
         <thead>
           <tr>
@@ -198,16 +202,17 @@
           </tr>
           <tr>
             <td colspan="3" class="lineright">
-              {% if user.is_authenticated %}
-                  <label id="labelSelectAll" ><input id="selectAllCheckbox"  type="checkbox" onChange="toggle(this)"/>Select all</label>
-                <a id="createMail" style="" onClick="multinagmail.show(); return false;" class="butt"><i class="icon-envelope"></i> Message selected</a>
-                  <button class="butt" id="showemaillistbtn"><i class="icon-copy"></i> <span>Show</span> selected e-mails</button>
-                  <div id="emaillistcontainer" style="display:none;">
-                    Press CTRL+C to copy.<br>
-                    <textarea name="emaillist" id="emaillist" cols="30" rows="10" disabled></textarea>
-                  </div>
-                    <!--<a id="emails" href="mailto:" class="butt" style=""><i class="icon-download"></i> <span id="emailsText"> Get selected e-mails</span></a>-->
-                {%endif%}
+                <label><input tri-state-checkbox elements="persons" elements-selected="personsSelected" change-action="updateSelectedEmails()"> Select all</label>
+                <button class="butt" data-clipboard-target="selectedemails" id="emailCopyButton" ng-if="hasFlash" type="button">
+                  <i class="icon-copy"></i> Copy selected e-mails
+                </button>
+                <button class="butt" ng-click="showSelectedEmails()" ng-if="!hasFlash" type="button">
+                  <i class="icon-copy"></i> <span ng-hide="selectedEmailsVisible">Show</span><span ng-show="selectedEmailsVisible">Hide</span> selected e-mails
+                </button>
+                <div ng-show="selectedEmailsVisible">
+                  Press CTRL+C to copy.<br>
+                  <textarea cols="30" rows="10" disabled="disabled" ng-model="selectedEmails" id="selectedemails"></textarea>
+                </div>
               </td>
             <td>
               Format:&nbsp;<select name="format" id="format">
@@ -219,13 +224,13 @@
                 <option value="native">Native</option>
                 <option value="en">English</option>
               </select>
-              Language:&nbsp;<select name="template">
+              Template:&nbsp;<select name="template">
                 <option value="default">Default Template</option>
                 {% for t in templates %}
                   <option value="{{t.id}}">{{t.title}}</option>
                 {% endfor %}
               </select>
-              <a href="" onClick="cvlist.downloadMulti(); return false;" class="butt"><i class="icon-copy"></i> Download selected CVs</a>
+              <button class="butt" ng-click="downloadMulti()" type="button"><i class="icon-copy"></i> Download selected CVs</button>
             </td>
             <td>Download</td>
           </tr>
@@ -233,28 +238,45 @@
       {% verbatim %}
         <tbody ng-repeat="p in persons">
           <tr ng-repeat="cv in p.cv">
-            <td rowspan="p.cv.length">
-              <label class="imgcheckbox" id="" style="">
-                <input type="checkbox" name="rowMailCheckbox" class="personcheckbox" value="p.mail" style="display:none"/>
-              </label>
+            <td rowspan="p.cv.length" ng-if="$index==0">
+              <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{p.id}}" ng-change="updateSelectedEmails()"/>
               </td>
-            <td rowspan="p.cv.length">
+            <td rowspan="p.cv.length" ng-if="$index==0">
               <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
               </td>
-            <td rowspan="p.cv.length" class="lineright">
-              <label for="" class="textcheckbox">
+            <td rowspan="p.cv.length" ng-if="$index==0" class="lineright">
+              <label for="p{{p.id}}">
               <h3>{{p.name}} ‒ {{p.title}}</h3>
               <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
               </label>
               </td>
+            <td ng-if="$index>0"></td>
+            <td ng-if="$index>0"></td>
+            <td ng-if="$index>0"></td>
             <td data-title="Select CV">
-              <label for="cv.id"><input type="checkbox" name="cvid" value="cv.id" id="cv.id" >{{cv.tags}} ({{cv.status.percent}}%)</label>
+              <label for="{{cv.id}}"><input type="checkbox" name="cvid" value="{{cv.id}}" id="{{cv.id}}" >{{cv.tags}} ({{cv.status.percent}}%)</label>
               </td>
             <td data-title="Download">
               <a href="{{urls.cv_detail}}{{cv.id}}/" title="{{cv.status.comment}}" target="_blank" class="butt">View</a>&nbsp;
-              <a href="{{urls.cv_download_doc}}?cvid={{cv.id}}" target="_blank" class="butt">DOC</a>&nbsp;
-              <a href="{{urls.cv_download_pdf}}?cvid={{cv.id}}" target="_blank" class="butt">PDF</a>
+              <a href="{{urls.cv_download_format_doc}}?cvid={{cv.id}}" target="_blank" class="butt">DOC</a>&nbsp;
+              <a href="{{urls.cv_download_format_pdf}}?cvid={{cv.id}}" target="_blank" class="butt">PDF</a>
               </td>
+          </tr>
+          <tr ng-if="!p.cv.length">
+            <td>
+              <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{p.id}}" ng-change="updateSelectedEmails()"/>
+              </td>
+            <td>
+              <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
+              </td>
+            <td class="lineright">
+              <label for="p{{p.id}}">
+              <h3>{{p.name}} ‒ {{p.title}}</h3>
+              <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
+              </label>
+              </td>
+            <td></td>
+            <td></td>
           </tr>
         </tbody>
 
@@ -265,6 +287,8 @@
         </tr>
       {% endverbatim %}
       </table>
+    <form>
+
     </div>
 
 {% endblock %}
