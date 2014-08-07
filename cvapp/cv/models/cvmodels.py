@@ -269,6 +269,12 @@ class Technology(models.Model):
 		splitted_list = multidelim.splitlist(splitted_list, '.')
 		striped_list = multidelim.striplist(splitted_list)
 		return striped_list
+
+	def clean(self):
+		if self.data:
+			self.data = self.data.strip()
+		if self.data_en:
+			self.data_en = self.data_en.strip()
 		
 	def __unicode__(self):
 		if self.title != "":
@@ -342,6 +348,12 @@ class TimedSkill(models.Model):
 			super(TimedSkill, self).save(*args, **kwargs)
 		else:
 			pass
+
+	def clean(self):
+		if self.description:
+			self.description = self.description.strip()
+		if self.description_en:
+			self.description_en = self.description_en.strip()
 	
 	class Meta:
 		ordering = ['-to_year','-from_year']
@@ -410,6 +422,12 @@ class Other(models.Model):
 	
 	def data_as_list(self):
 		return self.data.split('\n')
+
+	def clean(self):
+		if self.data:
+			self.data = self.data.strip()
+		if self.data_en:
+			self.data_en = self.data_en.strip()
 		
 	def __unicode__(self):
 		return self.title
