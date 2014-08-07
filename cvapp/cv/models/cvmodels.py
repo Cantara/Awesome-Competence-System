@@ -5,6 +5,7 @@ import django.contrib.auth.models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from utils import multidelim
+from itertools import chain
 from cv.templatetags.image_tags import scale, resized_path
 
 import logging
@@ -147,6 +148,24 @@ class Person(models.Model):
 				return today.year - born.year
 		else:
 			return ""
+
+	def years_of_experience(self):
+		years = 0
+		now = datetime.date.today()
+		exp_and_work = list( chain( self.experience_set.all(), self.workplace_set.all() ) )
+		for i in exp_and_work:
+			if( i.from_year > 1969):
+				i_year = i.from_year
+				if( i.from_month > 0 ):
+					i_month = i.from_month
+				else:
+					i_month = 1
+				i_date = datetime.date(i_year, i_month, 1)
+				delta = now - i_date
+				yearspan = delta.days / 365
+				if( years < yearspan and yearspan < 80):
+					years = yearspan
+		return years
 	
 	def completeness(self):
 		maxscore = 0

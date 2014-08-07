@@ -118,6 +118,8 @@ def download(request, format):
             info.append(l['email']+': '+a['mail'])
         if a['age']: 
             info.append( '%s: %s' % (l['age'], a['age']) )
+        if a['years_of_experience']: 
+            info.append( '%s: %s' % (l['years_of_experience'], a['years_of_experience']) )
         infoline = '<text:p text:style-name="P1">' + '<text:line-break></text:line-break>'.join(info) + '</text:p>'
 
         dictionary = {
@@ -209,6 +211,8 @@ def getInfoLine(p, l):
         info.append(l['email']+': '+p.mail)
     if p.age() != "" and p.age() > 0: 
         info.append( '%s: %s' % (l['age'], p.age()) )
+    if p.years_of_experience() > 0:
+        info.append( '%s: %s' % (l['years_of_experience'], p.years_of_experience()) )
     return '<text:p text:style-name="P1">' + '<text:line-break></text:line-break>'.join(info) + '</text:p>'
 
 def getImgData(img):

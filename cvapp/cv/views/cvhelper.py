@@ -20,6 +20,7 @@ labels = {
 		'age': 'Age',
 		'email': 'E-mail',
 		'ongoing': 'ongoing',
+		'years_of_experience': 'Years of experience',
 	},
 	'no': {
 		'cvheading': 'Konsulentprofil',
@@ -37,6 +38,7 @@ labels = {
 		'age': 'Alder',
 		'email': 'E-post',
 		'ongoing': 'd.d.',
+		'years_of_experience': 'Erfaring',
 	},
 	'se': {
 		'cvheading': 'Konsultprofil',
@@ -54,6 +56,7 @@ labels = {
 		'age': u'Ålder',
 		'email': 'E-post',
 		'ongoing': 'pågående',
+		'years_of_experience': u'Antal års erfarenhet',
 	}, 
 }
 
