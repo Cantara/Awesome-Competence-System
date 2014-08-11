@@ -140,6 +140,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/addperson-autocomplete.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/expautocomplete.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/compautocomplete.js"></script>
 		
 	<script language="JavaScript" type="text/javascript">
 	$(document).ready( function() {
@@ -180,12 +181,13 @@
 				$(this).parent().children("div").hide(200);
 			}
 		});
-		$('#technology_set-group').children('h2').append(" (Add competence categories e.g. Methods, Technologies, Tools, and Roles. For each competence category specify included competences like RUP, Java, Hibernate and Scrum Master)");
-        $('#workplace_set-group').children('h2').append(" (Current and previous employments)");        
-        $('#experience_set-group').children('h2').append(" (Add work experiences, assignments, projects or roles that you have had, most likely as part of an employment)");
-        $('#other_set-group').children('h2').append(" (Other relevant info e.g. Member of a board, Responsible for an online community)");
+		$('#technology_set-group').children('h2')
+		.after('<div class="alert alert-info">Add competence categories e.g. Methods, Technologies, Tools, and Roles. For each competence category specify included competences like RUP, Java, Hibernate and Scrum Master.</div>');
+        $('#workplace_set-group').children('h2').after('<div class="alert alert-info">Current and previous employments</div>');
+        $('#experience_set-group').children('h2').after('<div class="alert alert-info">Add work experiences, assignments, projects or roles that you have had, most likely as part of an employment.');
+        $('#other_set-group').children('h2').after('<div class="alert alert-info">Other relevant info e.g. Member of a board, Responsible for an online community</div>');
         
-        
+		// $('#technology_set-group .items').append('<button type="button" class="btn"><i class="icon-plus"></i> Add another Competence Category</button>');
 
 	    function isRowEmpty( textarea , row ){
 	        return textarea.value.split("\n")[row-1] == "";
@@ -199,15 +201,15 @@
 	        return false;
 	    }
 	    function resizeTextArea(){
-	        if(isLessThanHalfEmpty(this)){
-	            $(this).attr('rows', this.rows / 2);
+	        if(isLessThanHalfEmpty(this) & this.rows>9){
+	            $(this).attr('rows', this.rows - 1);
 	        }
 	        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
 	            $(this).attr('rows', this.rows + 1);
 	        }
 	    }
 	    $("textarea").keyup(resizeTextArea);
-	    $("textarea").click(resizeTextArea);     
+	    $("textarea").click(resizeTextArea);
 
 		/*// Append stuff to Technologies
 		var popTechs = 

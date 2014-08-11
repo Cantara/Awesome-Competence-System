@@ -1,6 +1,6 @@
 var AcsApp = angular.module('AcsApp', ['ui.slider']);
 
-AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
+AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
 
   $scope.urls = DJANGO_URLS || {};
 
@@ -16,7 +16,9 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
   $scope.hideFilter = false;
 
   var defaultSortSetting = 'name_exact asc'
+  
   $scope.sortSetting = defaultSortSetting;
+
   $scope.customFilter = {
     list: [
       {title:'completed',   defaultStatus: 'all',  status: 'all',  query:'fulljson:"completeness+percent+100"~1'},
@@ -107,16 +109,59 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
         for( var i=0; i<docs.length; i++ ) {
           var person = JSON.parse( docs[i].rendered );
           person.image = person.image.replace(/(.jpg|.png)/gi,'_scale_110x110.jpg');
+          person.index = i;
           $scope.persons.push( person );
         }
       }
       $scope.numFound = data.response.numFound;
       $scope.hasMorePersons = $scope.numFound > $scope.persons.length;
       console.log('Found:', $scope.numFound, 'Shown:', $scope.persons.length, 'Hasmore:', $scope.hasMorePersons);
+      renderPersons();
       $scope.isLoading = false;
     });
 
   };
+
+  var tableRender, personRender;
+
+  function renderPersons(){
+    var html = '';
+
+    if(!tableRender || !personRender){
+      doT.templateSettings = {
+        evaluate:    /\<\%([\s\S]+?)\%\>/g,
+        interpolate: /\<\%=([\s\S]+?)\%\>/g,
+        encode:      /\<\%!([\s\S]+?)\%\>/g,
+        use:         /\<\%#([\s\S]+?)\%\>/g,
+        define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
+        conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
+        iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
+        varname: 'p',
+        strip: true,
+        append: true,
+        selfcontained: false
+      };
+
+      var tableTemplate = $('#tabletemplate').text().replace(/999999999/g,'<%=p.id%>').replace(/999888999/g,'<%=cv.id%>');
+      tableRender = doT.template(tableTemplate);
+      var personTemplate = $('#persontemplate').text().replace(/111000111/g,'<%=p.id%>').replace(/888888888/g,'<%=cv.id%>');
+      personRender = doT.template(personTemplate);
+    }
+
+    var render = $scope.showListView ? tableRender : personRender;
+
+    for(var i=0; i < $scope.persons.length; i++){
+      html += render($scope.persons[i]);
+    }
+    html = $compile(html)($scope);
+    if($scope.showListView){
+      var $mr = $("#multiresults");
+      $mr.children().slice(1).remove();
+      $mr.append(html); 
+    } else {
+      $('#cardresults').html(html);
+    }
+  }
 
   $scope.loadMorePeople = function() {
     $scope.searchAcs({
@@ -242,6 +287,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
       } else {
         ff.facets['null'].checked = false;
       }
+      console.log('Facet uncheck place:', ff);
     }
     for( var facetField in $scope.facetFields ){
       var checkedFacets = [];
@@ -333,7 +379,6 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, Url) {
   $(function(){
     ZeroClipboard.config( { swfPath: DJANGO_URLS.static+'flash/ZeroClipboard.swf' } );
     var client = new ZeroClipboard($("#emailCopyButton"));
-    console.log('CLIENT:',client);
     client.on( "ready", function( readyEvent ) {
       // alert( "ZeroClipboard SWF is ready!" );
       client.on( "aftercopy", function( event ) {

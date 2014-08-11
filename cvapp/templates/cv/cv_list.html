@@ -286,7 +286,7 @@
 					<label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
 					</td>
 				<td data-title="Download">
-					<a href="{% url 'cv_detail' "999999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
+					<a href="{% url 'cv_detail' "888888888" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
 					<a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
 					<a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>&nbsp;
 					<a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank" class="butt">ODT</a>

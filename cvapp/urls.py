@@ -9,16 +9,16 @@ urlpatterns = patterns('cv.views',
     url(r'^$', 'cv_list'),
     url(r'^cv/$', 'cv_list', name='cv_list'),
     url(r'^cv/multi/$', 'multicv', name='cv_multi'),
-    url(r'^cv/(?P<cv_id>\w+)/$', 'detail', name='cv_detail'),
-    url(r'^cv/(?P<cv_id>\w+)/(?P<lang>en)/$', 'detail', name='cv_detail_en'),
+    url(r'^cv/(?P<cv_id>\d+)/$', 'detail', name='cv_detail'),
+    url(r'^cv/(?P<cv_id>\d+)/(?P<lang>en)/$', 'detail', name='cv_detail_en'),
 
     url(r'^cv/addpersonforuser/$', 'add_person_for_user', name='cv_add_person_for_user'),
-    url(r'^cv/addcvforperson/(?P<pid>\w+)/$', 'add_cv_for_person', name='cv_add_cv_for_person'),
+    url(r'^cv/addcvforperson/(?P<pid>\d+)/$', 'add_cv_for_person', name='cv_add_cv_for_person'),
     
     url(r'^cv/download/$', 'download', name='cv_download'),
     url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),
 
-    url(r'^cv/expautocomplete/$', 'expautocomplete', name='cv_expautocomplete'),
+    url(r'^cv/autocomplete/exp/$', 'expautocomplete', name='cv_expautocomplete'),
 
     url(r'^cv/nagmail/$', 'nagmail', name='cv_nagmail'),
     url(r'^cv/multinagmail/$', 'multinagmail', name='cv_multinagmail'),

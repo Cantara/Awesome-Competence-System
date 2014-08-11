@@ -3,7 +3,7 @@ $(function() {
   function expAutocomplete() {
     $( ".field-company input" ).autocomplete({
       minLength: 3,
-      source: '/cv/expautocomplete/',
+      source: '/cv/autocomplete/exp/',
       focus: function( event, ui ) {
         return false;
       },

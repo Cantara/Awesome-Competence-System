@@ -6,14 +6,14 @@
   <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
   <script type="text/javascript">
     var DJANGO_URLS = {
-      cv_person_change:       "{% url 'admin:cv_person_change' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
-      cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "XXXpidXXX" %}".replace('XXXpidXXX/',''),
+      cv_person_change:       "{% url 'admin:cv_person_change' "999999" %}".replace('999999/',''),
+      cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "999999" %}".replace('999999/',''),
       cv_person_add:          "{% url 'admin:cv_person_add' %}",
-      cv_cv_change:           "{% url 'admin:cv_cv_change' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
+      cv_cv_change:           "{% url 'admin:cv_cv_change' "888888" %}".replace('888888/',''),
       cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
       cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
       cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
-      cv_detail:              "{% url 'cv_detail' "XXXcvidXXX" %}".replace('XXXcvidXXX/',''),
+      cv_detail:              "{% url 'cv_detail' "888888" %}".replace('888888/',''),
       cv_multi:               "{% url 'cv_multi' %}",
       media: "{{ MEDIA_URL }}",
       static: "{{ STATIC_URL }}",
@@ -25,6 +25,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
+  <script src="{{ STATIC_URL }}js/doT.min.js"></script>
   <script src="{{ STATIC_URL }}js/ZeroClipboard.min.js"></script>
   <script src="{{ STATIC_URL }}js/flash_detect_min.js"></script>
   <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
@@ -127,15 +128,15 @@
 
 
 {% block content %}
-  {% verbatim %}
-    <div ng-if="!showListView">
+    <div ng-show="!showListView">
 
+      {% comment %}
       <div class="block tiled" ng-repeat="p in persons" id="p{{p.id}}">
         <header>
-          <h3>{{p.name}}</h3>
-          <h4>{{p.title}}</h4>
+          <h3 ng-bind="p.name"></h3>
+          <h4 ng-bind="p.title"></h4>
         </header>
-        <img src="{{urls.media}}{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
+        <img ng-src="{{urls.media}}{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
 
         <div class="completeness">
           <div class="percent" ng-class="{redpercent: p.completeness.percent < 100}" ng-style="{width: {{p.completeness.percent}}+'%'}"></div>
@@ -147,8 +148,8 @@
             <a class="butt" ng-class="{ 'butt-red': p.completeness.percent<100 }"><i class="icon-envelope"></i></a>
           </span>
                   
-          <p class="ldetail">{{p.phone}} <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
-          <a href="mailto:{{p.mail}}">{{p.mail}}</a></p>
+          <p class="ldetail">{{p.phone}} <img ng-src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
+          <a href="mailto:{{p.mail}}" ng-bind="p.mail"></a></p>
         </section>
         <div class="cvset">
           <div class="ldetail" ng-class="{alertbox: p.completeness.percent < 100}">
@@ -180,18 +181,85 @@
           </table>
         </div>
       </div>
+      {% endcomment %}
 
+    <script id="persontemplate" type="text/x-dot-template">
+      <div class="block tiled" id="p<%=p.id%>">
+        <header>
+          <h3><%=p.name%></h3>
+          <h4><%=p.title%></h4>
+        </header>
+        <%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
+
+        <div class="completeness">
+          <div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
+        </div>
+        <section>
+          <span>                    
+                      <a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt<%? p.completeness.percent < 100 %> butt-red<%?%>" style="float: right;"><i class="icon-envelope"></i></a>
+                    <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time" style="float: right; margin: .3em"></i><%?%>
+                  </span>
+                  
+          <p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
+          <a href="mailto:<%=p.mail%>"><%=p.mail%></a></p>
+        </section>
+        <div class="cvset">
+          <div class="ldetail<%? p.completeness.percent < 100 %> alertbox<%?%>">
+            <p>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
+                    <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time"></i> More than 4 months since last update.<%?%>
+            <%? p.completeness.comment %><ul><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
+          </div>
+          <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+            <a href="{% url 'admin:cv_person_change' "111000111" %}" class="butt">Edit person</a>
+          <%?%>
+          <table>
+          <%~p.cv :cv:index%>
+            <tr>
+              <td>
+                <a href="{% url 'cv_detail' "888888888" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>">
+                  <%=cv.tags%><br/>
+                  <span class="dato">
+                    <%=cv.last_edited%> <%=cv.status.percent%>%
+                    <span class="completeness">
+                      <span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span>
+                    </span>
+                  </span>
+                </a>
+              </td>
+              {% if user.is_authenticated %}
+                <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+                  <td><a href="{% url 'admin:cv_cv_change' "888888888" %}" class="butt">Edit<br/>
+                  <span class="dato">CV</span></a></td>
+                <%?%>
+              {% endif %}
+            </tr>
+          <%~%>
+          {% if user.is_authenticated %}
+            <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+              <tr>
+                <td><a href="{% url 'cv_add_cv_for_person' "111000111" %}" class="butt">Add CV</a></td>
+              </tr>
+            <%?%>
+          {% endif %}
+          </table>
+        </div>
+      </div>
+    </script> 
+
+      <div id="cardresults"></div>
+
+      {% verbatim %}
       <div class="block tiled" ng-if="isLoading">
         <header>
           <h3>Loading...</h3>
         </header>
-        <img src="{{urls.static}}/img/loading.gif" class="photo" style="float: left;">
+        <img ng-src="{{urls.static}}/img/loading.gif" class="photo" style="float: left;">
       </div>
+      {% endverbatim %}
 
     </div>
-  {% endverbatim %}
 
-    <div class="col-md-9" ng-show="showListView">
+    <div ng-show="showListView">
 
     <form name="multicv" action="{% url 'cv_multi' %}" method="get">
       <table id="multiresults" class="responsivetable">
@@ -235,59 +303,101 @@
             <td>Download</td>
           </tr>
         </thead>
-      {% verbatim %}
-        <tbody ng-repeat="p in persons">
-          <tr ng-repeat="cv in p.cv">
-            <td rowspan="p.cv.length" ng-if="$index==0">
-              <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{p.id}}" ng-change="updateSelectedEmails()"/>
-              </td>
-            <td rowspan="p.cv.length" ng-if="$index==0">
-              <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
-              </td>
-            <td rowspan="p.cv.length" ng-if="$index==0" class="lineright">
-              <label for="p{{p.id}}">
-              <h3>{{p.name}} ‒ {{p.title}}</h3>
-              <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
-              </label>
-              </td>
-            <td ng-if="$index>0"></td>
-            <td ng-if="$index>0"></td>
-            <td ng-if="$index>0"></td>
-            <td data-title="Select CV">
-              <label for="{{cv.id}}"><input type="checkbox" name="cvid" value="{{cv.id}}" id="{{cv.id}}" >{{cv.tags}} ({{cv.status.percent}}%)</label>
-              </td>
-            <td data-title="Download">
-              <a href="{{urls.cv_detail}}{{cv.id}}/" title="{{cv.status.comment}}" target="_blank" class="butt">View</a>&nbsp;
-              <a href="{{urls.cv_download_format_doc}}?cvid={{cv.id}}" target="_blank" class="butt">DOC</a>&nbsp;
-              <a href="{{urls.cv_download_format_pdf}}?cvid={{cv.id}}" target="_blank" class="butt">PDF</a>
-              </td>
-          </tr>
-          <tr ng-if="!p.cv.length">
-            <td>
-              <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{p.id}}" ng-change="updateSelectedEmails()"/>
-              </td>
-            <td>
-              <img src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
-              </td>
-            <td class="lineright">
-              <label for="p{{p.id}}">
-              <h3>{{p.name}} ‒ {{p.title}}</h3>
-              <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
-              </label>
-              </td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
+      {% comment %}
+        {% verbatim %}
+          <tbody ng-repeat="p in persons">
+            <tr ng-repeat="cv in p.cv">
+              <td rowspan="p.cv.length" ng-if="$index==0">
+                <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{$index}}" ng-change="updateSelectedEmails()"/>
+                </td>
+              <td rowspan="p.cv.length" ng-if="$index==0">
+                <img ng-src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
+                </td>
+              <td rowspan="p.cv.length" ng-if="$index==0" class="lineright">
+                <label for="p{{$index}}">
+                <h3>{{p.name}} ‒ {{p.title}}</h3>
+                <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
+                </label>
+                </td>
+              <td ng-if="$index>0"></td>
+              <td ng-if="$index>0"></td>
+              <td ng-if="$index>0"></td>
+              <td data-title="Select CV">
+                <label><input type="checkbox" name="cvid" value="{{cv.id}}" >{{cv.tags}} ({{cv.status.percent}}%)</label>
+                </td>
+              <td data-title="Download">
+                <a href="{{urls.cv_detail}}{{cv.id}}/" title="{{cv.status.comment}}" target="_blank" class="butt">View</a>&nbsp;
+                <a href="{{urls.cv_download_format_doc}}?cvid={{cv.id}}" target="_blank" class="butt">DOC</a>&nbsp;
+                <a href="{{urls.cv_download_format_pdf}}?cvid={{cv.id}}" target="_blank" class="butt">PDF</a>
+                </td>
+            </tr>
+            <tr ng-if="!p.cv.length">
+              <td>
+                <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{$index}}" ng-change="updateSelectedEmails()"/>
+                </td>
+              <td>
+                <img ng-src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
+                </td>
+              <td class="lineright">
+                <label for="p{{$index}}">
+                <h3>{{p.name}} ‒ {{p.title}}</h3>
+                <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
+                </label>
+                </td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
 
-        </tr>
-        <tr>
-          <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
-          <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
-        </tr>
-      {% endverbatim %}
+          </tr>
+          <tr>
+            <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
+            <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
+          </tr>
+        {% endverbatim %}
+      {% endcomment %}
       </table>
     <form>
+
+    <script id="tabletemplate" type="text/x-dot-template">
+      <% if (p.cv.length < 1) { p.cv.push({}); var nocvs = true; } %>
+      <tbody>
+      <%~p.cv :cv:index%>
+        <tr id="p<%=p.id%>">
+          <%? !personwritten %>
+            <td rowspan="<%=p.cv.length%>">
+              <input type="checkbox" ng-model="persons[<%=p.index%>].isSelected" value="<%=p.mail%>" id="p<%=p.index%>checkbox" ng-change="updateSelectedEmails()"/>
+              </td>
+            <td rowspan="<%=p.cv.length%>">
+              <%? p.country %><img src="{{ STATIC_URL }}/img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
+              <span style="display: inline-block; width:24px; height: 24px; background-size: cover; <%?p.image%>background-image: url({{ MEDIA_URL }}/<%=p.image%>); <%?%>"></span>
+              </td>
+            <td rowspan="<%=p.cv.length%>" class="lineright">
+              <label for="p<%=p.index%>checkbox" class="textcheckbox">
+              <h3><%=p.name%> ‒ <%=p.title%></h3>
+              <p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
+              </label>
+              </td>
+            <% var personwritten = true; %>
+          <%?%>
+          <%? !nocvs %>
+          <td data-title="Select CV">
+            <label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
+            </td>
+          <td data-title="Download">
+            <a href="{% url 'cv_detail' "999888999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
+            <a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
+            <a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>&nbsp;
+            <a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank" class="butt">ODT</a>
+            </td>
+          <%??%>
+            <td></td>
+            <td></td>
+          <%?%>
+        </tr>
+      <%~%>
+      </tbody>
+    </script> 
 
     </div>
 
