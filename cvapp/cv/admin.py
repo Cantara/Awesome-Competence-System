@@ -90,11 +90,6 @@ class EducationInline(admin.StackedInline):
     def has_add_permission(self, request):
         return True
 
-    class Media:
-        css = {
-            'all': ('/static/css/hotfix.css',)
-        }
-
 class OtherInline(admin.StackedInline):
     model = Other
     extra = 0
@@ -125,7 +120,7 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'status', 'last_edited')
     search_fields = ['name']
 
-    inlines = [TechnologyInline, WorkplaceInline, ExperienceInline, EducationInline, OtherInline]
+    inlines = [TechnologyInline, ExperienceInline, WorkplaceInline, EducationInline, OtherInline]
 
     actions = ['deactivate_person', 'activate_person']
 
