@@ -37,7 +37,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
 
   $scope.hideFilter = false;
 
-  var defaultSortSetting = 'name_exact asc'
+  var defaultSortSetting = 'last_edited desc'
   
   $scope.sortSetting = defaultSortSetting;
 
