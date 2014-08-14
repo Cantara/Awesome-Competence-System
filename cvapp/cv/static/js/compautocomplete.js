@@ -12,18 +12,6 @@ $(function() {
       "description": "Describe how you know a certain skillset, such as Test-driven development, Project management, etc.",
       "title": "Test-driven development",
       "data": "I am well versed in testing and the like, having worked with it for more than 15 years. In 2009 I received the award 'Best Tester'."
-    },
-    {
-      "exTitle": "Description of a skill or knowledge",
-      "description": "Describe how you know a certain skillset, such as Test-driven development, Project management, etc.",
-      "title": "Test-driven development",
-      "data": "I am well versed in testing and the like, having worked with it for more than 15 years. In 2009 I received the award 'Best Tester'."
-    },
-    {
-      "exTitle": "Description of a skill or knowledge",
-      "description": "Describe how you know a certain skillset, such as Test-driven development, Project management, etc.",
-      "title": "Test-driven development",
-      "data": "I am well versed in testing and the like, having worked with it for more than 15 years. In 2009 I received the award 'Best Tester'."
     }
   ];
 

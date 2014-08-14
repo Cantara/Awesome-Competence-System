@@ -96,10 +96,10 @@
 	-webkit-transition: left .2s; /* Safari and Chrome */
     	}
 		.hiddenopts {
-			width: 5em !important;
+			width: 6em !important;
 		}
 		.hiddenopts ~ #content {
-			left: 6.5em !important;
+			left: 7.5em !important;
 		}
 		.hiddenopts .animateheight {
 			max-height: 4em !important;
@@ -112,6 +112,9 @@
     	}
     	.hiddenopts #optionsinside {
     		display: none;
+    	}
+    	.hiddenopts .butt {
+    		width: 80%;
     	}
 
 		.option h3 {
@@ -298,27 +301,6 @@
 		}
 	}
     </style>
-<script>
-	$('.menutoggle').click(function(e){
-		$(this).next('.menulist').toggleClass('menulistactive');
-		e.preventDefault();
-	});
-    function createCookie(name,value,days) {
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime()+(days*24*60*60*1000));
-            var expires = "; expires="+date.toGMTString();
-        } else {
-            var expires = "";
-        } 
-        document.cookie = name+"="+value+expires+"; path=/";
-    }
-
-    function eraseCookie(name) {
-        createCookie(name,"",-1);
-    }
-
-</script>
 
 	{% block options %}
 	{% endblock %}
@@ -326,6 +308,41 @@
     <div id="content" class="">
         {% block content %}{% endblock %}
     </div>
+
+	<script>
+		$('.menutoggle').click(function(e){
+			$(this).next('.menulist').toggleClass('menulistactive');
+			e.preventDefault();
+		});
+		
+	    /* Anything that gets to the document will hide the dropdown */
+	    $(document).on('click', function (event) {
+	        if ($(event.target).closest('.menulist,.menutoggle').length == false) {
+	            $(".menulist").removeClass('menulistactive');
+	        }
+	    });
+
+	    /* Clicks within the dropdown won't make it past the dropdown itself */
+	    $(".menulist").click(function (e) {
+	        e.stopPropagation();
+	    });
+
+	    function createCookie(name,value,days) {
+	        if (days) {
+	            var date = new Date();
+	            date.setTime(date.getTime()+(days*24*60*60*1000));
+	            var expires = "; expires="+date.toGMTString();
+	        } else {
+	            var expires = "";
+	        } 
+	        document.cookie = name+"="+value+expires+"; path=/";
+	    }
+
+	    function eraseCookie(name) {
+	        createCookie(name,"",-1);
+	    }
+
+	</script>
 
 	</body>
 </html>

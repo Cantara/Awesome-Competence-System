@@ -6,8 +6,30 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
 
   $scope.persons = [ ];
   $scope.numFound = 0;
+  $scope.totalFound = 0;
 
   $scope.showListView = false;
+  $scope.multi = {
+    format: 'DOC',
+    language: 'Native language',
+    template: 'Default template',
+    params: {
+      format: [
+        {value: 'doc', label: 'DOC', checked: true},
+        {value: 'pdf', label: 'PDF'},
+        {value: 'odt', label: 'ODT'}
+      ],
+      language: [
+        {value: 'native', label: 'Native', checked: true},
+        {value: 'en', label: 'English'}
+      ],
+      template: CV_TEMPLATES
+    },
+    update: function(pName, text){
+      this[pName] = text;
+      console.log(pName, this[pName], text);
+    }
+  };
 
   $scope.facetFields = [];
   $scope.yearsOfExperience = {};
@@ -101,6 +123,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
         // Process the facetfields for consumption
         $scope.facetFields = processFacetFields( data.facet_counts.facet_fields, urlParams );
         $scope.updateAndSearchAcs();
+        $scope.totalFound = data.response.numFound;
       } else {
         $scope.updateFacetFields( data.facet_counts.facet_fields );
       }
@@ -370,7 +393,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
     if(cvchecked){
       document.forms['multicv'].submit();
     } else {
-      alert('You have not selected any CVs yet, please select the desired CVs from the list.');
+      alert('Please select CVs from the list for downloading.');
     }
     return false;
   }
@@ -386,7 +409,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
         if( copied ) {
           alert('Copied '+copied.split(';').length+' emails:\n\n'+copied);
         } else {
-          alert('Please select persons before copying.');
+          alert('Please select persons from the list for copying.');
         }
       });
     });

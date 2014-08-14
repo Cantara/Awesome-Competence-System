@@ -19,6 +19,13 @@
       static: "{{ STATIC_URL }}",
       solr: "{{solrurl}}"
     };
+
+    var CV_TEMPLATES = [
+      {value: 'default', label: 'Default', checked: true},
+      {% for t in templates %}
+      {value: '{{t.id}}', label: '{{t.title}}'}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
   </script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
@@ -31,25 +38,39 @@
   <script src="{{ STATIC_URL }}js/cv_list_slider.js"></script>
   <script src="{{ STATIC_URL }}js/cv_list_ctrl.js"></script>
   <script src="{{ STATIC_URL }}js/url_service.js"></script>
-  <script src="{{ STATIC_URL }}js/scroller_directive.js"></script>
+  <script src="{{ STATIC_URL }}js/scroller_directive.js?20140813"></script>
   <script src="{{ STATIC_URL }}js/tristatecheckbox_directive.js"></script>
 {% endblock %}
 
 {% block actions %}
-  <h1>ACS Persons</h1>
-  <input type="text" size="30" style="margin:0;" placeholder="Search" ng-model="searchQuery" ng-change="updateAndSearchAcs()" autofocus/> <span class="small" ng-bind="numFound"></span>
-
+  
   {% if not user.person %}
-    <br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
+    <p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
       Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You don't seem to have a CV profile. 
       <a href="{% url 'cv_add_person_for_user' %}" class="butt butt-action">Create a profile now!</a>
-    </p>
+    </p><br/>
   {% elif not user.person.cv_set.all %}
-    <br/><p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
+    <p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
       Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You have registered a profile, but you don't seem to have any CVs.
       <a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt butt-action">Create a CV now!</a>
-    </p>
+    </p><br/>
   {% endif %}
+
+  <h1>ACS</h1>
+  <input type="text" size="30" style="margin:0 0 1em 0; padding:0.4em" name="searchQuery" placeholder="Search" ng-model="searchQuery" ng-change="updateAndSearchAcs()" autofocus/>
+  <div style="text-transform: uppercase; font-size: 80%;">
+    Showing <span id="numFound" ng-bind="numFound"></span> of <span ng-bind="totalFound"></span>.
+    Sort by
+    <select name="sorting" ng-model="sortSetting" ng-change="updateAndSearchAcs()" style="font: inherit; color: inherit; text-transform: inherit; background: transparent;">
+      <option value="name_exact asc">Name a-z</option>
+      <option value="name_exact desc">Name z-a</option>
+      <option value="years_of_experience asc">Years of experience 0-9</option>
+      <option value="years_of_experience desc">Years of experience 9-0</option>
+      <option value="last_edited desc">Recently edited</option>
+      <option value="last_edited asc">Least recently edited</option>
+    <select>
+  </div>
+
 {% endblock %}
 
 {% block options %}
@@ -59,7 +80,7 @@
     <div class="option">
     <h3>View</h3>
     <label><input type="checkbox" id="multicvcheck" ng-model="showListView" ng-change="updateAndSearchAcs()"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
-  
+
     <a class="butt" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
     <a class="butt" style="margin-bottom:.5em;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
   
@@ -98,18 +119,6 @@
             <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="all" ng-model="cf.status"/>Show all</label><br/>
             <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="+" ng-model="cf.status"/>Show {{cf.title}}</label><br/>
             <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="-" ng-model="cf.status"/>Show not {{cf.title}}</label><br/>
-        </div>
-                
-        <div class="filter">                
-          <h3>Sorting</h3>
-          <select name="sorting" ng-model="sortSetting" ng-change="updateAndSearchAcs()">
-            <option value="name_exact asc">Name a-z</option>
-            <option value="name_exact desc">Name z-a</option>
-            <option value="years_of_experience asc">Years of experience 0-9</option>
-            <option value="years_of_experience desc">Years of experience 9-0</option>
-            <option value="last_edited desc">Recently edited</option>
-            <option value="last_edited asc">Least recently edited</option>
-          <select>
         </div>
 
       </div>
@@ -269,36 +278,37 @@
             <th colspan="2">CVs</th>
           </tr>
           <tr>
-            <td colspan="3" class="lineright">
-                <label><input tri-state-checkbox elements="persons" elements-selected="personsSelected" change-action="updateSelectedEmails()"> Select all</label>
-                <button class="butt" data-clipboard-target="selectedemails" id="emailCopyButton" ng-if="hasFlash" type="button">
-                  <i class="icon-copy"></i> Copy selected e-mails
-                </button>
-                <button class="butt" ng-click="showSelectedEmails()" ng-if="!hasFlash" type="button">
-                  <i class="icon-copy"></i> <span ng-hide="selectedEmailsVisible">Show</span><span ng-show="selectedEmailsVisible">Hide</span> selected e-mails
-                </button>
-                <div ng-show="selectedEmailsVisible">
-                  Press CTRL+C to copy.<br>
-                  <textarea cols="30" rows="10" disabled="disabled" ng-model="selectedEmails" id="selectedemails"></textarea>
-                </div>
+            <td>
+              <input tri-state-checkbox elements="persons" elements-selected="personsSelected" change-action="updateSelectedEmails()">
+              </td>
+            <td colspan="2" class="lineright">
+              <button class="butt" data-clipboard-target="selectedemails" id="emailCopyButton" ng-if="hasFlash" type="button">
+                <i class="icon-copy"></i> Copy e-mails
+              </button>
+              <button class="butt" ng-click="showSelectedEmails()" ng-if="!hasFlash" type="button">
+                <i class="icon-copy"></i> <span ng-hide="selectedEmailsVisible">Show</span><span ng-show="selectedEmailsVisible">Hide</span> e-mails
+              </button>
+              <div ng-show="selectedEmailsVisible">
+                Press CTRL+C to copy.<br>
+                <textarea cols="30" rows="10" disabled="disabled" ng-model="selectedEmails" id="selectedemails"></textarea>
+              </div>
               </td>
             <td>
-              Format:&nbsp;<select name="format" id="format">
-                <option value="doc">DOC</option>
-                <option value="pdf">PDF</option>
-                <option value="odt">ODT</option>
-              </select>
-              Language:&nbsp;<select name="language" id="language">
-                <option value="native">Native</option>
-                <option value="en">English</option>
-              </select>
-              Template:&nbsp;<select name="template">
-                <option value="default">Default Template</option>
-                {% for t in templates %}
-                  <option value="{{t.id}}">{{t.title}}</option>
-                {% endfor %}
-              </select>
-              <button class="butt" ng-click="downloadMulti()" type="button"><i class="icon-copy"></i> Download selected CVs</button>
+
+              <button class="butt" ng-click="downloadMulti()" type="button"><i class="icon-copy"></i> Download CVs</button>
+              <button type="button" class="menutoggle" style="background: none; cursor: pointer; border-bottom: 1px dotted #aaa; text-align: left">
+                {% verbatim %} {{multi.format}}, {{multi.language}}, {{multi.template}} {% endverbatim %}
+                <i class="icon-caret-down"></i>
+              </button>
+              {% verbatim %}
+              <div class="menulist menulisthidden">
+                <div ng-repeat="(pName, param) in multi.params">
+                  <h3 style="text-transform: capitalize">{{pName}}</h3>
+                  <label ng-repeat="p in param" ng-click="multi.update(pName, p.label)"><input type="radio" name="{{pName}}" value="{{p.value}}" ng-checked="{{p.checked}}"> {{p.label}}<br></label>
+                </div>
+              </div>
+              {% endverbatim %}
+
             </td>
             <td>Download</td>
           </tr>
@@ -387,8 +397,7 @@
           <td data-title="Download">
             <a href="{% url 'cv_detail' "999888999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
             <a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
-            <a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>&nbsp;
-            <a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank" class="butt">ODT</a>
+            <a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>
             </td>
           <%??%>
             <td></td>
