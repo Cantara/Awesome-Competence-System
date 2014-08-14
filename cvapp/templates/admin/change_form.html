@@ -31,7 +31,10 @@
             </button>         
         <ul class="dropdown-menu">
         {% for cv in cvs %}
-            <li><a href="{% url 'admin:cv_cv_change' cv.pk %}">{{cv.title}}</a></li>
+            <li><a href="{% url 'admin:cv_cv_change' cv.pk %}">
+                <strong>{{cv.tags}}</strong><br>
+                <small>{{cv.title}}</small>
+            </a></li>
         {% endfor %}
         </ul>
         </div>
