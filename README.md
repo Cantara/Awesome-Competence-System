@@ -6,6 +6,14 @@ Your one stop shop for employee skill, competency and experience search.
 
 Use ACS to build the best-selling CV for convincing your new customer you have the right person for the The Job.
 
+Key features include:
+=====================
+* Multiple profile-CV for each person
+* Built-in data-quality measurements and update-process features including NAGing
+* Very strong and interactive query functionality to ensure that you find the best possible candidates
+* Branded CV-production, including CV batches
+* Ready to integrate out-of-the-box
+
 Documentation:
 * https://wiki.cantara.no/display/ACS/Home
 
