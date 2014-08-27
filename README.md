@@ -15,7 +15,7 @@ Documentation:
 
 Licence:
 
-   Copyright 2012-2013 Altran AS 
+   Copyright 2012-2014 Altran AS 
 
 
    Licensed under the Apache License, Version 2.0 (the "License");
