@@ -9,10 +9,11 @@ Use ACS to build the best-selling CV for convincing your new customer you have t
 Key features include:
 =====================
 * Multiple profile-CV for each person
-* Built-in data-quality measurements and update-process features including NAGing
+* Built-in data-quality measurements and update-process features including NAG functionality
 * Very strong and interactive query functionality to ensure that you find the best possible candidates
 * Branded CV-production, including CV batches
 * Ready to integrate out-of-the-box
+* Plug-in applications for Sharepoint
 
 Documentation:
 * https://wiki.cantara.no/display/ACS/Home
