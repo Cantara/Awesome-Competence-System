@@ -40,19 +40,9 @@ class WhydahMiddleware(object):
 					else:
 						appToken = getAppToken(APP_NAME, APP_SECRET)
 						log.info('Getting usertoken:')
-						userToken = getUserToken(appToken, ticket, 'ticket')
+						userToken = getUserToken(appToken, ticket, 'userticket')
 						log.info(userToken)
-				'''
-				elif tokenid:
-					log.info('You are not logged in - Attempting log in')
-					log.info('Tokenid:')
-					log.info(tokenid)
-					appToken = getAppToken(APP_NAME, APP_SECRET)
-					log.info('Getting usertoken:')
-					userToken = getUserToken(appToken, tokenid, 'tokenid')
-					log.info(userToken)
-				'''
-
+	
 				if userToken:
 					logged_in = loginUserWithToken(userToken, request)
 					log.info('logged in: ')
@@ -142,8 +132,8 @@ def getUserToken(appToken, idvalue, idtype):
 	if appToken:
 		appTokenID = appToken[ appToken.find('<applicationtokenID>')+len('<applicationtokenID>') : appToken.find('</applicationtokenID>') ]
 		#appid = ET.XML(responsedata).find('applicationtoken')
-		path = SSO_URL+'tokenservice/token/%s/getusertokenby%s' % (appTokenID, idtype) # URL to be changed to 'getusertokenbyticket'
-		values = { 'apptoken' : appToken, 'ticket' : idvalue, 'tokenid': idvalue } # ticketid-parameter to be changed to 'ticket'
+		path = SSO_URL+'tokenservice/user/%s/get_usertoken_by_%s' % (appTokenID, idtype) 
+		values = { 'apptoken' : appToken, 'ticket' : idvalue, 'tokenid': idvalue }
 		data = urllib.urlencode(values)
 		request = urllib2.Request(path, data)
 		try:
