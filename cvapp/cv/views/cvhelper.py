@@ -58,6 +58,23 @@ labels = {
 		'ongoing': 'pågående',
 		'years_of_experience': u'Antal års erfarenhet',
 	}, 
+	'es': {
+		'cvheading': 'Consultor Perfil',
+		'profile': 'Perfil',
+		'period': u'Período',
+		'client': 'Cliente',
+		'techs': u'Tecnologías/Métodos',
+		'workplace2': 'Trabajo',
+		'school': 'Escuela',
+		'experience': 'Experiencia',
+		'workplace': 'Empleadores',
+		'education': u'Educación',
+		'other': 'Otros',
+		'phone': 'Teléfono',
+		'age': u'Edad',
+		'email': 'E-mail',
+		'ongoing': 'en curso',
+	}, 
 }
 
 def getTranslatedParts(cv, lang, alerts=False):

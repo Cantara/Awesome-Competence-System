@@ -129,6 +129,8 @@ class Person(models.Model):
 	def country(self):
 		if self.location in ['Oslo']:
 			return 'no'
+		elif self.location in ['Barcelona']:
+			return 'es'
 		elif self.location in ['Stockholm', 'Gothenburg', 'Borlänge', u'Borlänge', 'Karlstad', 'Malmö', u'Malmö', 'Lund', 'Linköping', u'Linköping' ]:
 			return 'se'
 		else:
