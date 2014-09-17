@@ -133,7 +133,7 @@ def getUserToken(appToken, idvalue, idtype):
 		appTokenID = appToken[ appToken.find('<applicationtokenID>')+len('<applicationtokenID>') : appToken.find('</applicationtokenID>') ]
 		#appid = ET.XML(responsedata).find('applicationtoken')
 		path = SSO_URL+'tokenservice/user/%s/get_usertoken_by_%s' % (appTokenID, idtype) 
-		values = { 'apptoken' : appToken, 'ticket' : idvalue, 'tokenid': idvalue }
+		values = { 'apptoken' : appToken, 'userticket' : idvalue }
 		data = urllib.urlencode(values)
 		request = urllib2.Request(path, data)
 		try:
