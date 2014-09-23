@@ -23,24 +23,24 @@ class WhydahMiddleware(object):
 		else:
 			if request.method == 'GET':
 				# log.info("HOST:%s; FOR:%s; SERVER:%s;" % (request.META['HTTP_X_FORWARDED_HOST'],request.META['HTTP_X_FORWARDED_FOR'],request.META['HTTP_X_FORWARDED_SERVER']) )
-				ticket = request.GET.get('userticket', False)
+				userTicket = request.GET.get('userticket', False)
 				# tokenid = request.COOKIES.get('whydahusertoken_sso', False)
 				userToken = False
 
-				if ticket:
+				if userTicket:
 					log.info('You are not logged in - Attempting log in')
-					log.info('Ticket:')
-					log.info(ticket)
-					if ticket == 'test' and DEBUG:
+					log.info('Userticket:')
+					log.info(userTicket)
+					if userTicket == 'test' and DEBUG:
 						log.info('Initiating test-token')
 						userToken = TESTTOKEN
-					elif ticket == 'test2' and DEBUG:
+					elif userTicket == 'test2' and DEBUG:
 						log.info('Initiating test-token2')
 						userToken = TESTTOKEN2
 					else:
 						appToken = getAppToken(APP_NAME, APP_SECRET)
 						log.info('Getting usertoken:')
-						userToken = getUserToken(appToken, ticket, 'userticket')
+						userToken = getUserToken(appToken, userTicket, 'userticket')
 						log.info(userToken)
 	
 				if userToken:
@@ -67,18 +67,18 @@ class WhydahMiddleware(object):
 			log.info(escaped_path)
 			return redirect( '/login/?path='+escaped_path )
 
-def loginUserWithToken(token, request):
+def loginUserWithToken(userToken, request):
 
-	token = ET.XML(token)
+	userToken = ET.XML(userToken)
 
 	useremail = False
 	is_superuser = False
-	firstname = token.findtext('firstname')
-	lastname = token.findtext('lastname')
+	firstname = userToken.findtext('firstname')
+	lastname = userToken.findtext('lastname')
 
 	tokengroups = []
 
-	for application in token.iter('application'):
+	for application in userToken.iter('application'):
 		if application.find('applicationName').text == 'ACS':
 			for role in application.iter('role'):
 				rolename = role.get('name')
@@ -120,6 +120,8 @@ def getAppToken(appID, appPass):
 	data = urllib.urlencode(values)
 	request = urllib2.Request(SSO_URL+'tokenservice/logon', data)
 	try:
+		log.info('Trying to get appToken')
+           	log.info(values)
 		responsedata = urllib2.urlopen(request)
 		return responsedata.read()
 	except urllib2.URLError, e:
