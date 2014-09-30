@@ -30,68 +30,68 @@
 	"experience":[{% for o in object.experience_set.all %}
 		{
 			"id": "{{ o.id }}",
-			"title": "{{ o.title }}",
-			"title_en": "{{ o.title_en }}",
+			"title": "{{ o.title|escapejs }}",
+			"title_en": "{{ o.title_en|escapejs }}",
 			"from_year": "{{ o.from_year }}",
 			"from_month": "{{ o.from_month }}",
 			"to_year": "{{ o.to_year }}",
 			"to_month": "{{ o.to_month }}",
-			"description": "{{ o.description }}",
-			"description_en": "{{ o.description_en }}",
-			"company": "{{ o.company }}",
-			"company_en": "{{ o.company_en }}",
-			"techs": "{{ o.techs }}",
-			"techs_en": "{{ o.techs_en }}"
+			"description": "{{ o.description|escapejs }}",
+			"description_en": "{{ o.description_en|escapejs }}",
+			"company": "{{ o.company|escapejs }}",
+			"company_en": "{{ o.company_en|escapejs }}",
+			"techs": "{{ o.techs|escapejs }}",
+			"techs_en": "{{ o.techs_en|escapejs }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"workplace":[{% for o in object.workplace_set.all %}
 		{
 			"id": "{{ o.id }}",
-			"title": "{{ o.title }}",
-			"title_en": "{{ o.title_en }}",
+			"title": "{{ o.title|escapejs }}",
+			"title_en": "{{ o.title_en|escapejs }}",
 			"from_year": "{{ o.from_year }}",
 			"from_month": "{{ o.from_month }}",
 			"to_year": "{{ o.to_year }}",
 			"to_month": "{{ o.to_month }}",
-			"description": "{{ o.description }}",
-			"description_en": "{{ o.description_en }}",
-			"company": "{{ o.company }}",
-			"company_en": "{{ o.company_en }}"
+			"description": "{{ o.description|escapejs }}",
+			"description_en": "{{ o.description_en|escapejs }}",
+			"company": "{{ o.company|escapejs }}",
+			"company_en": "{{ o.company_en|escapejs }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"education":[{% for o in object.education_set.all %}
 		{
 			"id": "{{ o.id }}",
-			"title": "{{ o.title }}",
-			"title_en": "{{ o.title_en }}",
+			"title": "{{ o.title|escapejs }}",
+			"title_en": "{{ o.title_en|escapejs }}",
 			"from_year": "{{ o.from_year }}",
 			"from_month": "{{ o.from_month }}",
 			"to_year": "{{ o.to_year }}",
 			"to_month": "{{ o.to_month }}",
-			"description": "{{ o.description }}",
-			"description_en": "{{ o.description_en }}",
-			"school": "{{ o.school }}",
-			"school_en": "{{ o.school_en }}"
+			"description": "{{ o.description|escapejs }}",
+			"description_en": "{{ o.description_en|escapejs }}",
+			"school": "{{ o.school|escapejs }}",
+			"school_en": "{{ o.school_en|escapejs }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"other":[{% for t in object.other_set.all %}
 		{
 			"id": "{{ t.id }}",
-			"title": "{{ t.title }}",
-			"title_en": "{{ t.title_en }}",
-			"data": "{{ t.data }}",
-			"data_en": "{{ t.data_en }}"
+			"title": "{{ t.title|escapejs }}",
+			"title_en": "{{ t.title_en|escapejs }}",
+			"data": "{{ t.data|escapejs }}",
+			"data_en": "{{ t.data_en|escapejs }}"
 		}{% if not forloop.last %},{% endif %}
 		{% endfor %}],
 	"cv": [{% for cv in object.cv_set.all|dictsortreversed:"cvsort" %}
 		{ 
 			"id": "{{ cv.id }}",
 			"last_edited": "{{ cv.last_edited|date:'SHORT_DATE_FORMAT' }}",
-			"tags": "{{ cv.tags }}",
-			"title": "{{ cv.title }}",
-			"title_en": "{{ cv.title_en }}",
-			"profile": "{{ cv.profile }}",
-			"profile_en": "{{ cv.profile_en }}",
+			"tags": "{{ cv.tags|escapejs }}",
+			"title": "{{ cv.title|escapejs }}",
+			"title_en": "{{ cv.title_en|escapejs }}",
+			"profile": "{{ cv.profile|escapejs }}",
+			"profile_en": "{{ cv.profile_en|escapejs }}",
 			"technology": [{% for o in cv.technology.all %}
 				"{{ o.id }}"{% if not forloop.last %},{% endif %}
 				{% endfor %}],

@@ -88,6 +88,8 @@
 	<%~ppl.cv :c:index%>
 		<h3><%=c.title%></h3>
 		<p class="small"><%=c.profile%></p>
+		<h3><%=c.title_en%></h3>
+		<p class="small"><%=c.profile_en%></p>
 		<br>
 	<%~%>
 </script>
@@ -108,7 +110,7 @@ var SOLR = (function($, doT){
 	 		sort: 'score desc',
 	 		rows: 10000,
 	 		hl: 'false',
-	 		fl: 'fulljson,score,years_of_experience'
+	 		fl: 'name_exact,fulljson,score,years_of_experience'
 	 	},
 		traditional: true,
 		cache: false
@@ -138,7 +140,14 @@ var SOLR = (function($, doT){
 		var docs = data.response.docs;
 		people = [];
 		for( var i = 0; i < docs.length; i++ ) {
-			people.push( JSON.parse( docs[i].fulljson.replace(/\s+/g,' ') ) );
+			var peopleJson = {};
+			try{
+				peopleJson = JSON.parse( docs[i].fulljson.replace(/\s+/g,' ') );
+			} catch(e) {
+				console.log('Parsing failed for ', docs[i].name_exact);
+				console.log(docs[i].fulljson);
+			}
+			people.push(peopleJson);
 			people[i].score = docs[i].score; 
 			people[i].years_of_experience = docs[i].years_of_experience;
 		}
