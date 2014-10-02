@@ -6,6 +6,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('cv.views',
 
+    url(r'^error401/$', 'error401', name='error401'),
+
     url(r'^$', 'cv_list'),
     url(r'^cv/$', 'cv_list', name='cv_list'),
     url(r'^cv/multi/$', 'multicv', name='cv_multi'),

@@ -50,15 +50,16 @@ class WhydahMiddleware(object):
 					if logged_in:
 						return None
 					else:
-						log.info('cant log in with your token :( ')
-						response = redirect('cv.views.myRemoteLogout')
-						response['Location'] += '?path=https://' + request.get_host()
-						return response
+						log.info("Can't log in with your token :(")
+						#response = redirect('cv.views.myRemoteLogout')
+						#response['Location'] += '?path=https://' + request.get_host()
+						return unauthorizedResponse(request)
 		return None
 
 	def process_view(self, request, view_func, view_args, view_kwargs):
 		viewFunctionName = view_func.__name__
-		if not request.user.is_authenticated() and not viewFunctionName in ['myRemoteLogin','myRemoteLogout']:
+		log.info(viewFunctionName)
+		if not request.user.is_authenticated() and not viewFunctionName in ['myRemoteLogin','myRemoteLogout','error401']:
 			log.info('User not authenticated, redirecting to login-page...')
 			log.info('Escaped path:')
 			escaped_path = urllib.quote(request.get_full_path())
@@ -66,6 +67,19 @@ class WhydahMiddleware(object):
 			escaped_path = urllib.quote(escaped_path)
 			log.info(escaped_path)
 			return redirect( '/login/?path='+escaped_path )
+
+def unauthorizedResponse(request):
+	logout(request)
+	response = HttpResponseRedirect('https://' + request.get_host())
+	response.delete_cookie(key='whydahusertoken_sso')
+	response.delete_cookie(key='whydahusertoken_sso', path='/', domain=request.get_host() )
+	response.set_cookie('whydahusertoken_sso','')
+	response.status_code = 401
+	if request.method == 'GET':
+		redirect_url = 'https://' + request.get_host() + request.POST.get('path', '/')
+	else:
+		redirect_url = 'https://' + request.get_host()
+	return HttpResponseRedirect('error401')
 
 def loginUserWithToken(userToken, request):
 

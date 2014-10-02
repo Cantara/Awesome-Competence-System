@@ -1,9 +1,4 @@
 from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-import xml.etree.ElementTree as ET
-import urllib
-import urllib2
 import logging
 from localsettings import SSO_URL
 log = logging.getLogger("cv")
