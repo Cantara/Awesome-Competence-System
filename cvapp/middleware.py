@@ -92,6 +92,11 @@ def loginUserWithToken(userToken, request):
 						is_superuser = True
 					tokengroups.append(rolename)
 
+	if not useremail and 'Manager' in tokengroups:
+		useremail = userToken.findtext('username')
+		log.info('Manager username bypass')
+		log.info(useremail)
+
 	if useremail:
 		user, created = User.objects.get_or_create(username__iexact = useremail, defaults={'username': useremail, 'email': useremail, 'first_name': firstname, 'last_name': lastname, 'is_staff': True})
 		currentgroups = user.groups.values_list('name', flat=True)
@@ -121,7 +126,7 @@ def getAppToken(appID, appPass):
 	request = urllib2.Request(SSO_URL+'tokenservice/logon', data)
 	try:
 		log.info('Trying to get appToken')
-           	log.info(values)
+		log.info(values)
 		responsedata = urllib2.urlopen(request)
 		return responsedata.read()
 	except urllib2.URLError, e:
