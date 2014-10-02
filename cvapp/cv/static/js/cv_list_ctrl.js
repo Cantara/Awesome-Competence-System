@@ -35,7 +35,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
   $scope.yearsOfExperience = {};
   $scope.searchParameters = {};
 
-  $scope.hideFilter = false;
+  $scope.hideFilter = true;
 
   var defaultSortSetting = 'last_edited desc'
   
@@ -120,6 +120,10 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
         firstrun = false;
         // Get parameters from URL
         var urlParams = Url.getParams();
+        if(!angular.equals({},urlParams)) {
+          console.log('Unhide filters');
+          $scope.hideFilter = false;
+        }
         // Process the facetfields for consumption
         $scope.facetFields = processFacetFields( data.facet_counts.facet_fields, urlParams );
         $scope.updateAndSearchAcs();
