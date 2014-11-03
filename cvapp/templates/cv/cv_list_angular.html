@@ -47,12 +47,12 @@
   {% if not user.person %}
     <p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
       Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You don't seem to have a CV profile. 
-      <a href="{% url 'cv_add_person_for_user' %}" class="butt butt-action">Create a profile now!</a>
+      <a href="{% url 'cv_add_person_for_user' %}" class="btn btn-primary">Create a profile now!</a>
     </p><br/>
   {% elif not user.person.cv_set.all %}
     <p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
       Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You have registered a profile, but you don't seem to have any CVs.
-      <a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="butt butt-action">Create a CV now!</a>
+      <a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="btn btn-primary">Create a CV now!</a>
     </p><br/>
   {% endif %}
 
@@ -81,15 +81,15 @@
     <h3>View</h3>
     <label><input type="checkbox" id="multicvcheck" ng-model="showListView" ng-change="updateAndSearchAcs()"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
 
-    <a class="butt" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
-    <a class="butt" style="margin-bottom:.5em;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
+    <a class="btn btn-default btn-xs" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
+    <a class="btn btn-default btn-xs" style="margin-bottom:.5em;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
   
     </div>
     
     <div class="option animateheight">
-      <span class="butt" ng-click="hideFilter=!hideFilter">
+      <button class="btn btn-default btn-xs" ng-click="hideFilter=!hideFilter">
         <i id="togglefiltericon" ng-class="{'icon-double-angle-right': hideFilter, 'icon-double-angle-left': !hideFilter}"></i> Filters
-      </span>
+      </button>
       <div id="optionsinside">
       <div id="facets">
 
@@ -126,7 +126,7 @@
   </div>
 
     <div class="option">
-      <a class="butt" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
+      <a class="btn btn-default btn-xs" href="https://wiki.cantara.no/display/ACS/User+Manual" target="_blank">
         <i class="icon-question-sign"></i> Help
       </a>
     </div>
@@ -198,14 +198,14 @@
           <h3><%=p.name%></h3>
           <h4><%=p.title%></h4>
         </header>
-        <%?p.image%><img src="/media/<%=p.image%>" class="photo" style="float: left;"><%?%>
+        <%?p.image%><img src="/media/<%=p.image%>?<%=p.last_edited%>" class="photo" style="float: left;"><%?%>
 
         <div class="completeness">
           <div class="percent<%? p.completeness.percent < 100 %> redpercent<%?%>" style="width: <%=p.completeness.percent%>%;"></div>
         </div>
         <section>
           <span>                    
-                      <a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="butt<%? p.completeness.percent < 100 %> butt-red<%?%>" style="float: right;"><i class="icon-envelope"></i></a>
+                      <a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="btn btn-xs <%? p.completeness.percent<100 %>btn-danger<%??%>btn-default<%?%>" style="float: right;"><i class="icon-envelope"></i></a>
                     <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time" style="float: right; margin: .3em"></i><%?%>
                   </span>
                   
@@ -380,11 +380,11 @@
               </td>
             <td rowspan="<%=p.cv.length%>">
               <%? p.country %><img src="{{ STATIC_URL }}/img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
-              <span style="display: inline-block; width:24px; height: 24px; background-size: cover; <%?p.image%>background-image: url({{ MEDIA_URL }}/<%=p.image%>); <%?%>"></span>
+              <span style="display: inline-block; width:24px; height: 24px; background-size: cover; <%?p.image%>background-image: url({{ MEDIA_URL }}/<%=p.image%>?<%=p.last_edited%>); <%?%>"></span>
               </td>
             <td rowspan="<%=p.cv.length%>" class="lineright">
               <label for="p<%=p.index%>checkbox" class="textcheckbox">
-              <h3><%=p.name%> ‒ <%=p.title%></h3>
+              <h5><%=p.name%> ‒ <%=p.title%></h5>
               <p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
               </label>
               </td>
@@ -395,9 +395,16 @@
             <label for="<%=cv.id%>"><input type="checkbox" name="cvid" value="<%=cv.id%>" id="<%=cv.id%>" ><%=cv.tags%> (<%=cv.status.percent%>%)</label>
             </td>
           <td data-title="Download">
-            <a href="{% url 'cv_detail' "999888999" %}" title="<%=cv.status.comment%>" target="_blank" class="butt">View</a>&nbsp;
-            <a href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank" class="butt">DOC</a>&nbsp;
-            <a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank" class="butt">PDF</a>
+
+            <div class="btn-group">
+              <a class="btn btn-default btn-xs" href="{% url 'cv_download_format' 'doc' %}?cvid=<%=cv.id%>" target="_blank"><span class="glyphicon glyphicon-download"></span> Word</a>
+              <a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'cv_detail' "999888999" %}" title="<%=cv.status.comment%>" target="_blank">View</a></li>
+                <li><a href="{% url 'cv_download_format' 'pdf' %}?cvid=<%=cv.id%>" target="_blank">Download PDF</a></li>
+                <li><a href="{% url 'cv_download_format' 'odt' %}?cvid=<%=cv.id%>" target="_blank">Download ODT</a></li>
+              </ul>
+            </div>
             </td>
           <%??%>
             <td></td>

@@ -10,6 +10,10 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.1.custom.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/cvpre.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/formtojson.js?20140702"></script>
+<style type="text/css">
+	h1, .h1, h2, .h2, h3, .h3, h4, .h4 {margin:0;}
+	input {padding:0;}
+</style>
 {% endblock %}
 
 
@@ -17,11 +21,13 @@
 {% block actions %}
 
 		{% if user.is_authenticated %}
-			<h1>{{ p.name }} CV</h1>
-			{% if lang != 'en' %}<a href="{% url 'cv_detail_en' cv.id 'en' %}" class="butt">Show in English</a>
-			{% else %}<a href="{% url 'cv_detail' cv.id %}" class="butt">Show in original language</a>{% endif %}
-			<a href="{% url 'admin:cv_cv_change' cv.id %}" class="butt">Edit CV</a>
-			<a href="{% url 'admin:cv_person_change' p.id %}" class="butt">Edit Person</a>
+			<h1>{{ p.name }} CV</h1><br/>
+			{% if lang != 'en' %}<a href="{% url 'cv_detail_en' cv.id 'en' %}" class="btn btn-default btn-sm">Show in English</a>
+			{% else %}<a href="{% url 'cv_detail' cv.id %}" class="btn btn-default btn-sm">Show in original language</a>{% endif %}
+			<div class="btn-group">
+				<a href="{% url 'admin:cv_cv_change' cv.id %}" class="btn btn-default btn-sm">Edit CV</a>
+				<a href="{% url 'admin:cv_person_change' p.id %}" class="btn btn-default btn-sm">Edit Person</a>
+			</div>
 		{% endif %}
 			<script>
 				function dl(format) {
@@ -32,11 +38,15 @@
 			</script>
 			<br/>
 			<br/>
-			Download for 
-			<a class="butt" onClick="dl('doc');">Word (.doc)</a>
-			<a class="butt" onClick="dl('pdf');">Adobe Reader (.pdf)</a>
-			<a class="butt" onClick="dl('odt');">OpenOffice (.odt)</a>
-			<select name="template" onChange="console.log(this.value);$('#template').val(this.value);">
+			<div class="btn-group">
+				<a class="btn btn-primary btn-sm" onClick="dl('doc');">Download Word</a>
+				<a href="#" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a onClick="dl('pdf');">Download PDF</a></li>
+					<li><a onClick="dl('odt');">Download OpenOffice</a></li>
+				</ul>
+			</div>
+			<select name="template" onChange="console.log(this.value);$('#template').val(this.value);"class="form-control" style="width: 20%; display: inline; vertical-align: middle;">
 				<option value="default">Default Template</option>
 				{% for t in templates %}
 					<option value="{{t.id}}">{{t.title}}</option>
@@ -44,8 +54,6 @@
 			</select>
 		{% if user.is_authenticated %}
 			<br/>
-			<br/>
-			<p>On this page you can make changes to the CV before downloading. These changes will not be stored permanently, but are only stored as a part of the downloaded document.</p>
 		{% endif %}
 {% endblock %}
 	
@@ -54,6 +62,7 @@
 <div id="cvdetails">
 	<!--img src="{{ STATIC_URL }}img/altranlogo.png"-->
 
+		<p><small>On this page you can make changes to the CV before downloading. These changes will not be stored permanently, but are only in the downloaded document.</small></p>
 		<form action="" method="post" name="cvform" id="cvform" target="_blank">
 		<div class="part">
 		  <img src="{% if p.image %}{{ p.image|scale:"300x300" }}{% endif %}" class="left" id="photo">
