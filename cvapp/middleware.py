@@ -98,7 +98,7 @@ def loginUserWithToken(userToken, request):
 	tokengroups = []
 
 	for application in userToken.iter('application'):
-		if application.find('applicationName').text == 'ACS':
+		if application.attrib['ID'] == APP_NAME:
 			for role in application.iter('role'):
 				rolename = role.get('name')
 				log.info('Role:')
@@ -110,11 +110,6 @@ def loginUserWithToken(userToken, request):
 					if rolename == 'Administrator' or rolename == 'Manager':
 						is_superuser = True
 					tokengroups.append(rolename)
-
-	if not useremail and 'Manager' in tokengroups:
-		useremail = userToken.findtext('username')
-		log.info('Manager username bypass')
-		log.info(useremail)
 
 	if useremail:
 		user, created = User.objects.get_or_create(username__iexact = useremail, defaults={'username': useremail, 'email': useremail, 'first_name': firstname, 'last_name': lastname, 'is_staff': True})

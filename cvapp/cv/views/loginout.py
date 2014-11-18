@@ -1,4 +1,5 @@
 from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth import logout
 import logging
 from localsettings import SSO_URL
 log = logging.getLogger("cv")
@@ -15,12 +16,5 @@ def myRemoteLogin(request):
 
 def myRemoteLogout(request):
 	logout(request)
-	response = HttpResponseRedirect('https://' + request.get_host())
-	response.delete_cookie(key='whydahusertoken_sso')
-	response.delete_cookie(key='whydahusertoken_sso', path='/', domain=request.get_host() )
-	response.set_cookie('whydahusertoken_sso','')
-	if request.method == 'GET':
-		redirect_url = 'https://' + request.get_host() + request.POST.get('path', '/')
-	else:
-		redirect_url = 'https://' + request.get_host()
-	return HttpResponseRedirect( SSO_URL + "sso/logoutaction?redirectURI=" + redirect_url)
+	redirect_url = 'https://' + request.get_host()
+	return HttpResponseRedirect( SSO_URL + "sso/logout?redirectURI=" + redirect_url)
