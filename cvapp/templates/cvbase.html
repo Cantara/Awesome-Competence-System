@@ -25,340 +25,71 @@
 	<body ng-controller="SearchCtrl" scroller="" on-scroll-bottom="loadMorePeople()" scroller-active="hasMorePersons">
 	{% endverbatim %}
 
-
-	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAaJJREFUeNqkVoGNwjAMbLsAHSEjMEI3eEbgN2AENqiYoCMAE8AG7QZlgzwT9JPqjO5D7RS9JatJ7DjO5eK0KAyZpmkXtAs6Tu8ywrYrPpUwqUmC9kFbjI1o98lizdrgLSb5oMegjmxxzFPfwcdjTpsL3sHxxoFpVyJNYnOYE6XLZd5l7GqmlGBbKNndjN3xmYyG3+1tl5jsU1jIvl1g0VbxdYg1J1GBZjHwqSzLh5KYUHGA8tgfQYxTjDnHJtycsW2h5BE6U9fwd6/zBDxrnCdAxXDlkhorwHM32CtQPML2h6ixbcEEiTFdhc7TcPzC90Jjl8S2JHPMKnPx6vARul3JJO0GPqrIApsMPD8BmrucQWzHsQxMG74DvbKDs7Ah6F5qEdrCvrN1yCZNk2q5VK5nsWhaEZ779C2griz+IAY5xZdjXdVSQTsTiXDV0HNi67RSoRY7qvFRDgswHMjuzWKXlmtacNSKGhVBOYtGLdcLsHhkUq94AWv4evPBWfNkKmwxn8xSe/TDpyOmDKgtT7pE0WdL7PrGBfzo7+Lfvy2/AgwAMspFg0vBldQAAAAASUVORK5CYII=" alt="ACS" style="max-height: 1em; vertical-align:top"> ACS</a>
-            </div>
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-		            <li><a href="{% url 'cv.views.cv_list' %}">Employees</a></li>
-		            <li><a href="{% url 'cv.views.reports' %}">Reports</a></li>
-		            <li><a href="{% url 'cv.views.matrix_list' %}">Competence Matrices</a></li>
-					{% if user.is_superuser %}
-		            <li><a href="{% url 'changelog' %}">Changelog</a></li>
-		            <li><a href="{% url 'admin:index' %}">Admin</a></li>
-					{% endif %}
-                </ul>
-			    <ul class="nav navbar-nav navbar-right">
-			      <li class="dropdown">
-					{% if user.person %}
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> {{ user.username }}
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	        <div class="container-fluid">
+	            <div class="navbar-header">
+	                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	                <span class="sr-only">Toggle navigation</span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	                </button>
+	                <a class="navbar-brand" href="#"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAaJJREFUeNqkVoGNwjAMbLsAHSEjMEI3eEbgN2AENqiYoCMAE8AG7QZlgzwT9JPqjO5D7RS9JatJ7DjO5eK0KAyZpmkXtAs6Tu8ywrYrPpUwqUmC9kFbjI1o98lizdrgLSb5oMegjmxxzFPfwcdjTpsL3sHxxoFpVyJNYnOYE6XLZd5l7GqmlGBbKNndjN3xmYyG3+1tl5jsU1jIvl1g0VbxdYg1J1GBZjHwqSzLh5KYUHGA8tgfQYxTjDnHJtycsW2h5BE6U9fwd6/zBDxrnCdAxXDlkhorwHM32CtQPML2h6ixbcEEiTFdhc7TcPzC90Jjl8S2JHPMKnPx6vARul3JJO0GPqrIApsMPD8BmrucQWzHsQxMG74DvbKDs7Ah6F5qEdrCvrN1yCZNk2q5VK5nsWhaEZ779C2griz+IAY5xZdjXdVSQTsTiXDV0HNi67RSoRY7qvFRDgswHMjuzWKXlmtacNSKGhVBOYtGLdcLsHhkUq94AWv4evPBWfNkKmwxn8xSe/TDpyOmDKgtT7pE0WdL7PrGBfzo7+Lfvy2/AgwAMspFg0vBldQAAAAASUVORK5CYII=" alt="ACS" style="max-height: 1em; vertical-align:top"> ACS</a>
+	            </div>
+	            <div class="collapse navbar-collapse">
+	                <ul class="nav navbar-nav">
+			            <li><a href="{% url 'cv.views.cv_list' %}">Employees</a></li>
+			            <li><a href="{% url 'cv.views.reports' %}">Reports</a></li>
+			            <li><a href="{% url 'cv.views.matrix_list' %}">Competence Matrices</a></li>
+						{% if user.is_superuser %}
+			            <li><a href="{% url 'changelog' %}">Changelog</a></li>
+			            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+						{% endif %}
+	                </ul>
+				    <ul class="nav navbar-nav navbar-right">
+				      <li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+							{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}
 							{% if user.person.completeness.percent < 100 %}
 								<span class="notification-icon butt-red"><i class="icon-warning-sign"></i></span>
 							{% endif %}
 							<b class="caret"></b>
 						</a>
 				        <ul class="dropdown-menu">
-							{% if user.person.image %}
-								<li style="text-align:center"><img src="{{ user.person.image|scale:'110x110' }}" style="max-width:5em;max-height:5em;"></li>
+							{% if user.person %}
+								{% if user.person.image %}
+									<li style="text-align:center"><img src="{{ user.person.image|scale:'110x110' }}" style="max-width:5em;max-height:5em;"></li>
+								{% endif %}
+								<li>
+									<div style="padding:.5em" class="{% if user.person.completeness.percent < 100 %}bg-danger{% else %}bg-info{% endif %}">
+										Profile {{ user.person.completeness.percent }}% complete. Updated: {{ user.person.last_edited }}
+										<ul>{{ user.person.completeness.comment|unordered_list }}</ul>
+									</div>
+								</li>
+					            <li><a href="{% url 'admin:cv_person_change' user.person.id %}">Edit Person</a></li>
+					            {% for cv in user.person.cv_set.all %}
+					            <li><a href="{% url 'admin:cv_cv_change' cv.id %}">Edit CV <em>{{cv.tags}}</em></a></li>
+					            {% endfor %}
+					            <li><a href="{% url 'cv_add_cv_for_person' user.person.id %}">Add CV</a></li>
 							{% endif %}
-							<li>
-								<div class="ldetail{% if user.person.completeness.percent < 100 %} alertbox{% endif %}">
-									<p>Profile {{ user.person.completeness.percent }}% complete. Updated: {{ user.person.last_edited }}</p>
-									<ul>{{ user.person.completeness.comment|unordered_list }}</ul>
-								</div>
-							</li>
-				            <li><a href="{% url 'admin:cv_person_change' user.person.id %}">Edit Person</a></li>
-				            {% for cv in user.person.cv_set.all %}
-				            <li><a href="{% url 'admin:cv_cv_change' cv.id %}">Edit CV <em>{{cv.tags}}</em></a></li>
-				            {% endfor %}
-				            <li><a href="{% url 'cv_add_cv_for_person' user.person.id %}">Add CV</a></li>
-				            <li class="text-center" style="padding: .5em">
-								<form method="get" action="{% if user.is_authenticated %}{% url 'cv.views.myRemoteLogout' %}{% else %}{% url 'cv.views.myRemoteLogin' %}{% endif %}">
-									{% csrf_token %}
-									<input type="hidden" value="{{ request.path }}" name="path">
-				            		<input type="submit" value="Log out" class="btn btn-default btn-sm" onClick="eraseCookie('whydahusertoken');">
-								</form>
-				            </li>
+				            <li><a href="{% url 'cv.views.myRemoteLogout' %}">Log out</a></li>
 				        </ul>
-					{% else %}
-						<strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong>
-					{% endif %}
-			      </li>
-			    </ul>
-            </div>
-        </div>
-    </div> <!-- /.navbar -->
+				      </li>
+				    </ul>
+	            </div>
+	        </div>
+	    </div> <!-- /.navbar -->
 
-    <div id="actions">
-        {% block actions %}{% endblock %}
-    </div>
-    <style>
-    	#optionsbox {
-    		position: absolute;
-    		left:1em;
-    		width: 21em;
-    		text-align: left;
-			transition: all .2s;
-		 -o-transition: all .2s; /* Opera */
-	   -moz-transition: all .2s; /* Firefox 4 */
-	-webkit-transition: all .2s; /* Safari and Chrome */
-    	}
-    	#optionsbox ~ #content {
-    		position: absolute;
-    		left: 22.5em;
-    		text-align: left;
-			transition: left .2s;
-		 -o-transition: left .2s; /* Opera */
-	   -moz-transition: left .2s; /* Firefox 4 */
-	-webkit-transition: left .2s; /* Safari and Chrome */
-    	}
-		.hiddenopts {
-			width: 6em !important;
-		}
-		.hiddenopts ~ #content {
-			left: 7.5em !important;
-		}
-		.hiddenopts .animateheight {
-			max-height: 4em !important;
-		}
-    	.animateheight {
-    		max-height: 80em;
-    	}
-    	#optionsinside {
-    		width: 20em;
-    	}
-    	.hiddenopts #optionsinside {
-    		display: none;
-    	}
-    	.hiddenopts .butt {
-    		width: 80%;
-    	}
+	    <div id="actions">
+	        {% block actions %}{% endblock %}
+	    </div>
 
-		.option h3 {
-			text-transform: uppercase;
-			font-size: 0.7em;
-			margin: .5em 0 .5em 0;
-		}
+		{% block options %}
+		{% endblock %}
 
-		.option {
-			background: #fff;
-    		padding: .5em;
-			overflow: hidden;
-			box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			border-bottom: 2px solid #ccc;
-			margin-bottom:1em;
-			transition: max-width .2s, max-height .2s .1s;
-		 -o-transition: max-width .2s, max-height .2s .1s; /* Opera */
-	   -moz-transition: max-width .2s, max-height .2s .1s; /* Firefox 4 */
-	-webkit-transition: max-width .2s, max-height .2s .1s; /* Safari and Chrome */
-		}
-			.filter {
-				margin-bottom: 1em;
-				padding-bottom: 1em;
-				border-bottom: 1px solid #ddd;
-			}
-
-		.clickable {
-			cursor: pointer;
-			overflow: visible;
-			width:2em;
-			height:2em; 
-			margin-bottom:1em; 
-			text-align: center; 
-			display: table-cell; 
-			vertical-align: middle;
-			text-decoration: none;
-		}
-		.clickable:hover {
-			opacity: 0.8;
-		}
-		.option + label {
-			position: relative;
-			display: block;
-			z-index: 300;
-			top: -4em;
-			left:6em;
-			font-size: 0.8em;
-			padding: 1em 0;
-			white-space:nowrap;
-			width: 1px;
-			height: 2em;
-			box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			background-color: #fff;
-			overflow: hidden;
-			transition: all 0.1s;
-		 -o-transition: all 0.1s; /* Opera */
-	   -moz-transition: all 0.1s; /* Firefox 4 */
-	-webkit-transition: all 0.1s; /* Safari and Chrome */
-		}
-		.option:hover + label {
-			width: 100px;
-			padding: 1em;
-		}
-		label {cursor: pointer;}
-		#multicvcheck {
-			display:none;
-		}
-		#multicvcheck ~ .icon-list, #multicvcheck ~ .icon-th {
-			position: relative;
-			cursor: pointer;
-			background-color: #3877A5;
-			border-radius: 3px;
-			color: #fff !important;
-	box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.5);
-			text-decoration: none;
-			padding: 0.5em;
-			display: inline-block;
-		  -webkit-user-select: none;  /* Chrome all / Safari all */
-		  -moz-user-select: none;     /* Firefox all */
-		  -ms-user-select: none;      /* IE 10+ */
-
-		  /* No support for these yet, use at own risk */
-		  -o-user-select: none;
-		  user-select: none;      
-		    background-image: -webkit-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
-		    background-image:    -moz-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
-		    background-image:     -ms-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
-		    background-image:      -o-linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
-		    background-image:         linear-gradient(hsla(0,0%,100%,.1), hsla(0,0%,0%,.2)) !important;
-		}
-		#multicvcheck ~ .icon-th 	{ border-radius: 3px 0 0 3px;}
-		#multicvcheck ~ .icon-list 	{ border-radius: 0 3px 3px 0; background-color: #ddd !important; }
-		#multicvcheck:checked ~ .icon-th 	{ background-color: #ddd !important; }
-		#multicvcheck:checked ~ .icon-list 	{ background-color: #3877A5 !important; }
-
-		#numfound {
-			font-size: .8em;
-			margin: .5em;
-			display: inline-block;
-		}
-
-					.showonsmall, .menulisthidden {
-						display: none;
-					}
-					.hideonsmall {
-						display: inline-block;
-					}
-
-					.menulistactive {
-						background: #fff;
-						color: #333;
-						padding: .5em;
-						box-shadow: 0 5px 6px 1px rgba(0,0,0,0.3);
-						border-bottom: 2px solid #ccc;
-						display: block !important;
-					}
-
-					.menulistactive {
-						position: absolute;
-						display: none;
-						z-index: 999;
-						text-align: left;
-					}
-
-					.menulistactive li {
-						display: block;
-					}
-
-					.menulistactive a {
-						padding: .5em !important;
-						display: block !important;
-					}
-
-					.menulistactive a:hover {
-						color: #333 !important;
-					}
-
-					.notification-icon {
-						text-align: center;
-						border-radius: 50%;
-						display: inline-block;
-						line-height: 1em;
-						width: 1em;
-						height: 1em;
-						padding: .4em;
-					}
-
-	@media (max-width: 600px) {
-
-					.showonsmall {
-						display: block;
-					}
-
-					.hideonsmall {
-						display: none;
-					}
-
-		#content {
-			position: static !important;
-			width: 100%;
-			text-align: center !important;
-		}
-		.hiddenopts {
-			width: 100% !important;
-		}
-			.hiddenopts:hover {
-				width: 100% !important;
-			}
-		.clickable {
-			width: 100%;
-		}
-		#optionsbox {
-			position: static;
-			width: 100%;
-			margin-bottom: 1em;
-		}
-		#optionsbox + label {
-			display: none
-		}
-		#optionsinside {
-			width: 100% ;
-		}
-	}
-    </style>
-
-	{% block options %}
-	{% endblock %}
-
-    <div id="content" class="">
-        {% block content %}{% endblock %}
-    </div>
-
-	<script>
-		$('.menutoggle').click(function(e){
-			$(this).next('.menulist').toggleClass('menulistactive');
-			e.preventDefault();
-		});
-		
-	    /* Anything that gets to the document will hide the dropdown */
-	    $(document).on('click', function (event) {
-	        if ($(event.target).closest('.menulist,.menutoggle').length == false) {
-	            $(".menulist").removeClass('menulistactive');
-	        }
-	    });
-
-	    /* Clicks within the dropdown won't make it past the dropdown itself */
-	    $(".menulist").click(function (e) {
-	        e.stopPropagation();
-	    });
-
-	    function createCookie(name,value,days) {
-	        if (days) {
-	            var date = new Date();
-	            date.setTime(date.getTime()+(days*24*60*60*1000));
-	            var expires = "; expires="+date.toGMTString();
-	        } else {
-	            var expires = "";
-	        } 
-	        document.cookie = name+"="+value+expires+"; path=/";
-	    }
-
-	    function eraseCookie(name) {
-	        createCookie(name,"",-1);
-	    }
-
-	</script>
+	    <div id="content" class="">
+	        {% block content %}{% endblock %}
+	    </div>
 
 	</body>
 </html>

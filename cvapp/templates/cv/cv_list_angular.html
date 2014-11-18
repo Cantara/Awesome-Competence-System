@@ -3,6 +3,7 @@
 {% block title %}CV{% endblock %}
 
 {% block extrastyles %}
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/cv-list.css"/>
   <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
   <script type="text/javascript">
     var DJANGO_URLS = {
@@ -97,14 +98,14 @@
           <h3>Years of experience</h3>
           <div style="text-align: center;">
             <div ui-slider="yearsOfExperience" ng-model="yearsOfExperienceValue" style="margin:1em 2em"></div>
-            <input type="number" ng-model="yearsOfExperienceValue[0]" size="3" min="0" max="{{yearsOfExperienceValue[1]}}" style="width:3em;" ng-change="updateAndSearchAcs()"/>
-            <input type="number" ng-model="yearsOfExperienceValue[1]" size="3" min="{{yearsOfExperienceValue[0]}}" max="{{yearsOfExperience.max}}"style="width:3em;" ng-change="updateAndSearchAcs()"/>
+            <input type="number" ng-model="yearsOfExperienceValue[0]" size="3" min="0" max="{{yearsOfExperienceValue[1]}}" style="width:5em;" ng-change="updateAndSearchAcs()"/>
+            <input type="number" ng-model="yearsOfExperienceValue[1]" size="3" min="{{yearsOfExperienceValue[0]}}" max="{{yearsOfExperience.max}}"style="width:5em;" ng-change="updateAndSearchAcs()"/>
           </div>
         </div>
 
         <div ng-repeat="facetField in facetFields" class="filter">
           <h3>{{facetField.name}}</h3>
-          <ul>
+          <ul class="list-unstyled">
             <li ng-repeat="(facetname, facet) in facetField.facets">
               <label>
                 <input type="checkbox" ng-model="facet.checked" ng-change="updateAndSearchAcs(facetField, facetname)">
@@ -219,34 +220,30 @@
             <%? p.completeness.comment %><ul><%~p.completeness.comment :value:index%><li><%=value%></li><%~%></ul><%?%>
           </div>
           <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
-            <a href="{% url 'admin:cv_person_change' "111000111" %}" class="butt">Edit person</a>
+            <a href="{% url 'admin:cv_person_change' "111000111" %}" class="btn btn-xs btn-default">Edit person</a>
           <%?%>
-          <table>
+          <table class="table-fixed">
           <%~p.cv :cv:index%>
             <tr>
-              <td>
-                <a href="{% url 'cv_detail' "888888888" %}" class="butt bigbutt<%? cv.status.percent == 0 %> empty<%?? !cv.is_recent || !cv.status.complete %> red<%?%>" title="<%=cv.status.comment%>">
+              <td class="table-fixed-main-td">
+                <a href="{% url 'cv_detail' "888888888" %}" class="btn btn-xs btn-block <%? cv.status.percent == 0 %> btn-warning <%?? !cv.is_recent || !cv.status.complete %> btn-danger <%??%> btn-default<%?%>" title="<%=cv.status.comment%>">
                   <%=cv.tags%><br/>
-                  <span class="dato">
-                    <%=cv.last_edited%> <%=cv.status.percent%>%
-                    <span class="completeness">
-                      <span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span>
-                    </span>
+                  <small><%=cv.last_edited%> <%=cv.status.percent%>%</small>
+                  <span class="completeness">
+                    <span class="percent<%? cv.status.percent < 100 %> redpercent<%?%>" style="width: <%=cv.status.percent%>%;"></span>
                   </span>
                 </a>
               </td>
-              {% if user.is_authenticated %}
-                <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
-                  <td><a href="{% url 'admin:cv_cv_change' "888888888" %}" class="butt">Edit<br/>
-                  <span class="dato">CV</span></a></td>
-                <%?%>
-              {% endif %}
+              <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
+                <td><a href="{% url 'admin:cv_cv_change' "888888888" %}" class="btn btn-block btn-xs btn-default">Edit<br/>
+                <span class="dato">CV</span></a></td>
+              <%?%>
             </tr>
           <%~%>
           {% if user.is_authenticated %}
             <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
               <tr>
-                <td><a href="{% url 'cv_add_cv_for_person' "111000111" %}" class="butt">Add CV</a></td>
+                <td><a href="{% url 'cv_add_cv_for_person' "111000111" %}" class="btn btn-xs btn-default">Add CV</a></td>
               </tr>
             <%?%>
           {% endif %}
@@ -416,5 +413,25 @@
     </script> 
 
     </div>
+
+  <script>
+    $('.menutoggle').click(function(e){
+      $(this).next('.menulist').toggleClass('menulistactive');
+      e.preventDefault();
+    });
+    
+      /* Anything that gets to the document will hide the dropdown */
+      $(document).on('click', function (event) {
+          if ($(event.target).closest('.menulist,.menutoggle').length == false) {
+              $(".menulist").removeClass('menulistactive');
+          }
+      });
+
+      /* Clicks within the dropdown won't make it past the dropdown itself */
+      $(".menulist").click(function (e) {
+          e.stopPropagation();
+      });
+
+  </script>
 
 {% endblock %}
