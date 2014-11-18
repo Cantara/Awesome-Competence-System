@@ -21,6 +21,7 @@ class WhydahMiddleware(object):
 		if request.user.is_authenticated():
 			return None
 		else:
+			log.info('You are not logged in - Attempting log in')
 			if request.method == 'GET':
 				# log.info("HOST:%s; FOR:%s; SERVER:%s;" % (request.META['HTTP_X_FORWARDED_HOST'],request.META['HTTP_X_FORWARDED_FOR'],request.META['HTTP_X_FORWARDED_SERVER']) )
 				userTicket = request.GET.get('userticket', False)
@@ -28,7 +29,6 @@ class WhydahMiddleware(object):
 				userToken = False
 
 				if userTicket:
-					log.info('You are not logged in - Attempting log in')
 					log.info('Userticket:')
 					log.info(userTicket)
 					if userTicket == 'test' and DEBUG:
@@ -42,6 +42,8 @@ class WhydahMiddleware(object):
 						log.info('Getting usertoken:')
 						userToken = getUserToken(appToken, userTicket, 'userticket')
 						log.info(userToken)
+						if not userToken:
+							return authNotAvailable(request)
 	
 				if userToken:
 					logged_in = loginUserWithToken(userToken, request)
@@ -59,7 +61,7 @@ class WhydahMiddleware(object):
 	def process_view(self, request, view_func, view_args, view_kwargs):
 		viewFunctionName = view_func.__name__
 		log.info(viewFunctionName)
-		if not request.user.is_authenticated() and not viewFunctionName in ['myRemoteLogin','myRemoteLogout','error401']:
+		if not request.user.is_authenticated() and not viewFunctionName in ['myRemoteLogin','myRemoteLogout','error401', 'error503']:
 			log.info('User not authenticated, redirecting to login-page...')
 			log.info('Escaped path:')
 			escaped_path = urllib.quote(request.get_full_path())
@@ -80,6 +82,9 @@ def unauthorizedResponse(request):
 	else:
 		redirect_url = 'https://' + request.get_host()
 	return HttpResponseRedirect('error401')
+
+def authNotAvailable(request):
+	return HttpResponseRedirect('error503')
 
 def loginUserWithToken(userToken, request):
 
@@ -164,7 +169,6 @@ def getUserToken(appToken, idvalue, idtype):
 			log.error('URL-problem:')
 			log.error(e)
 			log.error(path)
-			return False
 	return False
 
 def getAppCredXML(appID, appPass):
