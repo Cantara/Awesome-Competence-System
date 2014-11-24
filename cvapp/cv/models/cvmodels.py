@@ -501,13 +501,13 @@ class Cv(models.Model):
 		else:
 			comment.append("Does not have at least one set of competences")
 		
-		# Minimum 4 entries in experience and workplace combined
-		maxscore += 4
-		if self.experience.count() + self.workplace.count() >= 4:
-			myscore +=4
+		# Minimum 2 entries in experience and workplace combined
+		maxscore += 2
+		if self.experience.count() + self.workplace.count() >= 2:
+			myscore +=2
 		else:
 			myscore += self.experience.count() + self.workplace.count()
-			comment.append("Does not have at least four entries in experience and workplace combined")
+			comment.append("Does not have at least two entries in experience and workplace combined")
 		
 		# Minimum 1 entry in education
 		maxscore += 1
