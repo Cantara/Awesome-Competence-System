@@ -1,4 +1,4 @@
-var AcsApp = angular.module('AcsApp', ['ui.slider']);
+var AcsApp = angular.module('AcsApp', ['ui.slider','ngSanitize']);
 
 AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
 
@@ -433,6 +433,36 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
     }
     $scope.selectedEmails = m.join('; ');
     $('#selectedemails').select();
+  }
+
+  $scope.composeNag = function(personName, personId) {
+    console.log('Compose a nag for ', personName, personId);
+    $scope.nag = {};
+    $scope.nag.recipientName = personName;
+    $scope.nag.recipientId = personId;
+    $('#nagmodal').modal('show');
+  }
+
+  $scope.sendNag = function(){
+    var formdata = $('#nagForm').serialize();
+    console.log('Trying to send nagmail...', formdata);
+    $.ajax({
+      type: "POST",
+      url: DJANGO_URLS.cv_nagmail,
+      data: formdata
+    }).done(function( msg ) {
+      console.log('Send nagmail succeeded.', $scope);
+      $scope.nag.feedback = msg;
+      $scope.nag.success = true;
+      $scope.nag.failure = false;
+      $scope.$apply();
+    }).fail(function( response ) {
+      console.log('Send nagmail failed.', $scope);
+      $scope.nag.feedback = response.responseText;
+      $scope.nag.failure = true;
+      $scope.nag.success = false;
+      $scope.$apply();
+    });
   }
 
 });

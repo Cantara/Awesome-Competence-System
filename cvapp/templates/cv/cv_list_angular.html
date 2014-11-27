@@ -16,6 +16,7 @@
       cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
       cv_detail:              "{% url 'cv_detail' "888888" %}".replace('888888/',''),
       cv_multi:               "{% url 'cv_multi' %}",
+      cv_nagmail:             "{% url 'cv_nagmail' %}",
       media: "{{ MEDIA_URL }}",
       static: "{{ STATIC_URL }}",
       solr: "{{solrurl}}"
@@ -33,6 +34,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-touch.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-sanitize.min.js"></script>
   <script src="{{ STATIC_URL }}js/doT.min.js"></script>
   <script src="{{ STATIC_URL }}js/ZeroClipboard.min.js"></script>
   <script src="{{ STATIC_URL }}js/flash_detect_min.js"></script>
@@ -57,19 +59,24 @@
     </p><br/>
   {% endif %}
 
-  <h1>ACS</h1>
-  <input type="text" size="30" style="margin:0 0 1em 0; padding:0.4em" name="searchQuery" placeholder="Search" ng-model="searchQuery" ng-change="updateAndSearchAcs()" autofocus/>
-  <div style="text-transform: uppercase; font-size: 80%;">
-    Showing <span id="numFound" ng-bind="numFound"></span> of <span ng-bind="totalFound"></span>.
-    Sort by
-    <select name="sorting" ng-model="sortSetting" ng-change="updateAndSearchAcs()" style="font: inherit; color: inherit; text-transform: inherit; background: transparent;">
-      <option value="name_exact asc">Name a-z</option>
-      <option value="name_exact desc">Name z-a</option>
-      <option value="years_of_experience asc">Years of experience 0-9</option>
-      <option value="years_of_experience desc">Years of experience 9-0</option>
-      <option value="last_edited desc">Recently edited</option>
-      <option value="last_edited asc">Least recently edited</option>
-    <select>
+  <div class="form-inline text-left">
+    <div class="form-group has-feedback">
+      <label class="sr-only">Search</label>
+      <input type="text" size="30" class="form-control" name="searchQuery" id="searchQuery" placeholder="Search" ng-model="searchQuery" ng-change="updateAndSearchAcs()" autofocus/>
+      <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+    </div>
+    <span style="text-transform: uppercase; font-size: 80%; margin-left: .8em">
+      Showing <span id="numFound" ng-bind="numFound"></span> of <span ng-bind="totalFound"></span>.
+      Sort by
+      <select name="sorting" ng-model="sortSetting" ng-change="updateAndSearchAcs()" style="font: inherit; color: inherit; text-transform: inherit; background: transparent;">
+        <option value="name_exact asc">Name a-z</option>
+        <option value="name_exact desc">Name z-a</option>
+        <option value="years_of_experience asc">Years of experience 0-9</option>
+        <option value="years_of_experience desc">Years of experience 9-0</option>
+        <option value="last_edited desc">Recently edited</option>
+        <option value="last_edited asc">Least recently edited</option>
+      <select>
+    </span>
   </div>
 
 {% endblock %}
@@ -79,12 +86,13 @@
 <div id="optionsbox" ng-class="{hiddenopts: hideFilter}">
     
     <div class="option">
-    <h3>View</h3>
-    <label><input type="checkbox" id="multicvcheck" ng-model="showListView" ng-change="updateAndSearchAcs()"><i class="icon-th"></i><i class="icon-list"></i></label><br/><br/>
-
-    <a class="btn btn-default btn-xs" href="{{urls.cv_person_add}}" style="margin-bottom:.5em;"><i class="icon-plus-sign"></i> Person</a>
-    <a class="btn btn-default btn-xs" style="margin-bottom:.5em;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
-  
+      <h3>View</h3>
+      <div class="btn-group" style="margin-bottom:12px;">
+        <button type="button" class="btn btn-xs btn-default" ng-click="showListView=false;updateAndSearchAcs();" ng-class="{'btn-primary': !showListView}" style="width:auto"><i class="icon-th"></i></button>
+        <button type="button" class="btn btn-xs btn-default" ng-click="showListView=true;updateAndSearchAcs();" ng-class="{'btn-primary': showListView}" style="width:auto"><i class="icon-list"></i></button>
+      </div>
+      <a class="btn btn-default btn-xs" href="{{urls.cv_person_add}}" style="margin-bottom:12px;"><i class="icon-plus-sign"></i> Person</a>
+      <a class="btn btn-default btn-xs" style="margin-bottom:12px;" ng-click="getJson()"><i class="icon-download"></i> Json</a>
     </div>
     
     <div class="option animateheight">
@@ -103,6 +111,21 @@
           </div>
         </div>
 
+        <div class="filter">
+          <h3 ng-repeat-start="cf in customFilter.list">{{cf.title}}</h3>
+          <div class="btn-group btn-group-justified" ng-repeat-end>
+            <label class="btn btn-xs btn-default" ng-class="{'btn-primary':cf.status=='all'}" ng-click="updateAndSearchAcs()">
+              <input type="radio" class="hidden" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="all" ng-model="cf.status"> All
+            </label>
+            <label class="btn btn-xs btn-default" ng-class="{'btn-primary':cf.status=='+'}" ng-click="updateAndSearchAcs()" style="text-transform: capitalize;">
+              <input type="radio" class="hidden" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="+" ng-model="cf.status"> {{cf.title}}
+            </label>
+            <label class="btn btn-xs btn-default" ng-class="{'btn-primary':cf.status=='-'}" ng-click="updateAndSearchAcs()" >
+              <input type="radio" class="hidden" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="-" ng-model="cf.status"> Not {{cf.title}}
+            </label>
+          </div>
+        </div>
+
         <div ng-repeat="facetField in facetFields" class="filter">
           <h3>{{facetField.name}}</h3>
           <ul class="list-unstyled">
@@ -113,13 +136,6 @@
               </label>
             </li>
           </ul>
-        </div>
-
-        <div class="filter" ng-repeat="cf in customFilter.list">
-          <h3>{{cf.title}}</h3>
-            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="all" ng-model="cf.status"/>Show all</label><br/>
-            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="+" ng-model="cf.status"/>Show {{cf.title}}</label><br/>
-            <label><input type="radio" name="{{cf.title}}" ng-change="updateAndSearchAcs()" value="-" ng-model="cf.status"/>Show not {{cf.title}}</label><br/>
         </div>
 
       </div>
@@ -140,59 +156,6 @@
 {% block content %}
     <div ng-show="!showListView">
 
-      {% comment %}
-      <div class="block tiled" ng-repeat="p in persons" id="p{{p.id}}">
-        <header>
-          <h3 ng-bind="p.name"></h3>
-          <h4 ng-bind="p.title"></h4>
-        </header>
-        <img ng-src="{{urls.media}}{{p.image}}" class="photo" style="float: left;" ng-if="p.image">
-
-        <div class="completeness">
-          <div class="percent" ng-class="{redpercent: p.completeness.percent < 100}" ng-style="{width: {{p.completeness.percent}}+'%'}"></div>
-        </div>
-
-        <section>
-          <span style="float: right;">
-            <span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i></span>
-            <a class="butt" ng-class="{ 'butt-red': p.completeness.percent<100 }"><i class="icon-envelope"></i></a>
-          </span>
-                  
-          <p class="ldetail">{{p.phone}} <img ng-src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/><br/>
-          <a href="mailto:{{p.mail}}" ng-bind="p.mail"></a></p>
-        </section>
-        <div class="cvset">
-          <div class="ldetail" ng-class="{alertbox: p.completeness.percent < 100}">
-            <p>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</p>
-            <p><span ng-if="isRecent(p.last_edited)"><i class="icon-time"></i> More than 4 months since last update.</span></p>
-            <ul ng-if="p.completeness.comment">
-              <li ng-repeat="c in p.completeness.comment">{{c}}</li>
-            </ul>
-          </div>
-            <a href="{{urls.cv_person_change}}{{p.id}}/" class="butt">Edit person</a>
-          <table>
-            <tr ng-repeat="cv in p.cv">
-              <td>
-                <a href="{{urls.cv_detail}}{{cv.id}}/" class="butt bigbutt>">
-                  {{cv.tags}}<br/>
-                  <span class="dato">{{cv.last_edited}} {{cv.status.percent}}% <span class="completeness"><span class="percent"></span></span></span>
-                </a>
-              </td>
-              <td>
-                <a href="{{urls.cv_cv_change}}{{cv.id}}/" class="butt">Edit<br/>
-                <span class="dato">CV</span></a>
-              </td>
-            </tr>
-        
-            <tr>
-              <td><a href="{{urls.cv_add_cv_for_person}}{{p.id}}/" class="butt">Add CV</a></td>
-            </tr>
-          
-          </table>
-        </div>
-      </div>
-      {% endcomment %}
-
     <script id="persontemplate" type="text/x-dot-template">
       <div class="block tiled" id="p<%=p.id%>">
         <header>
@@ -206,7 +169,7 @@
         </div>
         <section>
           <span>                    
-                      <a onClick="nagmail.show('<%=p.name%>',<%=p.id%>); return false;" class="btn btn-xs <%? p.completeness.percent<100 %>btn-danger<%??%>btn-default<%?%>" style="float: right;"><i class="icon-envelope"></i></a>
+             <button ng-click="nag={recipientName:'<%=p.name%>', recipientId:'<%=p.id%>'}" data-toggle="modal" data-target="#nagmodal" type="button" class="btn btn-xs <%? p.completeness.percent<100 %>btn-danger<%??%>btn-default<%?%>" style="float: right;"><i class="icon-envelope"></i></button>
                     <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time" style="float: right; margin: .3em"></i><%?%>
                   </span>
                   
@@ -279,10 +242,10 @@
               <input tri-state-checkbox elements="persons" elements-selected="personsSelected" change-action="updateSelectedEmails()">
               </td>
             <td colspan="2" class="lineright">
-              <button class="butt" data-clipboard-target="selectedemails" id="emailCopyButton" ng-if="hasFlash" type="button">
+              <button class="btn btn-default btn-xs" data-clipboard-target="selectedemails" id="emailCopyButton" ng-if="hasFlash" type="button">
                 <i class="icon-copy"></i> Copy e-mails
               </button>
-              <button class="butt" ng-click="showSelectedEmails()" ng-if="!hasFlash" type="button">
+              <button class="btn btn-default btn-xs" ng-click="showSelectedEmails()" ng-if="!hasFlash" type="button">
                 <i class="icon-copy"></i> <span ng-hide="selectedEmailsVisible">Show</span><span ng-show="selectedEmailsVisible">Hide</span> e-mails
               </button>
               <div ng-show="selectedEmailsVisible">
@@ -292,7 +255,7 @@
               </td>
             <td>
 
-              <button class="butt" ng-click="downloadMulti()" type="button"><i class="icon-copy"></i> Download CVs</button>
+              <button class="btn btn-default btn-xs" ng-click="downloadMulti()" type="button"><i class="icon-copy"></i> Download CVs</button>
               <button type="button" class="menutoggle" style="background: none; cursor: pointer; border-bottom: 1px dotted #aaa; text-align: left">
                 {% verbatim %} {{multi.format}}, {{multi.language}}, {{multi.template}} {% endverbatim %}
                 <i class="icon-caret-down"></i>
@@ -310,61 +273,11 @@
             <td>Download</td>
           </tr>
         </thead>
-      {% comment %}
         {% verbatim %}
-          <tbody ng-repeat="p in persons">
-            <tr ng-repeat="cv in p.cv">
-              <td rowspan="p.cv.length" ng-if="$index==0">
-                <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{$index}}" ng-change="updateSelectedEmails()"/>
-                </td>
-              <td rowspan="p.cv.length" ng-if="$index==0">
-                <img ng-src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
-                </td>
-              <td rowspan="p.cv.length" ng-if="$index==0" class="lineright">
-                <label for="p{{$index}}">
-                <h3>{{p.name}} ‒ {{p.title}}</h3>
-                <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
-                </label>
-                </td>
-              <td ng-if="$index>0"></td>
-              <td ng-if="$index>0"></td>
-              <td ng-if="$index>0"></td>
-              <td data-title="Select CV">
-                <label><input type="checkbox" name="cvid" value="{{cv.id}}" >{{cv.tags}} ({{cv.status.percent}}%)</label>
-                </td>
-              <td data-title="Download">
-                <a href="{{urls.cv_detail}}{{cv.id}}/" title="{{cv.status.comment}}" target="_blank" class="butt">View</a>&nbsp;
-                <a href="{{urls.cv_download_format_doc}}?cvid={{cv.id}}" target="_blank" class="butt">DOC</a>&nbsp;
-                <a href="{{urls.cv_download_format_pdf}}?cvid={{cv.id}}" target="_blank" class="butt">PDF</a>
-                </td>
-            </tr>
-            <tr ng-if="!p.cv.length">
-              <td>
-                <input type="checkbox" ng-model="p.isSelected" value="p.mail" id="p{{$index}}" ng-change="updateSelectedEmails()"/>
-                </td>
-              <td>
-                <img ng-src="{{urls.static}}/img/flags/{{p.country}}.gif" width="16" height="11" alt="p.country" ng-if="p.country"/>
-                </td>
-              <td class="lineright">
-                <label for="p{{$index}}">
-                <h3>{{p.name}} ‒ {{p.title}}</h3>
-                <p><small>Profile {{p.completeness.percent}}% complete. Updated: {{p.last_edited}}</small></p>
-                </label>
-                </td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-
-          </tr>
-          <tr>
-            <td colspan="4" ng-if="!persons.length && searchQuery">No results for search "{{searchQuery}}".</td>
-            <td colspan="4" ng-if="!persons.length && !searchQuery">Type above to start searching!</td>
-          </tr>
+          <tbody><tr><td colspan="9"><img ng-src="{{urls.static}}/img/loading.gif"> Loading</td></tr></tbody>
         {% endverbatim %}
-      {% endcomment %}
       </table>
-    <form>
+    </form>
 
     <script id="tabletemplate" type="text/x-dot-template">
       <% if (p.cv.length < 1) { p.cv.push({}); var nocvs = true; } %>
@@ -381,8 +294,8 @@
               </td>
             <td rowspan="<%=p.cv.length%>" class="lineright">
               <label for="p<%=p.index%>checkbox" class="textcheckbox">
-              <h5><%=p.name%> ‒ <%=p.title%></h5>
-              <p><small>Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></small></p>
+              <h5><%=p.name%><br><%=p.title%></h5>
+              <p class="small">Profile <%=p.completeness.percent%>% complete. Updated: <%=p.last_edited%></p>
               </label>
               </td>
             <% var personwritten = true; %>
@@ -413,6 +326,37 @@
     </script> 
 
     </div>
+
+
+<!-- Role Modal -->
+<div class="modal fade" id="nagmodal" tabindex="-1" role="dialog" aria-labelledby="naglabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          {% verbatim %}
+            <h4 class="modal-title" id="naglabel">Nag on <strong>{{nag.recipientName}}</strong></h4>
+          {% endverbatim %}
+      </div>
+      <div class="modal-body">
+        <form name="nagForm" id="nagForm">
+          {% csrf_token %}
+          <input type="hidden" name="receiver_id" ng-value="nag.recipientId">
+          <input type="hidden" name="sendermail" value="{{ user.email }}">
+          <input type="hidden" name="sendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
+          <h4>From: <strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong></h4>
+          <textarea name="message" class="form-control" cols="30" rows="10" placeholder="Message" ng-hide="nag.success"></textarea>
+          <p class="bg-info" style="padding:10px; margin-top:10px" ng-show="nag.success" ng-bind-html="nag.feedback"></p>
+          <p class="bg-danger" style="padding:10px; margin-top:10px" ng-show="nag.failure" ng-bind-html="nag.feedback"></p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="sendNag()" ng-hide="nag.success">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <script>
     $('.menutoggle').click(function(e){
