@@ -57,25 +57,20 @@ def nagmail(request):
 		if p.completeness()['percent'] < 100:
 			missing = 'Missing elements in your profile include: \n -%s' % '\n- '.join(p.completeness()['comment'])
 
-		subject = "%s has indicated that you should update your data in ACS" % sendername
-		mailtext = '''Hi %s,
-
-A colleague of yours, %s, has indicated that you should update your CV in ACS with the message:
-
-"%s"
+		subject = "Message from %s in ACS" % sendername
+		mailtext = '''%s
 
 %s
 
 Update your CV here: %s?q=name:%%22%s%%22
 
+---
+
 It is of key importance to us that we have consistent and complete information in ACS as we use it on a daily basis to find and allocate the correct people for the tasks. 
 If you have problems accessing or updating ACS, please check https://wiki.cantara.no/display/ACS/User+Manual for FAQ, User Manual and contact information.
-
-Best regards,
-
-The Awesome Competence System''' % ( p.name, sendername, message, missing, localsettings.APP_URL, p.name.replace(" ","%20") )
+''' % ( message, missing, localsettings.APP_URL, p.name.replace(" ","%20") )
 		try:
-			mail = EmailMessage(subject, mailtext, 'noreply@altran.no', [p.mail], headers = {'Reply-To': sendermail})
+			mail = EmailMessage(subject, mailtext, 'noreply@altran.com', [p.mail], headers = {'Reply-To': sendermail})
 			mail.send()
 		except BadHeaderError:
 			return HttpResponseBadRequest('Invalid header found.')
@@ -96,20 +91,14 @@ def multinagmail(request):
 	if receiver_email and message:
 		if not sendermail:
 			sendermail = no_reply
-		if not sendername:
-			sendername = 'Mr/Ms Not_logged_in'
-		subject = "%s is nagging you through ACS" % sendername
-		mailtext = '''Hi, 
-The following message have been sent through ACS.
-Sent by: %s
-Sent by E-mail: %s
-
-%s
-
-ACS url: %s''' % (sendername, sendermail, message, "https://"+request.get_host())
+		subject = "Message from %s in ACS" % sendername
+		mailtext = '''%s
+---
+ACS
+%s''' % (message, "https://"+request.get_host())
 		temp_list = receiver_email.split(';', 1)
 		try:
-			mail = EmailMessage(subject, mailtext, sendermail, temp_list, headers = {'Reply-To': sendermail})
+			mail = EmailMessage(subject, mailtext, 'noreply@altran.com', temp_list, headers = {'Reply-To': sendermail})
 			mail.send()
 			#if sendcopy:
 				#copy = EmailMessage(subject, mailtext, no_reply, [sendermail], headers = {'Reply-To': no_reply})

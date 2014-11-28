@@ -334,16 +334,16 @@
       </div>
       <div class="modal-body">
         {% verbatim %}
-        <h5>To <strong>{{nag.recipientName||nag.recipientEmails}}</strong></h5>
+        <h5>To <strong>{{nag.recipientName||nag.recipientEmails||"No users selected"}}</strong></h5>
         {% endverbatim %}
         <form name="nagForm" id="nagForm">
           {% csrf_token %}
           <input type="hidden" name="receiver_id" ng-value="nag.recipientId">
           <input type="hidden" name="receiver_email" ng-value="nag.recipientEmails">
-          <input type="hidden" name="sendermail" value="{{ user.email }}">
+          <input type="hidden" name="sendermail" value="{% if user.email %}{{ user.email }}{% else %}{{ user.username }}{% endif %}">
           <input type="hidden" name="sendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
-          <h4>From: <strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong></h4>
-          <textarea name="message" class="form-control" cols="30" rows="10" placeholder="Message" ng-hide="nag.success"></textarea>
+          <h5>From: <strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong></h5>
+          <textarea name="message" ng-model="nag.message" class="form-control" cols="30" rows="10" placeholder="Message" ng-hide="nag.success"></textarea>
           <p class="bg-info" style="padding:10px; margin-top:10px" ng-show="nag.success" ng-bind-html="nag.feedback"></p>
           <p class="bg-danger" style="padding:10px; margin-top:10px" ng-show="nag.failure" ng-bind-html="nag.feedback"></p>
         </form>
@@ -351,7 +351,9 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" ng-click="sendNag()" ng-hide="nag.success" ng-if="nag.recipientId">Send</button>
-        <button type="button" class="btn btn-primary" ng-click="sendNag(true)" ng-hide="nag.success" ng-if="nag.recipientEmails">Send</button>
+        {% verbatim %}
+        <button type="button" class="btn btn-primary" ng-click="sendNag(true)" ng-hide="nag.success" ng-if="nag.recipientEmails">Send to {{nag.recipientEmails.split(';').length}} recipients</button>
+        {% endverbatim %}
       </div>
     </div>
   </div>
