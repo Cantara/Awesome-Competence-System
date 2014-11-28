@@ -14,7 +14,9 @@
 					<h1 class="text-center" style="font-size: 600%; color: #39e;"><span class="glyphicon glyphicon-lock"></span></h1>
 					<h1>Unauthorized <small>401</small></h1>
 					<p class="lead">Doesn't look like you have the roles needed to access ACS.</p>
-					<p class="lead"><a href="{{SSO_URL}}sso/login?redirectURI=https://{{request.META.HTTP_HOST}}">Try to log in again...</a></p>
+					<p class="lead"><a href="{{SSO_URL}}sso/login?redirectURI=https://{{request.META.HTTP_HOST}}">Try to log in again</a></p>
+					<p><a href="{{SSO_URL}}sso/logout?redirectURI=https://{{request.META.HTTP_HOST}}">Log out from all Whydah-connected services</a></p>
+					<p><a href="{{SSO_URL}}sso/welcome">See your currently logged in profile</a></p>
 				</div>
 			</div>
 		</div>
