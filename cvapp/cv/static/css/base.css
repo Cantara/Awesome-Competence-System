@@ -155,7 +155,6 @@ body {
   clear: right; }
 
 .ldetail ul {
-  margin-left: 1.5em;
   list-style: circle; }
 
 .completeness {
@@ -206,10 +205,6 @@ span.percent {
 input, textarea {
   font: inherit;
   border: 1px solid rgba(127, 127, 127, 0.3); }
-
-.highlight {
-  font-size: 0.8em;
-  opacity: 0.6; }
 
 /* FORM */
 #matrix input[type="text"], #matrix textarea {
@@ -264,21 +259,27 @@ fieldset.competence {
     color: #aaa; }
   .responsivetable th {
     color: #999;
-    font-size: 1.3em; }
-  .responsivetable td:before {
-    content: attr(data-th);
-    font-weight: bold;
-    display: inline; }
-    @media (min-width: 720px) {
-      .responsivetable td:before {
-        display: none; } }
+    font-size: 1.3em;
+    font-weight: normal;
+    display: none; }
+  .responsivetable td {
+    display: block; }
+    .responsivetable td:before {
+      content: attr(data-th);
+      font-weight: bold;
+      display: inline; }
+      @media (min-width: 720px) {
+        .responsivetable td:before {
+          display: none; } }
   .responsivetable th, .responsivetable td {
     display: block;
     text-align: left;
     vertical-align: top;
-    padding: .25em; }
+    padding: .5em; }
     @media (min-width: 720px) {
       .responsivetable th, .responsivetable td {
         display: table-cell; } }
+  .responsivetable h5 {
+    margin: 0 0 .5em 0; }
 
 /*# sourceMappingURL=base.css.map */

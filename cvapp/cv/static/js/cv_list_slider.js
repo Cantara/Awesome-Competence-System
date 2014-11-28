@@ -117,7 +117,6 @@ angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider',
                         prevRangeValues.max = ngModel.$viewValue[1];
 
                     }
-                    console.log('ELM:', elm);
                     elm.slider(method, ngModel.$viewValue);
                 };
 

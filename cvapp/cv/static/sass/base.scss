@@ -173,7 +173,6 @@ body {
 }
 
 .ldetail ul {
-	margin-left: 1.5em;
 	list-style: circle;
 }
 
@@ -226,11 +225,6 @@ span.percent {
 input, textarea {
 	font: inherit;
 	border: 1px solid rgba(127,127,127,0.3);
-}
-
-.highlight {
-	font-size: 0.8em;
-	opacity: 0.6;
 }
 
 /* FORM */
@@ -291,9 +285,12 @@ $breakpoint-small: 720px;
 	th {
 		color: #999;
 		font-size: 1.3em;
+		font-weight: normal;
+		display: none;
 	}
 
 	td {
+		display: block;
 		&:before {
 			content: attr(data-th);
 			font-weight: bold;
@@ -308,10 +305,12 @@ $breakpoint-small: 720px;
 		display: block;
 		text-align: left;
 		vertical-align: top;
-		padding: .25em;
+		padding: .5em;
 		@media (min-width: $breakpoint-small) {
 			display: table-cell;
 		}
 	}
+
+	h5 { margin: 0 0 .5em 0; }
 
 }

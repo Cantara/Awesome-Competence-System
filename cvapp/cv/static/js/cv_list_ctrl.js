@@ -27,7 +27,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
     },
     update: function(pName, text){
       this[pName] = text;
-      console.log(pName, this[pName], text);
+      // console.log(pName, this[pName], text);
     }
   };
 
@@ -75,6 +75,8 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
       rows: rows,
       start: start,
       sort: $scope.sortSetting,
+      hl: 'true',
+      'hl.snippets': 3,
       fl: 'rendered',
       fq: $scope.searchParameters.fq || '',
       facet: 'true',
@@ -141,6 +143,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
         }
       }
       $scope.numFound = data.response.numFound;
+      $scope.highlighting = data.highlighting;
       $scope.hasMorePersons = $scope.numFound > $scope.persons.length;
       console.log('Found:', $scope.numFound, 'Shown:', $scope.persons.length, 'Hasmore:', $scope.hasMorePersons);
       renderPersons();
@@ -187,6 +190,17 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
       $mr.append(html); 
     } else {
       $('#cardresults').html(html);
+      showHighlighting($scope.highlighting);
+    }
+  }
+
+  function showHighlighting(highlighting){
+    console.log('Adding highlights...');
+    for( var person in highlighting ){
+      var pid = person.replace(/cv.person./, 'p');
+      for( var hl in highlighting[person] ) {
+        $('#'+pid + ' .cvset').prepend('<div class="bg-info highlighting">...'+highlighting[person][hl]+'...</div>');
+      }
     }
   }
 
@@ -355,7 +369,7 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
     // Create listview URL-Params
     if($scope.showListView) params.push('view=list');
 
-    console.log($scope.searchParameters);
+    console.log('Search parameters updated:', $scope.searchParameters);
 
     Url.setParams(params.join('&'));
   }
