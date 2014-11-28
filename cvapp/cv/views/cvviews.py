@@ -89,8 +89,8 @@ The Awesome Competence System''' % ( p.name, sendername, message, missing, local
 def multinagmail(request):
 	receiver_email = request.POST.get('receiver_email', '')
 	message = request.POST.get('message', '')
-	sendermail = request.POST.get('multisendermail', '')
-	sendername = request.POST.get('multisendername', '')
+	sendermail = request.POST.get('sendermail', '')
+	sendername = request.POST.get('sendername', '')
 	#sendcopy = request.POST.get('checkboxcopy', '')
 	no_reply = 'no-reply@altran.com'
 	if receiver_email and message:

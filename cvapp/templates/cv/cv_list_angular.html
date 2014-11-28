@@ -17,6 +17,7 @@
       cv_detail:              "{% url 'cv_detail' "888888" %}".replace('888888/',''),
       cv_multi:               "{% url 'cv_multi' %}",
       cv_nagmail:             "{% url 'cv_nagmail' %}",
+      cv_multinagmail:        "{% url 'cv_multinagmail' %}",
       media: "{{ MEDIA_URL }}",
       static: "{{ STATIC_URL }}",
       solr: "{{solrurl}}"
@@ -50,12 +51,12 @@
   {% if not user.person %}
     <p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
       Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You don't seem to have a CV profile. 
-      <a href="{% url 'cv_add_person_for_user' %}" class="btn btn-primary">Create a profile now!</a>
-    </p><br/>
+      <a href="{% url 'cv_add_person_for_user' %}" class="btn btn-primary btn-sm">Create a profile now!</a>
+    </p>
   {% elif not user.person.cv_set.all %}
     <p style="padding: 1em; margin: 1em; background: #fff; display: inline-block; border-bottom: 2px solid #bbb;">
       Hi, {% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}! You have registered a profile, but you don't seem to have any CVs.
-      <a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="btn btn-primary">Create a CV now!</a>
+      <a href="{% url 'cv_add_cv_for_person' user.person.id %}" class="btn btn-primary btn-sm">Create a CV now!</a>
     </p><br/>
   {% endif %}
 
@@ -173,7 +174,7 @@
                     <%? ( new Date().getTime() - new Date(p.last_edited).getTime() ) / (1000*60*60*24) > 120 %><i class="icon-time" style="float: right; margin: .3em"></i><%?%>
                   </span>
                   
-          <p class="ldetail"><%=p.phone%> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
+          <p class="ldetail"><a href="tel:<%=p.phone%>"><%=p.phone%></a> <%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%><br/>
           <a href="mailto:<%=p.mail%>"><%=p.mail%></a></p>
         </section>
         <div class="cvset">
@@ -184,6 +185,7 @@
           </div>
           <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
             <a href="{% url 'admin:cv_person_change' "111000111" %}" class="btn btn-xs btn-default">Edit person</a>
+            <a href="{% url 'cv_add_cv_for_person' "111000111" %}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-plug"></span> Add CV</a>
           <%?%>
           <table class="table-fixed">
           <%~p.cv :cv:index%>
@@ -203,13 +205,6 @@
               <%?%>
             </tr>
           <%~%>
-          {% if user.is_authenticated %}
-            <%? p.username == "{{ user.username }}" {% if user.is_superuser %}|| true{% endif %} %>
-              <tr>
-                <td><a href="{% url 'cv_add_cv_for_person' "111000111" %}" class="btn btn-xs btn-default">Add CV</a></td>
-              </tr>
-            <%?%>
-          {% endif %}
           </table>
         </div>
       </div>
@@ -252,6 +247,7 @@
                 Press CTRL+C to copy.<br>
                 <textarea cols="30" rows="10" disabled="disabled" ng-model="selectedEmails" id="selectedemails"></textarea>
               </div>
+              <button class="btn btn-default btn-xs" type="button" ng-click="composeMultiNag()" data-toggle="modal" data-target="#nagmodal">Compose message</button>
               </td>
             <td>
 
@@ -328,20 +324,22 @@
     </div>
 
 
-<!-- Role Modal -->
+<!-- Nag Message Modal -->
 <div class="modal fade" id="nagmodal" tabindex="-1" role="dialog" aria-labelledby="naglabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          {% verbatim %}
-            <h4 class="modal-title" id="naglabel">Nag on <strong>{{nag.recipientName}}</strong></h4>
-          {% endverbatim %}
+        <h4 class="modal-title" id="naglabel">Compose Message</h4>
       </div>
       <div class="modal-body">
+        {% verbatim %}
+        <h5>To <strong>{{nag.recipientName||nag.recipientEmails}}</strong></h5>
+        {% endverbatim %}
         <form name="nagForm" id="nagForm">
           {% csrf_token %}
           <input type="hidden" name="receiver_id" ng-value="nag.recipientId">
+          <input type="hidden" name="receiver_email" ng-value="nag.recipientEmails">
           <input type="hidden" name="sendermail" value="{{ user.email }}">
           <input type="hidden" name="sendername" value="{% if user.person %}{{ user.person.name }}{% else %}{{ user.username }}{% endif %}">
           <h4>From: <strong>{% if user.first_name %}{{user.first_name}} {{user.last_name}}{% else %}{{user.username}}{% endif %}</strong></h4>
@@ -352,29 +350,31 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="sendNag()" ng-hide="nag.success">Send</button>
+        <button type="button" class="btn btn-primary" ng-click="sendNag()" ng-hide="nag.success" ng-if="nag.recipientId">Send</button>
+        <button type="button" class="btn btn-primary" ng-click="sendNag(true)" ng-hide="nag.success" ng-if="nag.recipientEmails">Send</button>
       </div>
     </div>
   </div>
 </div>
 
   <script>
+
     $('.menutoggle').click(function(e){
       $(this).next('.menulist').toggleClass('menulistactive');
       e.preventDefault();
     });
-    
-      /* Anything that gets to the document will hide the dropdown */
-      $(document).on('click', function (event) {
-          if ($(event.target).closest('.menulist,.menutoggle').length == false) {
-              $(".menulist").removeClass('menulistactive');
-          }
-      });
+  
+    /* Anything that gets to the document will hide the dropdown */
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.menulist,.menutoggle').length == false) {
+            $(".menulist").removeClass('menulistactive');
+        }
+    });
 
-      /* Clicks within the dropdown won't make it past the dropdown itself */
-      $(".menulist").click(function (e) {
-          e.stopPropagation();
-      });
+    /* Clicks within the dropdown won't make it past the dropdown itself */
+    $(".menulist").click(function (e) {
+        e.stopPropagation();
+    });
 
   </script>
 

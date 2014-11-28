@@ -449,20 +449,27 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
     $('#selectedemails').select();
   }
 
+  $scope.composeMultiNag = function() {
+    console.log('Compose a nag for ', $scope.selectedEmails);
+    $scope.nag = {};
+    $scope.nag.recipientEmails = $scope.selectedEmails;
+  }
+
   $scope.composeNag = function(personName, personId) {
     console.log('Compose a nag for ', personName, personId);
     $scope.nag = {};
     $scope.nag.recipientName = personName;
     $scope.nag.recipientId = personId;
-    $('#nagmodal').modal('show');
   }
 
-  $scope.sendNag = function(){
+  $scope.sendNag = function(multi){
+    var nagUrl =  DJANGO_URLS.cv_nagmail;
+    if(multi) nagUrl = DJANGO_URLS.cv_multinagmail;
     var formdata = $('#nagForm').serialize();
     console.log('Trying to send nagmail...', formdata);
     $.ajax({
       type: "POST",
-      url: DJANGO_URLS.cv_nagmail,
+      url: nagUrl,
       data: formdata
     }).done(function( msg ) {
       console.log('Send nagmail succeeded.', $scope);
