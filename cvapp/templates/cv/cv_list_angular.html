@@ -9,6 +9,7 @@
     var DJANGO_URLS = {
       cv_person_change:       "{% url 'admin:cv_person_change' "999999" %}".replace('999999/',''),
       cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "999999" %}".replace('999999/',''),
+      cv_add_experience:      "{% url 'cv_add_experience'  %}",
       cv_person_add:          "{% url 'admin:cv_person_add' %}",
       cv_cv_change:           "{% url 'admin:cv_cv_change' "888888" %}".replace('888888/',''),
       cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
@@ -354,6 +355,106 @@
         {% verbatim %}
         <button type="button" class="btn btn-primary" ng-click="sendNag(true)" ng-hide="nag.success" ng-if="nag.recipientEmails">Send to {{nag.recipientEmails.split(';').length}} recipients</button>
         {% endverbatim %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Experience Modal -->
+<div class="modal fade" id="experiencemodal" tabindex="-1" role="dialog" aria-labelledby="experiencelabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="experiencelabel">Add Experience</h4>
+      </div>
+      <div class="modal-body">
+        <form name="experienceForm" id="experienceForm">
+          {% csrf_token %}
+          
+          <input type="hidden" name="pid" ng-value="{{ user.person.id }}">
+          
+          <div class="row">
+            <div class="col-sm-3 form-group">
+              <label for="from_month">From month</label>
+              <select class="form-control" name="from_month" id="from_month" ng-model="from_month" ng-options="m.id as m.name for m in months"></select>
+            </div>
+            <div class="col-sm-3 form-group">
+              <label for="from_year">From year</label>
+              <select class="form-control" name="from_year" id="from_year" ng-model="from_year" ng-options="y for y in years"></select>
+            </div>
+            <div class="col-sm-3 form-group">
+              <label for="to_month">To month</label>
+              <select class="form-control" name="to_month" id="to_month" ng-model="to_month" ng-options="m.id as m.name for m in months">
+                <option value="">To month</option>
+              </select>
+            </div>
+            <div class="col-sm-3 form-group">
+              <label for="to_year">To year</label>
+              <select class="form-control" name="to_year" id="to_year" ng-model="to_year" ng-options="y for y in years">
+                <option value="">To year</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 form-group">
+              <label for="">Title</label>
+              <input type="text" name="title" class="form-control"  placeholder="Title">
+            </div>
+            <div class="col-sm-6 form-group">
+              <label for="">Title (English)</label>
+              <input type="text" name="title_en" class="form-control" placeholder="Title (English)">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 form-group">
+              <label for="">Company</label>
+              <input type="text" name="company" class="form-control" placeholder="Company">
+            </div>
+            <div class="col-sm-6 form-group">
+              <label for="">Company (English)</label>
+              <input type="text" name="company_en" class="form-control" placeholder="Company (English)">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 form-group">
+              <label for="">Description</label>
+              <textarea name="description" class="form-control" cols="30" rows="7" placeholder="Description"></textarea>
+            </div>
+            <div class="col-sm-6 form-group">
+              <label for="">Description (English)</label>
+              <textarea name="description_en" class="form-control" cols="30" rows="7" placeholder="Description"></textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 form-group">
+              <label for="">Technologies/Methods</label>
+              <input type="text" name="techs" class="form-control" placeholder="Technologies/Methods">
+            </div>
+            <div class="col-sm-6 form-group">
+              <label for="">Technologies/Methods (English)</label>
+              <input type="text" name="techs_en" class="form-control" placeholder="Technologies/Methods (English)">
+            </div>
+          </div>
+
+          <label for="">Add this experience to following CVs</label>
+          <select name="cv_ids" id="" class="form-control" multiple>
+            {% for cv in user.person.cv_set.all %}
+            <option value="{{cv.id}}" selected>{{cv.tags}}</option>
+            {% endfor %}
+          </select>
+
+          <p class="bg-info" style="padding:10px; margin-top:10px" ng-show="experience.success" ng-bind-html="experience.feedback"></p>
+          <p class="bg-danger" style="padding:10px; margin-top:10px" ng-show="experience.failure" ng-bind-html="experience.feedback"></p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="experience={}">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="addExperience()" ng-hide="experience.success">Add experience</button>
       </div>
     </div>
   </div>

@@ -17,6 +17,8 @@ urlpatterns = patterns('cv.views',
 
     url(r'^cv/addpersonforuser/$', 'add_person_for_user', name='cv_add_person_for_user'),
     url(r'^cv/addcvforperson/(?P<pid>\d+)/$', 'add_cv_for_person', name='cv_add_cv_for_person'),
+
+    url(r'^cv/addexperience/$', 'add_experience', name='cv_add_experience'),
     
     url(r'^cv/download/$', 'download', name='cv_download'),
     url(r'^cv/download/(?P<format>pdf|doc|odt)/$', 'download', name='cv_download_format'),

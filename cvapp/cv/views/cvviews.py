@@ -195,6 +195,61 @@ def add_cv_for_person(request, pid):
 	else:
 		return HttpResponseForbidden()
 
+def add_experience(request):
+
+	pid = request.POST.get('pid','')
+	p = get_object_or_404(Person, pk=pid)
+
+	if request.user.is_superuser or request.user.person == p:
+
+		from_year = request.POST.get('from_year','')
+		from_month = request.POST.get('from_month','')
+		to_year = request.POST.get('to_year','')
+		to_month = request.POST.get('to_month','')
+		title = request.POST.get('title','')
+		title_en = request.POST.get('title_en','')
+		company = request.POST.get('company','')
+		company_en = request.POST.get('company_en','')
+		description = request.POST.get('description','')
+		description_en = request.POST.get('description_en','')
+		techs = request.POST.get('techs','')
+		techs_en = request.POST.get('techs_en','')
+
+		try:
+			exp = Experience(
+				person = p,
+				from_year = from_year,
+				from_month = from_month,
+				to_year = to_year,
+				to_month = to_month,
+				title = title,
+				title_en = title_en,
+				company = company,
+				company_en = company_en,
+				description = description, 
+				description_en = description_en,
+				techs = techs,
+				techs_en = techs_en,
+				)
+
+			exp.save()
+
+			cv_ids = request.POST.getlist('cv_ids')
+
+			for cv_id in cv_ids:
+				cv = get_object_or_404(Cv, pk=cv_id)
+				cv.experience.add(exp)
+				cv.save()
+
+			return HttpResponse( "Experience added: %s %s" % ( title, company ) )
+
+		except:
+			return HttpResponseBadRequest( "Experience not added, please review." )
+
+	else:
+
+		return HttpResponseForbidden()
+
 import locale
 import sys
  

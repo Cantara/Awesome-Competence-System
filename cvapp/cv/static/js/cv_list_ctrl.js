@@ -486,4 +486,51 @@ AcsApp.controller('SearchCtrl', function($scope, $q, $http, $compile, Url) {
     });
   }
 
+  $scope.months = [
+    {id:'1', name:'Jan'},
+    {id:'2', name:'Feb'},
+    {id:'3', name:'Mar'},
+    {id:'4', name:'Apr'},
+    {id:'5', name:'May'},
+    {id:'6', name:'Jun'},
+    {id:'7', name:'Jul'},
+    {id:'8', name:'Aug'},
+    {id:'9', name:'Sep'},
+    {id:'10', name:'Oct'},
+    {id:'11', name:'Nov'},
+    {id:'12', name:'Dec'}
+  ];
+
+  $scope.years = [];
+  for(var y = new Date().getFullYear(); y>1975; y--){
+    $scope.years.push(y);
+  }
+
+  $scope.from_year = new Date().getFullYear();
+  $scope.from_month = new Date().getMonth();
+
+  $scope.experience = {};
+
+  $scope.addExperience = function(){
+    var formdata = $('#experienceForm').serialize();
+    console.log('Trying to add experience...', formdata);
+    $.ajax({
+      type: "POST",
+      url: DJANGO_URLS.cv_add_experience,
+      data: formdata
+    }).done(function( msg ) {
+      console.log('Adding experience succeeded.', $scope);
+      $scope.experience.feedback = msg;
+      $scope.experience.success = true;
+      $scope.experience.failure = false;
+      $scope.$apply();
+    }).fail(function( response ) {
+      console.log('Adding experience failed.', $scope);
+      $scope.experience.feedback = response.responseText;
+      $scope.experience.failure = true;
+      $scope.experience.success = false;
+      $scope.$apply();
+    });
+  }
+
 });

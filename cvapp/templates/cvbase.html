@@ -75,6 +75,7 @@
 					            <li><a href="{% url 'admin:cv_cv_change' cv.id %}">Edit CV <em>{{cv.tags}}</em></a></li>
 					            {% endfor %}
 					            <li><a href="{% url 'cv_add_cv_for_person' user.person.id %}">Add CV</a></li>
+					            <li><a href="#" data-toggle="modal" data-target="#experiencemodal">Add Experience</a></li>
 							{% endif %}
 				            <li><a href="{% url 'cv.views.myRemoteLogout' %}">Log out</a></li>
 				        </ul>
