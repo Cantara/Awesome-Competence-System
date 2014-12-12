@@ -1,310 +1,241 @@
-
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> <!-- Forces IE out of comp mode -->
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Reports</title>
-        <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css" rel="stylesheet">
-		<style>
-			body {background-color: #ddd; margin-top: 3em;}
-			p {font-size: 80%;}
-			.score:before {content:'';width:1em;height:1em; display: inline-block;border-radius: 50%; margin-right: .5em;} 
-			.scorehigh:before 		{background-color: #5e0;}
-			.scoremedium:before 	{background-color: #ec3;}
-			.scorelow:before		{background-color: #ccc;}
-			.t_experience {text-align: right}
-			table {font-size: 0.9em; width: 100%; }
-			th { font-weight: 700;}
-			th, td { border-bottom: 1px solid #ccc; padding: .5em;}
-			.sort { text-decoration: underline; cursor: pointer;}
-			.sort:hover { background-color: #eee;}
-			tbody tr:hover, .selected { background-color: #f3f3f3; cursor: pointer; }
-			.margin-top {margin-top: 1em;}
-			.restrict-height {
-				max-height: 500px;
-				max-height: 80vh;
-				overflow-y: auto;
-				background-color: #fff;
-				padding: 1.5em;
-			}
-			.profile-photo {
-				width: 6em;
-				height: 6em;
-				border-radius: 3px;
-				background-color: #aaa; 
-				background-size: cover;
-				background-position: center;
-				margin: auto;
-			}
-		</style>
-	</head>
-	<body>
-
-		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAaJJREFUeNqkVoGNwjAMbLsAHSEjMEI3eEbgN2AENqiYoCMAE8AG7QZlgzwT9JPqjO5D7RS9JatJ7DjO5eK0KAyZpmkXtAs6Tu8ywrYrPpUwqUmC9kFbjI1o98lizdrgLSb5oMegjmxxzFPfwcdjTpsL3sHxxoFpVyJNYnOYE6XLZd5l7GqmlGBbKNndjN3xmYyG3+1tl5jsU1jIvl1g0VbxdYg1J1GBZjHwqSzLh5KYUHGA8tgfQYxTjDnHJtycsW2h5BE6U9fwd6/zBDxrnCdAxXDlkhorwHM32CtQPML2h6ixbcEEiTFdhc7TcPzC90Jjl8S2JHPMKnPx6vARul3JJO0GPqrIApsMPD8BmrucQWzHsQxMG74DvbKDs7Ah6F5qEdrCvrN1yCZNk2q5VK5nsWhaEZ779C2griz+IAY5xZdjXdVSQTsTiXDV0HNi67RSoRY7qvFRDgswHMjuzWKXlmtacNSKGhVBOYtGLdcLsHhkUq94AWv4evPBWfNkKmwxn8xSe/TDpyOmDKgtT7pE0WdL7PrGBfzo7+Lfvy2/AgwAMspFg0vBldQAAAAASUVORK5CYII=" alt="ACS" style="max-height: 1em; vertical-align:top"> ACS</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-			            <li><a href="{% url 'cv.views.cv_list' %}">Employees</a></li>
-			            <li><a href="{% url 'cv.views.reports' %}">Reports</a></li>
-			            <li><a href="{% url 'cv.views.matrix_list' %}">Competence Matrices</a></li>
-						{% if user.is_superuser %}
-			            <li><a href="{% url 'changelog' %}">Changelog</a></li>
-			            <li><a href="{% url 'admin:index' %}">Admin</a></li>
-						{% endif %}
-	                </ul>
-				    <ul class="nav navbar-nav navbar-right">
-				      <li class="dropdown">
-				        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.username}} <b class="caret"></b></a>
-				        <ul class="dropdown-menu">
-				          <li><a href="#">Action</a></li>
-				          <li><a href="#">Another action</a></li>
-				          <li><a href="#">Something else here</a></li>
-				          <li class="divider"></li>
-				          <li><a href="#">Separated link</a></li>
-				        </ul>
-				      </li>
-				    </ul>
-                </div>
-            </div>
-        </div> <!-- /.navbar -->
-
-		<div class="container-fluid">
-
-			<h1>Reports</h1>
-
-			<form action="" id="searchform">
-				<div class="row">
-					<div class="col-md-4">
-						<select name="predefined_queries" id="predefined_queries" class="form-control">
-							<option value="(technology:java)^4 Java (technology:maven)^2 (develop OR utvikle OR utveckla)^2">Java-developer</option>
-							<option value="(technology:java OR technology:.net) OR (c# OR c++) scrum">System developer</option>
-							<option value="scrum^2 OR ('project manager' OR projektledare OR prosjektleder)^3 AND (lead OR lede)">Project manager</option>
-							<option value="(technology:javascript AND technology:html AND technology:css)^3 frontend^5">Frontend developer</option>
-							<option value="(architect OR arkitekt)">Systems architect</option>
-						</select>
-					</div>
-					<div class="col-md-8">	
-					    <div class="input-group">
-					      <input type="text" name="q" id="q" class="form-control">
-					      <span class="input-group-btn">
-					        <button class="btn btn-primary" type="button" id="searchbtn">Search</button>
-					      </span>
-					    </div><!-- /input-group -->
-					</div>
+{% extends "./cvbase.html" %}
+{% block title %}Reports{% endblock %}
+{% block extrastyles %}
+	<style>
+		body {background-color: #ddd; margin-top: 3em;}
+		p {font-size: 80%;}
+		.score:before {content:'';width:1em;height:1em; display: inline-block;border-radius: 50%; margin-right: .5em;}
+						.scorehigh:before 		{background-color: #5e0;}
+				.scoremedium:before 	{background-color: #ec3;}
+						.scorelow:before		{background-color: #ccc;}
+		.t_experience {text-align: right}
+		table {font-size: 0.9em; width: 100%; }
+		th { font-weight: 700;}
+		th, td { border-bottom: 1px solid #ccc; padding: .5em;}
+		.sort { text-decoration: underline; cursor: pointer;}
+		.sort:hover { background-color: #eee;}
+		tbody tr:hover, .selected { background-color: #f3f3f3; cursor: pointer; }
+		.margin-top {margin-top: 1em;}
+		.restrict-height {
+			max-height: 500px;
+			max-height: 80vh;
+			overflow-y: auto;
+			background-color: #fff;
+			padding: 1.5em;
+		}
+		.profile-photo {
+			width: 6em;
+			height: 6em;
+			border-radius: 3px;
+			background-color: #aaa;
+			background-size: cover;
+			background-position: center;
+			margin: auto;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<div class="container-fluid">
+		<h1>Reports</h1>
+		<form action="" id="searchform">
+			<div class="row">
+				<div class="col-md-4">
+					<select name="predefined_queries" id="predefined_queries" class="form-control">
+						<option value="(technology:java)^4 Java (technology:maven)^2 (develop OR utvikle OR utveckla)^2">Java-developer</option>
+						<option value="(technology:java OR technology:.net) OR (c# OR c++) scrum">System developer</option>
+						<option value="scrum^2 OR ('project manager' OR projektledare OR prosjektleder)^3 AND (lead OR lede)">Project manager</option>
+						<option value="(technology:javascript AND technology:html AND technology:css)^3 frontend^5">Frontend developer</option>
+						<option value="(architect OR arkitekt)">Systems architect</option>
+					</select>
 				</div>
-			</form>
-
-			<div class="row margin-top">
-				<div class="col-md-6">
-					<div class="restrict-height">
-						<table id="results">
-							<thead>
-								<tr>
-									<th></th>
-									<th class="sort" data-sort="t_name">Name</th>
-									<th class="sort hidden" data-sort="t_mail ">Mail</th>
-									<th class="sort" data-sort="t_match">Match</th>
-									<th class="sort text-right" data-sort="t_experience">Experience</th>
-								</tr>
-							</thead>
-							<tbody id="resultsbody" class="list">
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div class="restrict-height" id="persondetails"></div>
+				<div class="col-md-8">
+					<div class="input-group">
+						<input type="text" name="q" id="q" class="form-control">
+						<span class="input-group-btn">
+						<button class="btn btn-primary" type="button" id="searchbtn">Search</button>
+						</span>
+					</div><!-- /input-group -->
 				</div>
 			</div>
+		</form>
+		<div class="row margin-top">
+			<div class="col-md-6">
+				<div class="restrict-height">
+					<table id="results">
+						<thead>
+							<tr>
+								<th></th>
+								<th class="sort" data-sort="t_name">Name</th>
+								<th class="sort hidden" data-sort="t_mail ">Mail</th>
+								<th class="sort" data-sort="t_match">Match</th>
+								<th class="sort text-right" data-sort="t_experience">Experience</th>
+							</tr>
+						</thead>
+						<tbody id="resultsbody" class="list">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="restrict-height" id="persondetails"></div>
+			</div>
 		</div>
-
-<script id="template" type="text/x-dot-template">
-	<%~ppl :p:jindex%>
-		<tr id="p<%=p.id%>" data-personindex="<%=jindex%>">
-			<td>
-				<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
-				</td>
-			<td class="t_name">
-				<%=p.name%>
-				</td>
-			<td class="t_mail hidden">
-				<%=p.mail%>
-				</td>
-			<td class="t_match score score<%=(p.score>0.7)?'high':(p.score>0.5)?'medium':'low'%>">
-				<%=Math.round( p.score*1000 )/10 %>
-				</td>
-			<td class="t_experience text-right">
-				<%=p.years_of_experience%>
-				</td>
-		</tr>
-	<%~%>
-</script> 
-
-<script id="detailtemplate" type="text/x-dot-template">
-	<div class="text-center">
-		<div style="background-image: url(<%=DJANGO_URLS.media%><%=ppl.image.replace(/(\.png|\.jpg|\.gif|\.jpeg|\.bmp)/i,'_scale_110x110.jpg')%>)" class="profile-photo"></div>
-		<h4><%=ppl.name%></h4>
-		<h5><%=ppl.title%></h5>
-		<p><%=ppl.location%>&emsp;<a href="mailto:<%=ppl.mail%>"><%=ppl.mail%></a>&emsp;<%=ppl.phone%></p>
 	</div>
-	<%~ppl.cv :c:index%>
-		<div class="well">
-			<h3><%=c.title%><small> <%=c.title_en%></small></h3>
-			<p><%=c.profile%></p>
-			<p><em><%=c.profile_en%></em></p>
-			<a class="btn btn-primary btn-sm" href="<%=DJANGO_URLS.cv_detail%><%=c.id%>">View CV</a>&nbsp;
-			<a class="btn btn-default btn-sm" href="<%=DJANGO_URLS.cv_download_format_doc%><%=c.id%>"><span class="glyphicon glyphicon-download"></span> DOC</a>&nbsp;
-			<a class="btn btn-default btn-sm" href="<%=DJANGO_URLS.cv_download_format_pdf%><%=c.id%>"><span class="glyphicon glyphicon-download"></span> PDF</a>&nbsp;
+	<script id="template" type="text/x-dot-template">
+		<%~ppl :p:jindex%>
+			<tr id="p<%=p.id%>" data-personindex="<%=jindex%>">
+						<td>
+									<%? p.country %> <img src="{{ STATIC_URL }}img/flags/<%=p.country%>.gif" width="16" height="11" alt="<%=p.country%>"/><%?%>
+							</td>
+						<td class="t_name">
+									<%=p.name%>
+							</td>
+						<td class="t_mail hidden">
+									<%=p.mail%>
+							</td>
+						<td class="t_match score score<%=(p.score>0.7)?'high':(p.score>0.5)?'medium':'low'%>">
+									<%=Math.round( p.score*1000 )/10 %>
+							</td>
+						<td class="t_experience text-right">
+									<%=p.years_of_experience%>
+							</td>
+			</tr>
+		<%~%>
+	</script>
+	<script id="detailtemplate" type="text/x-dot-template">
+		<div class="text-center">
+					<div style="background-image: url(<%=DJANGO_URLS.media%><%=ppl.image.replace(/(\.png|\.jpg|\.gif|\.jpeg|\.bmp)/i,'_scale_110x110.jpg')%>)" class="profile-photo"></div>
+					<h4><%=ppl.name%></h4>
+					<h5><%=ppl.title%></h5>
+					<p><%=ppl.location%>&emsp;<a href="mailto:<%=ppl.mail%>"><%=ppl.mail%></a>&emsp;<%=ppl.phone%></p>
 		</div>
-	<%~%>
-</script>
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/list.min.js"></script>
-<script>
-
-var DJANGO_URLS = {
-	cv_person_change:       "{% url 'admin:cv_person_change' "999999" %}".replace('999999/',''),
-	cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "999999" %}".replace('999999/',''),
-	cv_person_add:          "{% url 'admin:cv_person_add' %}",
-	cv_cv_change:           "{% url 'admin:cv_cv_change' "888888" %}".replace('888888/',''),
-	cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
-	cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
-	cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
-	cv_detail:              "{% url 'cv_detail' "888888" %}".replace('888888/',''),
-	cv_multi:               "{% url 'cv_multi' %}",
-	media: "{{ MEDIA_URL }}",
-	static: "{{ STATIC_URL }}",
-	solr: "{{solrurl}}"
-};
-
-var SOLR = (function($, doT){
-
- 	var ajaxConf = {
-		type: 'get',
-		url: '{{solrurl}}',
-		data: {
-	 		q: '*',
-	 		wt: 'json',
-	 		indent: 'true',
-	 		sort: 'score desc',
-	 		rows: 10000,
-	 		hl: 'false',
-	 		fl: 'name_exact,fulljson,score,years_of_experience'
-	 	},
-		traditional: true,
-		cache: false
+		<%~ppl.cv :c:index%>
+			<div class="well">
+						<h3><%=c.title%><small> <%=c.title_en%></small></h3>
+						<p><%=c.profile%></p>
+						<p><em><%=c.profile_en%></em></p>
+						<a class="btn btn-primary btn-sm" href="<%=DJANGO_URLS.cv_detail%><%=c.id%>">View CV</a>&nbsp;
+						<a class="btn btn-default btn-sm" href="<%=DJANGO_URLS.cv_download_format_doc%><%=c.id%>"><span class="glyphicon glyphicon-download"></span> DOC</a>&nbsp;
+						<a class="btn btn-default btn-sm" href="<%=DJANGO_URLS.cv_download_format_pdf%><%=c.id%>"><span class="glyphicon glyphicon-download"></span> PDF</a>&nbsp;
+			</div>
+		<%~%>
+	</script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/doT.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/list.min.js"></script>
+	<script>
+	var DJANGO_URLS = {
+		cv_person_change:       "{% url 'admin:cv_person_change' "999999" %}".replace('999999/',''),
+		cv_add_cv_for_person:   "{% url 'cv_add_cv_for_person' "999999" %}".replace('999999/',''),
+		cv_person_add:          "{% url 'admin:cv_person_add' %}",
+		cv_cv_change:           "{% url 'admin:cv_cv_change' "888888" %}".replace('888888/',''),
+		cv_download_format_doc: "{% url 'cv_download_format' 'doc' %}",
+		cv_download_format_pdf: "{% url 'cv_download_format' 'pdf' %}",
+		cv_download_format_odt: "{% url 'cv_download_format' 'odt' %}",
+		cv_detail:              "{% url 'cv_detail' "888888" %}".replace('888888/',''),
+		cv_multi:               "{% url 'cv_multi' %}",
+		media: "{{ MEDIA_URL }}",
+		static: "{{ STATIC_URL }}",
+		solr: "{{solrurl}}"
 	};
-	
-	var people = [];
-
-	function callServer(){
-		ajaxConf.data.q = $('#q').val();
-		$.ajax(ajaxConf).done(function( data ) {
-			data = jQuery.parseJSON( data );
-			parseResults( data );
-			var changelist = new List('results', {
-			    valueNames: [ 
-			    	't_name',
-			    	't_mail', 
-			    	't_match', 
-			    	't_experience' 
-			    	],
-			    page: 300
-			});
-		});
-	}
-
-	function parseResults(data){
-		$('#persondetails').html('<h4><small>Select a person from the list</small></h4>');
-		var docs = data.response.docs;
-		people = [];
-		for( var i = 0; i < docs.length; i++ ) {
-			var peopleJson = {};
-			try{
-				peopleJson = JSON.parse( docs[i].fulljson.replace(/\s+/g,' ') );
-			} catch(e) {
-				console.log('Parsing failed for ', docs[i].name_exact);
-				console.log(docs[i].fulljson);
-			}
-			people.push(peopleJson);
-			people[i].score = docs[i].score; 
-			people[i].years_of_experience = docs[i].years_of_experience;
-		}
-		console.log('JSON List of People:', people);
-		var html = renderer(people);
-		$('#resultsbody').html(html);
-	}
-
-	function searchFormSubmit(e){
-		console.log('Search form sent');
-		callServer();
-		e.preventDefault();
-	}
-
-	function showPersonDetails(){
-		$('tr').removeClass('selected');
-		var $t = $(this);
-		$t.addClass('selected');
-		var personindex = $t.data('personindex');
-		console.log('Person click - Index: ', personindex);
-		$('#persondetails').html( detailrenderer(people[personindex]) );
-	}
-
-	function init() {
-
-		doT.templateSettings = {
-			evaluate:    /\<\%([\s\S]+?)\%\>/g,
-			interpolate: /\<\%=([\s\S]+?)\%\>/g,
-			encode:      /\<\%!([\s\S]+?)\%\>/g,
-			use:         /\<\%#([\s\S]+?)\%\>/g,
-			define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
-			conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
-			iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
-			varname: 'ppl',
-			strip: true,
-			append: true,
-			selfcontained: false
+	var SOLR = (function($, doT){
+		var ajaxConf = {
+			type: 'get',
+			url: '{{solrurl}}',
+			data: {
+				q: '*',
+				wt: 'json',
+				indent: 'true',
+				sort: 'score desc',
+				rows: 10000,
+				hl: 'false',
+				fl: 'name_exact,fulljson,score,years_of_experience'
+			},
+			traditional: true,
+			cache: false
 		};
-
-		renderer = doT.template( $('#template').text() );
-		detailrenderer = doT.template( $('#detailtemplate').text() );
-
-		var $pq = $('#predefined_queries');
-		$('#q').val( $pq.val() );
-		$pq.change( function(){
-			$('#q').val( $(this).val() );
-		});
-		$('#searchbtn').click(searchFormSubmit);
-		$('#searchform').submit(searchFormSubmit);
-		$('#resultsbody').on('click','tr',showPersonDetails)
-		// Retrieve initial data
-		callServer();
-
-	}
-
-	return {
-		init: init,
-		callServer: callServer
-	}
-
-}($, doT));
-
-SOLR.init();
-
-</script>		
-	</body>
-</html>
+		
+		var people = [];
+		function callServer(){
+			ajaxConf.data.q = $('#q').val();
+			$.ajax(ajaxConf).done(function( data ) {
+				data = jQuery.parseJSON( data );
+				parseResults( data );
+				var changelist = new List('results', {
+				valueNames: [
+					't_name',
+					't_mail',
+					't_match',
+					't_experience'
+					],
+				page: 300
+				});
+			});
+		}
+		function parseResults(data){
+			$('#persondetails').html('<h4><small>Select a person from the list</small></h4>');
+			var docs = data.response.docs;
+			people = [];
+			for( var i = 0; i < docs.length; i++ ) {
+				var peopleJson = {};
+				try{
+					peopleJson = JSON.parse( docs[i].fulljson.replace(/\s+/g,' ') );
+				} catch(e) {
+					console.log('Parsing failed for ', docs[i].name_exact);
+					console.log(docs[i].fulljson);
+				}
+				people.push(peopleJson);
+				people[i].score = docs[i].score;
+				people[i].years_of_experience = docs[i].years_of_experience;
+			}
+			console.log('JSON List of People:', people);
+			var html = renderer(people);
+			$('#resultsbody').html(html);
+		}
+		function searchFormSubmit(e){
+			console.log('Search form sent');
+			callServer();
+			e.preventDefault();
+		}
+		function showPersonDetails(){
+			$('tr').removeClass('selected');
+			var $t = $(this);
+			$t.addClass('selected');
+			var personindex = $t.data('personindex');
+			console.log('Person click - Index: ', personindex);
+			$('#persondetails').html( detailrenderer(people[personindex]) );
+		}
+		function init() {
+			doT.templateSettings = {
+				evaluate:    /\<\%([\s\S]+?)\%\>/g,
+				interpolate: /\<\%=([\s\S]+?)\%\>/g,
+				encode:      /\<\%!([\s\S]+?)\%\>/g,
+				use:         /\<\%#([\s\S]+?)\%\>/g,
+				define:      /\<\%##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\%\>/g,
+				conditional: /\<\%\?(\?)?\s*([\s\S]*?)\s*\%\>/g,
+				iterate:     /\<\%~\s*(?:\%\>|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\%\>)/g,
+				varname: 'ppl',
+				strip: true,
+				append: true,
+				selfcontained: false
+			};
+			renderer = doT.template( $('#template').text() );
+			detailrenderer = doT.template( $('#detailtemplate').text() );
+			var $pq = $('#predefined_queries');
+			$('#q').val( $pq.val() );
+			$pq.change( function(){
+				$('#q').val( $(this).val() );
+			});
+			$('#searchbtn').click(searchFormSubmit);
+			$('#searchform').submit(searchFormSubmit);
+			$('#resultsbody').on('click','tr',showPersonDetails)
+			// Retrieve initial data
+			callServer();
+		}
+		return {
+			init: init,
+			callServer: callServer
+		}
+	}($, doT));
+	SOLR.init();
+	</script>
+{% endblock %}
