@@ -215,13 +215,14 @@ def add_experience(request):
 		techs = request.POST.get('techs','')
 		techs_en = request.POST.get('techs_en','')
 
-		try:
+		# TODO: Validity check before creating experience object
+		# 
+
+		if title != '':
+
 			exp = Experience(
 				person = p,
-				from_year = from_year,
-				from_month = from_month,
-				to_year = to_year,
-				to_month = to_month,
+				from_year = int(from_year),
 				title = title,
 				title_en = title_en,
 				company = company,
@@ -231,6 +232,13 @@ def add_experience(request):
 				techs = techs,
 				techs_en = techs_en,
 				)
+
+			if isinstance(from_month, int):
+				exp.from_month = int(from_month)+1
+			if isinstance(to_year, int):
+				exp.to_year = int(to_year)
+			if isinstance(to_month, int):
+				exp.to_month = int(to_month)+1
 
 			exp.save()
 
@@ -242,9 +250,9 @@ def add_experience(request):
 				cv.save()
 
 			return HttpResponse( "Experience added: %s %s" % ( title, company ) )
-
-		except:
-			return HttpResponseBadRequest( "Experience not added, please review." )
+			
+		else:
+			return HttpResponseBadRequest( "Please fill out the required fields.")
 
 	else:
 
