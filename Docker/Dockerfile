@@ -38,6 +38,13 @@ RUN adduser acs-user
 RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-System.git "
 
 
+
+#SOLR
+RUN apt-get install -y  wget
+RUN adduser solr
+RUN su -  solr -c "/usr/bin/wget -O /home/solr/solr-4.4.0.tgz -q -N  https://archive.apache.org/dist/lucene/solr/4.4.0/solr-4.4.0.tgz"
+RUN su -  solr -c "tar -zxvf solr-4.4.0.tgz"
+
 RUN apt-get install -y python-django
 ADD acs.conf /etc/apache2/sites-available/acs.conf
 ADD .htaccess /home/acs-user/.htaccess
