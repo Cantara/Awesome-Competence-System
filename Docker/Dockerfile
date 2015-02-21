@@ -54,10 +54,10 @@ RUN apt-get install -y oracle-java8-installer
 # ACS stuff
 RUN adduser acs-user
 RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-System.git "
+RUN  su -  acs-user -c  "ln -s Awesome-Competence-System acs" 
 
 
-
-#SOLR
+ome-Competence-SysteSOLR
 RUN adduser solr
 RUN su -  solr -c "/usr/bin/wget -O /home/solr/solr-4.4.0.tgz -q -N  https://archive.apache.org/dist/lucene/solr/4.4.0/solr-4.4.0.tgz"
 RUN su -  solr -c "tar -zxvf solr-4.4.0.tgz"
