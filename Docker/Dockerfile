@@ -40,7 +40,7 @@ RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-
 
 RUN apt-get install -y python-django
 ADD acs.conf /etc/apache2/sites-available/acs.conf
-
+Dd .htaccess /home/acs-user/.htaccess
 
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
