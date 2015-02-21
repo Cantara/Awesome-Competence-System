@@ -4,6 +4,8 @@ MAINTAINER Leon Ho
 # Install dependencies for ACS installation
 RUN apt-get update
 RUN apt-get upgrade
+RUN apt-get install -y  python-software-properties
+
 
 RUN apt-get install -y apache2
 # In /etc/apache2/apache2.conf add ServerName altubutu01
@@ -25,7 +27,6 @@ RUN apt-get install -y openoffice
 
 # Azul OpenJDK
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
-RUN apt-get install -y  python-software-properties
 RUN apt-add-repository "deb http://repos.azulsystems.com/ubuntu stable main"
 RUN apt-get update 
 RUN apt-get install -y  zulu-8
@@ -38,11 +39,15 @@ RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-
 
 
 RUN apt-get install -y python-django
-COPY acs.conf /etc/apache2/sites-available/acs.conf
+ADD acs.conf /etc/apache2/sites-available/acs.conf
 
+
+RUN apt-get install -y supervisor
+RUN mkdir -p /var/log/supervisor
 
 # Expose port 80 and 443 
 EXPOSE 80 443
-CMD ["npm","start"]
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]
 
 
