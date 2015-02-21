@@ -3,6 +3,7 @@ MAINTAINER Leon Ho
 
 # Install dependencies for ACS installation
 RUN apt-get update
+RUN apt-get upgrade
 
 RUN apt-get install -y apache2
 # In /etc/apache2/apache2.conf add ServerName altubutu01
@@ -15,12 +16,21 @@ RUN apt-get install -y sqlite3
 RUN apt-get install -y git
 RUN apt-get install -y postfix
 
+# Apache OpenOffice
+RUN add-apt-repository ppa:upubuntu-com/office
+RUN apt-get update
+RUN apt-get install -y unzip bzip2
+RUN apt-get install -y openoffice
+
+
 # Azul OpenJDK
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
 RUN apt-get install -y  python-software-properties
 RUN apt-add-repository "deb http://repos.azulsystems.com/ubuntu stable main"
 RUN apt-get update 
 RUN apt-get install -y  zulu-8
+
+
 
 # ACS stuff
 RUN adduser acs-user
