@@ -2,12 +2,13 @@ ACS Docker Image
 ================
 
 To run:
-
 * sudo docker run -it -p 8080:80 -p 443:443 totto/acs
 
 Go to:
 * [http://localhost:8080]
 
+To inspect and debug
+* sudo docker run -it totto/acs /bin/bash
 
 Documentation:
 * https://wiki.cantara.no/display/ACS/Home
