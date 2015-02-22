@@ -14,6 +14,9 @@ RUN /etc/init.d/apache2 restart
 RUN  make-ssl-cert generate-default-snakeoil --force-overwrite
 # install mod_wsgi
 RUN apt-get install -y libapache2-mod-wsgi
+RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
+RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy.load
+
 RUN apt-get install -y sqlite3
 RUN apt-get install -y git
 RUN apt-get install -y postfix
@@ -64,6 +67,7 @@ RUN su -  solr -c "tar -zxvf solr-4.4.0.tgz"
 
 RUN apt-get install -y python-django
 ADD acs.conf /etc/apache2/sites-available/acs.conf
+RUN ln -s /etc/apache2/sites-available/acs.conf /etc/apache2/sites-enabled/acs.conf
 ADD .htaccess /home/acs-user/.htaccess
 ADD .htaccess /home/acs-user/password
 
