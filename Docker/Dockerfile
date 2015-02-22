@@ -60,7 +60,7 @@ RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-
 RUN  su -  acs-user -c  "ln -s Awesome-Competence-System acs" 
 
 
-ome-Competence-SysteSOLR
+# SOLR
 RUN adduser solr
 RUN su -  solr -c "/usr/bin/wget -O /home/solr/solr-4.4.0.tgz -q -N  https://archive.apache.org/dist/lucene/solr/4.4.0/solr-4.4.0.tgz"
 RUN su -  solr -c "tar -zxvf solr-4.4.0.tgz"
