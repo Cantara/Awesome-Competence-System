@@ -3,7 +3,7 @@ MAINTAINER Leon Ho
 
 # Install dependencies for ACS installation
 RUN apt-get update
-RUN apt-get upgrade
+RUN apt-get upgrade -y
 RUN apt-get install -y  python-software-properties wget
 
 
