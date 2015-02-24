@@ -78,7 +78,7 @@ RUN apt-get install -y libgtk2.0-0:i386 libidn11:i386 libglu1-mesa:i386
 # Expose port 80 and 443 
 EXPOSE 80 443
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-RUN ln -a /etc/supervisor/conf.d/supervisord.conf /etc/supervisord.conf
+RUN ln -s /etc/supervisor/conf.d/supervisord.conf /etc/supervisord.conf
 CMD ["/usr/bin/supervisord"]
 
 
