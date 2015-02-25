@@ -16,6 +16,7 @@ RUN  make-ssl-cert generate-default-snakeoil --force-overwrite
 RUN apt-get install -y libapache2-mod-wsgi
 RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
 RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy.load
+RUN /etc/init.d/apache2 restart
 
 RUN apt-get install -y sqlite3
 RUN apt-get install -y git
@@ -78,7 +79,7 @@ RUN apt-get install -y libgtk2.0-0:i386 libidn11:i386 libglu1-mesa:i386
 # Expose port 80 and 443 
 EXPOSE 80 443
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-RUN ln -a /etc/supervisor/conf.d/supervisord.conf /etc/supervisord.conf
+RUN ln -s /etc/supervisor/conf.d/supervisord.conf /etc/supervisord.conf
 CMD ["/usr/bin/supervisord"]
 
 
