@@ -16,6 +16,7 @@ RUN  make-ssl-cert generate-default-snakeoil --force-overwrite
 RUN apt-get install -y libapache2-mod-wsgi
 RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
 RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy.load
+RUN /etc/init.d/apache2 restart
 
 RUN apt-get install -y sqlite3
 RUN apt-get install -y git
