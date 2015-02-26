@@ -28,29 +28,28 @@ ENV DEBIAN_FRONTEND noninteractive
 # RUN apt-get update
 # RUN apt-get install -y unzip bzip2
 # RUN apt-get install -y openoffice
-# Install OpenOffice
+
+
+# Install OpenOffice - headless/server-mode
 RUN apt-get install -y libxt6
 RUN apt-get install -y libxrender1
-
 RUN wget http://sourceforge.net/projects/openofficeorg.mirror/files/4.1.1/binaries/en-US/Apache_OpenOffice_4.1.1_Linux_x86-64_install-deb_en-US.tar.gz
 RUN tar -xvf Apache_OpenOffice*.tar.gz
 RUN dpkg -i en-US/DEBS/*.deb
 RUN dpkg -i en-US/DEBS/desktop-integration/*.deb
 
 
-# Azul OpenJDK
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
-RUN apt-add-repository "deb http://repos.azulsystems.com/ubuntu stable main"
-RUN apt-get update 
+# Azul Zulu OpenJDK 8
+# RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
+# RUN apt-add-repository "deb http://repos.azulsystems.com/ubuntu stable main"
+# RUN apt-get update 
 # RUN apt-get install -y  zulu-8
 
-#Install Oracle Java 8
-# RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee /etc/apt/sources.list.d/webupd8team-java.list
-# RUN echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list
+# Install Oracle Java 8
 RUN apt-add-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main"
-# RUN apt-add-repository "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main"
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 RUN apt-get update
+# Accept Oracle lisence automatically
 RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true |  /usr/bin/debconf-set-selections
 RUN apt-get install -y oracle-java8-installer
 
@@ -61,16 +60,17 @@ RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-
 RUN  su -  acs-user -c  "ln -s Awesome-Competence-System acs" 
 
 
-# SOLR
+# ACS - SOLR index
 RUN adduser solr
 RUN su -  solr -c "/usr/bin/wget -O /home/solr/solr-4.4.0.tgz -q -N  https://archive.apache.org/dist/lucene/solr/4.4.0/solr-4.4.0.tgz"
 RUN su -  solr -c "tar -zxvf solr-4.4.0.tgz"
 
+# And the django stack for ACS
 RUN apt-get install -y python-django
 ADD acs.conf /etc/apache2/sites-available/acs.conf
 RUN ln -s /etc/apache2/sites-available/acs.conf /etc/apache2/sites-enabled/acs.conf
-ADD .htaccess /home/acs-user/.htaccess
-ADD .htaccess /home/acs-user/password
+ADD .htaccess /home/acs-user/acs/cvbase/.htaccess
+ADD .htaccess /home/acs-user/acs/password
 
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
