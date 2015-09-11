@@ -133,6 +133,9 @@ RUN chgrp www-data /home/acs-user/acs/cvapp/settings.pyc
 RUN chown acs-user /home/acs-user/acs/cvapp/settings.pyc
 RUN chmod 644 /home/acs-user/acs/cvapp/settings.pyc
 RUN chmod 644 /home/acs-user/acs/cvapp/localsettings.pyc
+
+# Sending mail
+RUN apt-get install -y -q --force-yes postfix
     
 # Expose port 80 and 443 
 EXPOSE 80 443
