@@ -127,6 +127,12 @@ RUN pip install six --upgrade
 #  with_items:
 #    - /home/acs-user/acs/cvapp/localsettings.pyc
 #    - /home/acs-user/acs/cvapp/settings.pyc
+RUN chgrp www-data /home/acs-user/acs/cvapp/localsettings.pyc
+RUN chown acs-user /home/acs-user/acs/cvapp/localsettings.pyc
+RUN chgrp www-data /home/acs-user/acs/cvapp/settings.pyc
+RUN chown acs-user /home/acs-user/acs/cvapp/settings.pyc
+RUN chmod 644 /home/acs-user/acs/cvapp/settings.pyc
+RUN chmod 644 /home/acs-user/acs/cvapp/localsettings.pyc
     
 # Expose port 80 and 443 
 EXPOSE 80 443
