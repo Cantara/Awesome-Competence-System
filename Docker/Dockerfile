@@ -11,7 +11,8 @@ RUN apt-get install -y apache2
 # In /etc/apache2/apache2.conf add ServerName altubutu01
 RUN /etc/init.d/apache2 restart
 # Fix certificates
-RUN  make-ssl-cert generate-default-snakeoil --force-overwrite
+RUN apt-get install -y ssl-cert
+# RUN  make-ssl-cert generate-default-snakeoil --force-overwrite
 # install mod_wsgi
 RUN apt-get install -y libapache2-mod-wsgi
 RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
