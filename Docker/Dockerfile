@@ -112,14 +112,14 @@ RUN chown www-data /var/log/django/logfile
 # name: Python Collect static files into /var/www/static
 #  shell: echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
 RUN pip install six --upgrade
-RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
-
+# RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
+# 
 # name: Copy Solr password file
 #  template: src=solr-password.jinja dest=/home/acs-user/password backup=yes owner=acs-user group=www-data mode=644
 
 # name: Index ACS site in Solr
 #  shell: echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
-RUN echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
+# RUN echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
 
 # name: Set file ownership of all acs correctly
 #  file: state=file path={{item}} owner=acs-user group=www-data mode=644
