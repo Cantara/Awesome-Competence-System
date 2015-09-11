@@ -75,7 +75,30 @@ ADD .htaccess /home/acs-user/acs/password
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 
+# Whatever this is..  :)
 RUN apt-get install -y libgtk2.0-0:i386 libidn11:i386 libglu1-mesa:i386
+
+
+# Not ported from ansible yet..
+# https://github.com/Cantara/Awesome-Competence-System-Provisioning/blob/master/roles/django/tasks/main.yml
+
+# name: Python Collect static files into /var/www/static
+#  shell: echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
+RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
+
+# name: Copy Solr password file
+#  template: src=solr-password.jinja dest=/home/acs-user/password backup=yes owner=acs-user group=www-data mode=644
+
+# name: Index ACS site in Solr
+#  shell: echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
+RUN echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
+
+# name: Set file ownership of all acs correctly
+#  file: state=file path={{item}} owner=acs-user group=www-data mode=644
+#  with_items:
+#    - /home/acs-user/acs/cvapp/localsettings.pyc
+#    - /home/acs-user/acs/cvapp/settings.pyc
+    
 # Expose port 80 and 443 
 EXPOSE 80 443
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
