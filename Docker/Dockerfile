@@ -72,12 +72,36 @@ RUN ln -s /etc/apache2/sites-available/acs.conf /etc/apache2/sites-enabled/acs.c
 ADD .htaccess /home/acs-user/acs/cvbase/.htaccess
 ADD .htaccess /home/acs-user/acs/password
 
+# Django modules
+RUN apt-get install -y python-pip python-lxml libxml2-dev libxslt-dev python-imaging libpq-dev python-dev
+
+# pip modules
+RUN pip install django-haystack django-admin-bootstrapped#==1.6.4 pysolr#==3.2.0 appy#==0.8. django-webodt psycopg2
+RUN pip lxml --upgrade
+
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 
 # Whatever this is..  :)
 RUN apt-get install -y libgtk2.0-0:i386 libidn11:i386 libglu1-mesa:i386
 
+# Django directories
+RUN mkdir /var/log/django
+RUN chgrp www-data /var/log/django
+RUN chown www-data /var/log/django
+RUN mkdir /var/www/static
+RUN chgrp www-data /var/www/static
+RUN chown www-data /var/www/static
+RUN mkdir /var/www/media/photos
+RUN chgrp www-data /var/www/media/photos
+RUN chown www-data/var/www/media/photos
+RUN mkdir /var/www/media/templates
+RUN chgrp www-data /var/www/media/templates
+RUN chown www-data /var/www/media/templatesa
+
+RUN touch /var/log/django/logfile
+RUN chgrp www-data /var/log/django/logfile
+RUN chown www-dataa/var/log/django/logfile
 
 # Not ported from ansible yet..
 # https://github.com/Cantara/Awesome-Competence-System-Provisioning/blob/master/roles/django/tasks/main.yml
