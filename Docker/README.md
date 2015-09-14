@@ -14,7 +14,7 @@ To inspect and debug
 Documentation:
      https://wiki.cantara.no/display/ACS/Home
 
-![Blurred ScreenShot](https://raw.github.com/cantara/cvapp/master/acs_blurred.png)
+![Blurred ScreenShot](https://raw.github.com/altran/cvapp/master/acs_blurred.png)
 
 
 
