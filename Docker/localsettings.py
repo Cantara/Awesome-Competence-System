@@ -34,4 +34,4 @@ TESTTOKEN = ''
 TESTTOKEN2 = ''
 
 # SOLR
-SOLRURL = 'http://localhost:8983/select'
+SOLRURL = 'http://localhost:8983/solr/select'
