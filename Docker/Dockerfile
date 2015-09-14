@@ -77,7 +77,12 @@ ADD .htaccess /home/acs-user/acs/password
 RUN apt-get install -y python-pip python-lxml libxml2-dev libxslt-dev python-imaging libpq-dev python-dev
 
 # pip modules
-RUN pip install Django#==1.6.2 django-haystack django-admin-bootstrapped#==1.6.4 pysolr#==3.2.0 appy#==0.8. django-webodt psycopg2 six
+RUN pip install Django==1.6.2 
+RUN pip install django-haystack 
+RUN pip install django-admin-bootstrapped==1.6.4 
+RUN pip install pysolr==3.2.0 
+RUN pip install appy==0.8.4 
+RUN pip install django-webodt psycopg2 
 RUN pip install lxml --upgrade
 
 RUN apt-get install -y supervisor
