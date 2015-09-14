@@ -2,17 +2,23 @@ ACS Docker Image
 ================
 
 To run:
-     sudo docker run -it -p 8080:80 -p 443:443 cantara/awesome-competence-system
-
+```
+   sudo docker run -it -p 8080:80 -p 443:443 cantara/awesome-competence-system
+```
 Go to:
-     http://localhost:8080/
-
+```
+   http://localhost:8080/
+```
 
 To inspect and debug
-     sudo docker run -it cantara/awesome-competence-system /bin/bash
+```
+   sudo docker run -it cantara/awesome-competence-system /bin/bash
+```
 
 Documentation:
-     https://wiki.cantara.no/display/ACS/Home
+```
+   https://wiki.cantara.no/display/ACS/Home
+```
 
 ![Blurred ScreenShot](https://raw.github.com/altran/cvapp/master/acs_blurred.png)
 
