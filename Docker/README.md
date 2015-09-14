@@ -5,7 +5,7 @@ To run:
 * sudo docker run -it -p 8080:80 -p 443:443 cantara/awesome-competence-system
 
 Go to:
-* [http://localhost:8080]
+* http://localhost:8080
 
 To inspect and debug
 * sudo docker run -it cantara/awesome-competence-system /bin/bash
