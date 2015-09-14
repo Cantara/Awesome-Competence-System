@@ -1,8 +1,8 @@
 ADMINS = (
-    ('{{django_admin_user}}', '{{django_admin_email}}'),
+    ('acs-admin', 'acs@cantara.no'),
 )
 
-ALLOWED_HOSTS = ['{{frontend_server_name}}']
+ALLOWED_HOSTS = ['localhost']
 
 MANAGERS = ADMINS
 
@@ -10,22 +10,22 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 HTTP_AUTH = ''
-APP_URL = 'https://'+ALLOWED_HOSTS[0]
+APP_URL = 'https://localhost'
 
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
-        'NAME': '{{db_ident}}',
-        'USER': '{{db_user}}',
-        'PASSWORD': '{{db_password}}',
-        'HOST': '{{db_host}}',
-        'PORT': '{{db_port}}',
+        'NAME': 'acs',
+        'USER': 'acsuser',
+        'PASSWORD': 'acspw',
+        'HOST': 'localhost',
+        'PORT': '5432',
         },
     }
 
 # Whydah App Auth
-APP_NAME = '{{acs_app_name}}'
-APP_SECRET = '{{acs_secret}}'
+APP_NAME = 'ACS'
+APP_SECRET = 'ACS_WHYDAH_SECRET'
 
 SSO_URL = '{{sso_url}}'
 
