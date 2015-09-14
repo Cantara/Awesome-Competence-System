@@ -160,6 +160,7 @@ RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
 
 # name: Index ACS site in Solr
 #  shell: echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
+
 ADD run_solr.sh /home/solr/run_solr.sh
 RUN chmod 755 /home/solr/run_solr.sh
 RUN service postgresql start && /home/solr/run_solr.sh && sleep 5 &&   python /home/acs-user/acs/cvapp/manage.py rebuild_index --noinput
@@ -175,6 +176,7 @@ RUN chgrp www-data /home/acs-user/acs/cvapp/settings.pyc
 RUN chown acs-user /home/acs-user/acs/cvapp/settings.pyc
 RUN chmod 644 /home/acs-user/acs/cvapp/settings.pyc
 RUN chmod 644 /home/acs-user/acs/cvapp/localsettings.pyc
+RUN chown -R solr /home/solr
 
 # Sending mail
 RUN apt-get install -y -q --force-yes postfix

@@ -27,11 +27,11 @@ DATABASES = {
 APP_NAME = 'ACS'
 APP_SECRET = 'ACS_WHYDAH_SECRET'
 
-SSO_URL = '{{sso_url}}'
+SSO_URL = 'https://sso.cantara.no/sso'
 
 TESTTOKEN = ''
 
 TESTTOKEN2 = ''
 
 # SOLR
-SOLRURL = 'https://{{solr_username}}:{{solr_password}}@'+ALLOWED_HOSTS[0]+'/solr/acs/select'
+SOLRURL = 'http://localhost:8983/select'
