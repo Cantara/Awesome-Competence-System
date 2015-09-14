@@ -2,13 +2,13 @@ ACS Docker Image
 ================
 
 To run:
-* sudo docker run -it -p 8080:80 -p 443:443 totto/acs
+* sudo docker run -it -p 8080:80 -p 443:443 cantara/awesome-competence-system
 
 Go to:
 * [http://localhost:8080]
 
 To inspect and debug
-* sudo docker run -it totto/acs /bin/bash
+* sudo docker run -it cantara/awesome-competence-system /bin/bash
 
 Documentation:
 * https://wiki.cantara.no/display/ACS/Home
@@ -18,8 +18,6 @@ Documentation:
 
 
 Licence:
-
-   Copyright 2012-2014 Altran AS 
 
 
    Licensed under the Apache License, Version 2.0 (the "License");
