@@ -149,7 +149,7 @@ RUN /etc/init.d/apache2 restart
 # https://github.com/Cantara/Awesome-Competence-System-Provisioning/blob/master/roles/django/tasks/main.yml
 
 ADD localsettings.py /home/acs-user/acs/cvapp/localsettings.py
-RUN service postgresql start
+RUN service postgresql start  && sleep 5 &&  python /home/acs-user/acs/cvapp/manage.py syncdb --noinput
 
 # name: Python Collect static files into /var/www/static
 #  shell: echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
@@ -160,7 +160,7 @@ RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
 
 # name: Index ACS site in Solr
 #  shell: echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
-RUN echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
+RUN service postgresql start && sleep 5 &&  | python /home/acs-user/acs/cvapp/manage.py rebuild_index --noinput
 
 # name: Set file ownership of all acs correctly
 #  file: state=file path={{item}} owner=acs-user group=www-data mode=644
