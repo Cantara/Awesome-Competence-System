@@ -163,7 +163,7 @@ RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
 
 ADD run_solr.sh /home/solr/run_solr.sh
 RUN chmod 755 /home/solr/run_solr.sh
-RUN service postgresql start && /home/solr/run_solr.sh && sleep 5 &&   python /home/acs-user/acs/cvapp/manage.py rebuild_index --noinput
+# RUN service postgresql start && /home/solr/run_solr.sh && sleep 5 &&   python /home/acs-user/acs/cvapp/manage.py rebuild_index --noinput
 
 # name: Set file ownership of all acs correctly
 #  file: state=file path={{item}} owner=acs-user group=www-data mode=644
