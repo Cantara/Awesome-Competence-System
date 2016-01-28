@@ -2,7 +2,7 @@ FROM ubuntu:12.04
 MAINTAINER Leon Ho
 
 # Install dependencies for ACS installation
-RUN apt-get update
+RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y  python-software-properties wget
 
@@ -17,6 +17,7 @@ RUN apt-get install -y ssl-cert
 RUN apt-get install -y libapache2-mod-wsgi
 RUN ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
 RUN ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy.load
+RUN echo 127.0.0.1 sso.cantara.no >>/etc/hosts; cat /etc/hosts
 RUN /etc/init.d/apache2 restart
 
 RUN apt-get install -y sqlite3
@@ -88,7 +89,7 @@ RUN apt-get install -y oracle-java8-installer
 
 # ACS stuff
 RUN adduser acs-user
-RUN  su -  acs-user -c  "git clone https://github.com/altran/Awesome-Competence-System.git "
+RUN  su -  acs-user -c  "git clone https://github.com/cantara/Awesome-Competence-System.git "
 RUN  su -  acs-user -c  "ln -s Awesome-Competence-System acs" 
 
 
