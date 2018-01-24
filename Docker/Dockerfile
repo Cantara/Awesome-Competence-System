@@ -73,18 +73,18 @@ RUN dpkg -i en-US/DEBS/desktop-integration/*.deb
 
 
 # Azul Zulu OpenJDK 8
-# RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
-# RUN apt-add-repository "deb http://repos.azulsystems.com/ubuntu stable main"
-# RUN apt-get update 
-# RUN apt-get install -y  zulu-8
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9
+RUN apt-add-repository "deb http://repos.azulsystems.com/ubuntu stable main"
+RUN apt-get update 
+RUN apt-get install -y  zulu-8
 
-# Install Oracle Java 8
-RUN apt-add-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main"
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
-RUN apt-get update
-# Accept Oracle lisence automatically
-RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true |  /usr/bin/debconf-set-selections
-RUN apt-get install -y oracle-java8-installer
+# Install Oracle Java 8 - Commented out because of failure downloading Oracle Java
+#RUN apt-add-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main"
+#RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
+#RUN apt-get update
+## Accept Oracle lisence automatically
+#RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true |  /usr/bin/debconf-set-selections
+#RUN apt-get install -y oracle-java8-installer
 
 
 # ACS stuff
