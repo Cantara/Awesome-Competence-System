@@ -1,10 +1,10 @@
-FROM ubuntu:12.04
+FROM ubuntu:18.04
 MAINTAINER Leon Ho
 
 # Install dependencies for ACS installation
 RUN apt-get update -y
 RUN apt-get upgrade -y
-RUN apt-get install -y  python-software-properties wget
+RUN apt-get install -y  python3-software-properties wget
 
 
 RUN apt-get install -y apache2
@@ -22,22 +22,25 @@ RUN /etc/init.d/apache2 restart
 
 RUN apt-get install -y sqlite3
 RUN apt-get install -y git
-RUN apt-get install -y postfix
+#RUN apt-get install -y postfix
 ENV DEBIAN_FRONTEND noninteractive
 
 # POSTGRES
 # Add the PostgreSQL PGP key to verify their Debian packages.
 # It should be the same key as https://www.postgresql.org/media/keys/ACCC4CF8.asc
-RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+#RUN apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
 
 # Add PostgreSQL's repository. It contains the most recent stable release
 #     of PostgreSQL, ``9.3``.
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
-# Install ``python-software-properties``, ``software-properties-common`` and PostgreSQL 9.3
+# Install ``python3-software-properties``, ``software-properties-common`` and PostgreSQL 9.3
 #  There are some warnings (in red) that show up during the build. You can hide
 #  them by prefixing each apt-get statement with DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y python-software-properties software-properties-common postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN apt-get update
+RUN apt-get install -y python3-software-properties software-properties-common
+RUN apt-get install -y postgresql-10 postgresql-client-10 postgresql-contrib-10
 
 # Note: The official Debian and Ubuntu images automatically ``apt-get clean``
 # after each ``apt-get``
@@ -50,10 +53,10 @@ RUN su -  postgres -c    "/etc/init.d/postgresql start && psql --command \"CREAT
 
 # Adjust PostgreSQL configuration so that remote connections to the
 # database are possible. 
-RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/10/main/pg_hba.conf
 
 # And add ``listen_addresses`` to ``/etc/postgresql/9.3/main/postgresql.conf``
-RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/10/main/postgresql.conf
 
 
 # Apache OpenOffice
@@ -106,10 +109,13 @@ ADD .htaccess /home/acs-user/acs/cvbase/.htaccess
 ADD .htaccess /home/acs-user/acs/password
 
 # Django modules
-RUN apt-get install -y python-pip python-lxml libxml2-dev libxslt-dev python-imaging libpq-dev python-dev
+RUN apt-get install -y python-pip python-lxml libxml2-dev libxslt-dev libpq-dev python-dev
+
+# python-imaging replaced by Pillow
+RUN pip install Pillow
 
 # pip modules
-RUN pip install Django==1.6.2 
+RUN pip install Django
 RUN pip install django-haystack 
 RUN pip install django-admin-bootstrapped==1.6.4 
 RUN pip install pysolr==3.2.0 
@@ -121,7 +127,7 @@ RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 
 # Whatever this is..  :)
-RUN apt-get install -y libgtk2.0-0:i386 libidn11:i386 libglu1-mesa:i386
+RUN apt-get install -y libgtk2.0-0 libidn11 libglu1-mesa
 
 # Django directories
 RUN mkdir /var/log/django
@@ -180,7 +186,10 @@ RUN chmod 644 /home/acs-user/acs/cvapp/localsettings.pyc
 RUN chown -R solr /home/solr
 
 # Sending mail
-RUN apt-get install -y -q --force-yes postfix
+#RUN debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
+#RUN debconf-set-selections <<< "postfix postfix/main_mailer_type string '2'"
+#RUN apt-get install  -y -q --force-yes postfix
+#RUN apt-get install -y -q --force-yes postfix
     
 # Expose port 80 and 443 
 EXPOSE 80 443

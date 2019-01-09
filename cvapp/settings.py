@@ -214,11 +214,12 @@ WEBODT_TEMPLATE_PATH = '/var/tmp/'
 WEBODT_CACHE_DIR = WEBODT_TEMPLATE_PATH
 
 # Get request in templates
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-
-TEMPLATE_CONTEXT_PROCESSORS = TCP + (
-    'django.core.context_processors.request',
-)
+# REF_ACS_2.0 Removed in Django 1.10
+# from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+#
+# TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+#     'django.core.context_processors.request',
+# )
 
 # HAYSTACK / SOLR STUFF
 HAYSTACK_CONNECTIONS = {
