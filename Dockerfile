@@ -92,8 +92,13 @@ RUN apt-get install -y  zulu-8
 
 # ACS stuff
 RUN adduser acs-user
-RUN  su -  acs-user -c  "git clone https://github.com/cantara/Awesome-Competence-System.git "
-RUN  su -  acs-user -c  "ln -s Awesome-Competence-System acs" 
+#RUN  su -  acs-user -c  "git clone https://github.com/cantara/Awesome-Competence-System.git "
+#RUN  su -  acs-user -c  "ln -s Awesome-Competence-System acs"
+RUN mkdir /home/acs-user/acs
+ADD cvapp/* /home/acs-user/acs/cvapp/
+RUN chgrp -R www-data /home/acs-user/acs
+RUN chown -R acs-user /home/acs-user/acs
+ADD ./Docker/localsettings.py /home/acs-user/acs/cvapp/localsettings.py
 
 
 # ACS - SOLR index
@@ -103,10 +108,10 @@ RUN su -  solr -c "tar -zxvf solr-4.4.0.tgz"
 
 # And the django stack for ACS
 RUN apt-get install -y python-django
-ADD acs.conf /etc/apache2/sites-available/acs.conf
+ADD Docker/acs.conf /etc/apache2/sites-available/acs.conf
 RUN ln -s /etc/apache2/sites-available/acs.conf /etc/apache2/sites-enabled/acs.conf
-ADD .htaccess /home/acs-user/acs/cvbase/.htaccess
-ADD .htaccess /home/acs-user/acs/password
+ADD Docker/.htaccess /home/acs-user/acs/cvbase/.htaccess
+ADD Docker/.htaccess /home/acs-user/acs/password
 
 # Django modules
 RUN apt-get install -y python-pip python-lxml libxml2-dev libxslt-dev libpq-dev python-dev
@@ -154,13 +159,14 @@ RUN /etc/init.d/apache2 restart
 
 # Not ported from ansible yet..
 # https://github.com/Cantara/Awesome-Competence-System-Provisioning/blob/master/roles/django/tasks/main.yml
-
-ADD localsettings.py /home/acs-user/acs/cvapp/localsettings.py
-RUN service postgresql start  && sleep 5 &&  python /home/acs-user/acs/cvapp/manage.py syncdb --noinput
+#ADD cvapp /home/acs-user/acs
+#ADD Docker/localsettings.py /home/acs-user/acs/cvapp/localsettings.py
+#TODO RUN service postgresql start  && sleep 5
+#TODO RUN python3 /home/acs-user/acs/cvapp/manage.py syncdb --noinput
 
 # name: Python Collect static files into /var/www/static
 #  shell: echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
-RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
+#TODO RUN echo "yes" | python3 /home/acs-user/acs/cvapp/manage.py collectstatic
 # 
 # name: Copy Solr password file
 #  template: src=solr-password.jinja dest=/home/acs-user/password backup=yes owner=acs-user group=www-data mode=644
@@ -168,7 +174,7 @@ RUN echo "yes" | python /home/acs-user/acs/cvapp/manage.py collectstatic
 # name: Index ACS site in Solr
 #  shell: echo "y" | python /home/acs-user/acs/cvapp/manage.py rebuild_index
 
-ADD run_solr.sh /home/solr/run_solr.sh
+ADD Docker/run_solr.sh /home/solr/run_solr.sh
 RUN chmod 755 /home/solr/run_solr.sh
 # RUN service postgresql start && /home/solr/run_solr.sh && sleep 5 &&   python /home/acs-user/acs/cvapp/manage.py rebuild_index --noinput
 
@@ -177,12 +183,16 @@ RUN chmod 755 /home/solr/run_solr.sh
 #  with_items:
 #    - /home/acs-user/acs/cvapp/localsettings.pyc
 #    - /home/acs-user/acs/cvapp/settings.pyc
-RUN chgrp www-data /home/acs-user/acs/cvapp/localsettings.pyc
-RUN chown acs-user /home/acs-user/acs/cvapp/localsettings.pyc
-RUN chgrp www-data /home/acs-user/acs/cvapp/settings.pyc
-RUN chown acs-user /home/acs-user/acs/cvapp/settings.pyc
-RUN chmod 644 /home/acs-user/acs/cvapp/settings.pyc
-RUN chmod 644 /home/acs-user/acs/cvapp/localsettings.pyc
+#ADD cvapp /home/acs-user/acs
+#RUN chgrp -R www-data /home/acs-user/acs/cvapp
+#RUN chown -R acs-user /home/acs-user/acs/cvapp
+#ADD ./Docker/localsettings.py /home/acs-user/acs/cvapp/localsettings.py
+#RUN chgrp www-data /home/acs-user/acs/cvapp/localsettings.pyc
+#RUN chown acs-user /home/acs-user/acs/cvapp/localsettings.pyc
+#RUN chgrp www-data /home/acs-user/acs/cvapp/settings.pyc
+#RUN chown acs-user /home/acs-user/acs/cvapp/settings.pyc
+#RUN chmod 644 /home/acs-user/acs/cvapp/settings.pyc
+#RUN chmod 644 /home/acs-user/acs/cvapp/localsettings.pyc
 RUN chown -R solr /home/solr
 
 # Sending mail
@@ -193,7 +203,7 @@ RUN chown -R solr /home/solr
     
 # Expose port 80 and 443 
 EXPOSE 80 443
-ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD Docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN ln -s /etc/supervisor/conf.d/supervisord.conf /etc/supervisord.conf
 CMD ["/usr/bin/supervisord"]
 

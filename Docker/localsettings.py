@@ -14,7 +14,7 @@ APP_URL = 'https://localhost'
 
 DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.postgresql_psycopg2',
+        'ENGINE':'django.db.backends.postgresql',
         'NAME': 'acs',
         'USER': 'acsuser',
         'PASSWORD': 'acspw',
