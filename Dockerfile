@@ -114,19 +114,19 @@ ADD Docker/.htaccess /home/acs-user/acs/cvbase/.htaccess
 ADD Docker/.htaccess /home/acs-user/acs/password
 
 # Django modules
-RUN apt-get install -y python-pip python-lxml libxml2-dev libxslt-dev libpq-dev python-dev
+RUN apt-get install -y python3-pip python-lxml libxml2-dev libxslt-dev libpq-dev python3-dev
 
 # python-imaging replaced by Pillow
-RUN pip install Pillow
+RUN pip3 install Pillow
 
 # pip modules
-RUN pip install Django
-RUN pip install django-haystack 
-RUN pip install django-admin-bootstrapped==1.6.4 
-RUN pip install pysolr==3.2.0 
-RUN pip install appy==0.8.4 
-RUN pip install django-webodt psycopg2 
-RUN pip install lxml --upgrade
+RUN pip3 install django
+RUN pip3 install django-haystack 
+RUN pip3 install django-admin-bootstrapped==1.6.4 
+RUN pip3 install pysolr==3.2.0 
+RUN pip3 install appy==0.8.4 
+RUN pip3 install django-webodt psycopg2 
+RUN pip3 install lxml --upgrade
 
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
